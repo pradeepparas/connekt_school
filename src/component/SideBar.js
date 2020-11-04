@@ -243,6 +243,10 @@ toggleClass =(e, type)=>{
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'holiday' ? 'active' : ''} to="/holiday" > Holidays   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'enquiry' ? 'active' : ''} to="/enquiry" > Enquiry   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'students' ? 'active' : ''} to="/students" > Student   </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'section' ? 'active' : ''} to="/section" > Section   </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'caste' ? 'active' : ''} to="/caste" > Caste   </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'religion' ? 'active' : ''} to="/religion" > Religion   </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'feetype' ? 'active' : ''} to="/feetype" > Fee Type   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'notification' ? 'active' : ''} to="/notification" > Notification</Link></li>
 
 
