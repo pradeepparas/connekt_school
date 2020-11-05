@@ -995,11 +995,11 @@ uploadFile=(e, type)=>{
               <div className="row align-items-center">
                 <div className="col-sm-6">
                   <div className="breadcrumbs-area clearfix">
-                    <h4 className="page-title pull-left">Enquiry</h4>
+                    <h4 className="page-title pull-left">Student</h4>
 
                     <ul className="breadcrumbs pull-left">
                       <li><a >Home</a></li>
-                      <li><span>Enquiry</span></li>
+                      <li><span>Student</span></li>
                     </ul>
                   </div>
                 </div>
@@ -1073,23 +1073,23 @@ uploadFile=(e, type)=>{
 
                       */}
                       {this.props.match.params.id==='insert'&&<><div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Student Name</span><span style={{marginLeft: 81,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.studentName} onChange={this.handleInputs} name="studentName" />
+                      <span style={{marginLeft: 13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Student Name" value={this.state.studentName} onChange={this.handleInputs} name="studentName" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Student Username </span><span style={{marginLeft: 72,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.studentUsername} onChange={this.handleInputs} name="studentUsername" />
+                      <span style={{marginLeft: 13}}>Student Username<small style={{color: 'red', fontSize: 18}}>*</small> </span><span style={{marginLeft: 30,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Student Username" value={this.state.studentUsername} onChange={this.handleInputs} name="studentUsername" />
                       </div></>}
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Password</span><span style={{marginLeft: 83,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.password} onChange={this.handleInputs} name="password" />
+                      <span style={{marginLeft: 13}}>Password<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 86,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="password" className="input-s br-w-1" placeholder="Password" value={this.state.password} onChange={this.handleInputs} name="password" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enrollment Number</span><span style={{marginLeft: 47,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
+                      <span style={{marginLeft: 13}}>Enrollment Number</span><span style={{marginLeft: 32,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enrollment Number" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Gender</span><span style={{marginLeft: 21,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Gender<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 100,marginRight: 35}}> : </span>
                       <span style={{marginLeft:"16px"}}>
                       <label   style={{paddingRight:"32px"}} type="radio"class="radio-inline">
                    <input className="gen-input" type="radio"  value="Male" onChange={this.handleInputs} name="gender" checked={this.state.gender=='Male'}/>Male
@@ -1100,11 +1100,11 @@ uploadFile=(e, type)=>{
                       </span>
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Date of Birth</span><span style={{marginLeft: 12,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
+                      <span style={{marginLeft: 13}}>Date of Birth<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 67,marginRight: 25}}> : </span>
+                      <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.birthDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Class Name</span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 76,marginRight: 25}}> : </span>
                       <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
@@ -1114,43 +1114,49 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Section</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Section</span><span style={{marginLeft: 108,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Section" value={this.state.section} onChange={this.handleInputs} name="section" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 92,marginRight: 25}}> : </span>
+                      <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Enquiry Name-</option>
+                        {this.state.classList.length > 0 ? this.state.classList.map(cls =>
+                          <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
+                        ) : null}
+
+                      </select>{" "}
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Medium</span><span style={{marginLeft: 103,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Medium" value={this.state.meduim} onChange={this.handleInputs} name="meduim" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>PreviousSchool</span><span style={{marginLeft: 59,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Previous School" value={this.state.previousSchool} onChange={this.handleInputs} name="previousSchool" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Any Disability</span><span style={{marginLeft: 69,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="(Yes/No) if yes mention it." value={this.state.anyDisability} onChange={this.handleInputs} name="anyDisability" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Child Interests</span><span style={{marginLeft: 64,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Child Interests" value={this.state.childInterests} onChange={this.handleInputs} name="childInterests" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Nationality</span><span style={{marginLeft: 86,marginRight: 25}}> : </span>
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Nationality" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      </div>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <span style={{marginLeft: 13}}>Religion</span><span style={{marginLeft: 105,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Date</span><span style={{marginLeft: 88,marginRight: 25}}> : </span>
-                      <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.enquiryDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Medium</span><span style={{marginLeft: 82,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>PreviousSchool</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Caste</span><span style={{marginLeft: 119,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Any Disability</span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Child Interests</span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Nationality</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Religion</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Caste</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Category</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Category</span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
                       </div>
                       <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>

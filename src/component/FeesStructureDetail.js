@@ -19,14 +19,16 @@ const imageUrl = myConstClass.imageUrl
 const pageSize = myConstClass.pageSize
 const file1 = myConstClass.fileSize
 
-class FeeType extends React.Component {
+class FeesStructureDetail extends React.Component {
   constructor() {
     super();
     this.state = {
-      modeofPayment: "",
+      feesDetailList: [],
+      feetypeList: [],
+      amount: "",
       count: false,
       fsize: 0,
-      feetypeList: [],
+      feesStructureList: [],
       classList:[],
       status:"",
       searchStr:"",
@@ -45,13 +47,13 @@ class FeeType extends React.Component {
       current_page: 1,
       isLoading:false,
       classId:"",
-      feesType:"",
+      feesStructure:"",
       courseDescription:"",
       courseOtherDetails:"",
       courseImage:[],
       courseFile:[],
       classId_ErMsg:"",
-      feesType_ErMsg:"",
+      feesStructure_ErMsg:"",
       courseDescription_ErMsg:"",
       courseOtherDetails_ErMsg:"",
       courseImage_ErMsg:"",
@@ -72,7 +74,7 @@ class FeeType extends React.Component {
             () => {
               if(this.state.count){
                 this.getClass(this.state.current_page);
-                this.getFeeType(this.state.current_page)
+                this.getFeesStructureDetail(this.state.current_page)
               }
             });
       }
@@ -96,7 +98,9 @@ class FeeType extends React.Component {
     } else {
 
    this.getClass(1);
-   this.getFeeType(1)
+   this.getfeesType(1)
+   this.getFeesStructure(1)
+   this.getFeesStructureDetail(1)
 
 
     }
@@ -111,13 +115,13 @@ onChangeInsertType =(e)=>{
     this.setState({
       show: true,
       chapterFile:[], fileName:"",
-      title: 'Add Fees Type',
-       feesType:"",
+      title: 'Add Fees Structure Type',
+       feesStructure:"",
       courseDescription:"",
       courseOtherDetails:"",
       courseImage:[],
       classId_ErMsg:"",
-      feesType_ErMsg:"",
+      feesStructure_ErMsg:"",
       courseDescription_ErMsg:"",
       courseOtherDetails_ErMsg:"",
       courseImage_ErMsg:"",
@@ -133,19 +137,21 @@ onChangeInsertType =(e)=>{
   };
 // EDIT COURSE
 
-editFeeType = (data) => {
+editFeesStructureDetail = (data) => {
   console.log(data)
   debugger
   this.setState({
     show: true,
+    feestypeId: data.FeesTypeMasterId,
+    feestructureId: data.FeesStructureMasterId,
      insertType:"single",
-    title: 'Update Fees Type',
-    feesType:data.FeesType,
+    title: 'Update Fees Structure Detail',
+    otherDescription: data.OtherDescription,
     active:data.StatusId==1?true:false,
-    id:data.FeesTypeMasterId,
-    modeofPayment: data.ModeofPayment,
-    modeofPayment_ErMsg: "",
-    feesType_ErMsg:"",
+    id:data.FeesStructureDetailId,
+    amount: data.Amount,
+    amount_ErMsg: "",
+    feesStructure_ErMsg:"",
     btntitle: 'Update',
     isAdd: false,
     isEdit: true,
@@ -188,20 +194,87 @@ catch(err)
 }
 };
 
+getFeesStructure = async pageNumber => {
+  debugger
+  this.setState({isLoading:true})
+try{
+const response = await fetch( api_Url+`getFeesStructureBySchoolId?page=1&size=50&status=1`,{
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+    }
+  }
+);
+const data = await response.json();
+ if(data.success){
+   debugger
+   console.log('data', data)
+   debugger
+   this.setState({
+         feesStructureList: data.FeesStructure,
+     });
+
+ } else {
+     this.setState({
+      feesStructureList: []
+     });
+ }
+this.setState({isLoading:false})
+}
+catch(err)
+{
+this.setState({isLoading: false})
+toast.error('uploading failed')
+}
+ };
+
+getfeesType = async(pageNumber) => {
+  this.setState({isLoading:true})
+try{
+const response = await fetch( api_Url+`getFeesTypeBySchoolId?page=${pageNumber}&size=50&status=1`,{
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+    }
+  }
+);
+const data = await response.json();
+ if(data.success){
+   debugger
+   console.log(data,'datA',)
+     this.setState({
+       feetypeList: data.FeesType,
+     });
+ } else {
+     this.setState({
+      feetypeList: []
+     });
+ }
+this.setState({isLoading:false})
+}
+catch(err)
+{
+
+}
+}
 
 /// ON SEARCH COURSE
 onSearchCourese=()=>{
-this.getFeeType(1, this.state.current_page, this.state.classId, this.state.status)
+this.getFeesStructureDetail(1, this.state.current_page, this.state.classId, this.state.status)
 }
 
 
 // delete section
-deleteFeeType = (data) => {
+deleteFeesStructureDetail = (data) => {
   console.log(data)
   debugger
    this.setState({
-     id: data.FeesTypeMasterId,
-     title: 'Delete FeeType',
+     id: data.FeesStructureDetailId,
+     title: 'Delete Fees Structure Detail',
      btntitle: 'Delete',
      btnValue: "Delete",
      show: false,
@@ -209,19 +282,19 @@ deleteFeeType = (data) => {
      isEdit: false,
      isAdd: false,
      isDelete: true,
-     feesType: data.FeesType,
+     feesStructure: "Empty",
      displaytext: 'hide_block',
    })
 
 }
 
 // delete fee by Id
-deleteFeeTypeById = async(e) => {
+deleteFeesStructureDetailById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteFeeType?status=0&FeeTypeMasterId=1
+  //http://35.200.220.64:4000/connektschool/deleteFeesStructureDetail?status=0&FeesStructureDetailMasterId=1
   this.setState({isLoading:true})
-  fetch(api_Url+`deleteFeeTypeMaster?status=0&FeesTypeMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteFeesStructureDetail?status=0&FeesStructureDetailId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -237,7 +310,7 @@ deleteFeeTypeById = async(e) => {
 
      })
      this.setState({id:""},()=>{
-      this.getFeeType(this.state.current_page, this.state.per_page)
+      this.getFeesStructureDetail(this.state.current_page, this.state.per_page)
 
      })
      this.handleDeleteClose()
@@ -255,7 +328,7 @@ deleteFeeTypeById = async(e) => {
 }
 
 /// GET CLASS LIST by sir
-getFeeType = async pageNumber => {
+getFeesStructureDetail = async pageNumber => {
   debugger
   this.setState({isLoading:true})
 try{
@@ -267,7 +340,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getFeesTypeBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getFeesStructureDetailBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -282,14 +355,14 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         feetypeList: data.FeesType,
+         feesDetailList: data.FeesStructureDetail,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
 
  } else {
      this.setState({
-      feetypeList: []
+      feesDetailList: []
      });
  }
 this.setState({isLoading:false})
@@ -317,23 +390,23 @@ validateForm =()=>{
    var isValid=true;
     if(this.state.classId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"Class name is required", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-   else if(this.state.feesType.trim()==''){
+   else if(this.state.feesStructure.trim()==''){
        isValid= false
-        return this.setState({classId_ErMsg:"", feesType_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
     else if(this.state.courseDescription.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
     }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+    //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     // }
     // else  if(this.state.isAdd&&this.state.courseImage.length==0){
     //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
+    //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
         return isValid
@@ -343,19 +416,22 @@ validateForm =()=>{
 
 
   // manage Course
-  manageFeeType = (e) => {
+  manageFeesStructureDetail = (e) => {
     debugger
     e.preventDefault();
 
    if(this.state.isAdd){
-     var data = {
-       "FeesType": this.state.feesType,
-       "ModeofPayment": this.state.modeofPayment
-     }
-    // var data = {
-    //     "FeeTypeName": this.state.feesType
-    //   }
-    let url= `insertFeeTypeMaster`;
+      var data = {
+          "FeesTypeMasterId":this.state.feestypeId,
+          "FeesStructureMasterId":this.state.feestructureId,
+          "Amount":this.state.amount,
+          "OtherDescription":this.state.otherDescription
+      }
+     // if(this.state.amount){
+     //   data.TotalFees = this.state.amount;
+     // }
+
+    let url= `insertFeesStructureDetail`;
       let header={
         "Accept":"Application/json",
         "Content-Type": "application/json",
@@ -375,7 +451,7 @@ validateForm =()=>{
 
               })
               this.setState({classId:""},()=>{
-                this.getFeeType(this.state.current_page, this.state.per_page, this.state.classId, this.state.status)
+                this.getFeesStructureDetail(this.state.current_page, this.state.per_page, this.state.classId, this.state.status)
 
               })
              this.handleClose()
@@ -396,15 +472,21 @@ validateForm =()=>{
    }
 
    else if(this.state.isEdit){
+
           var data = {
-              "FeesTypeMasterId":this.state.id,
-              "FeesType": this.state.feesType,
-              "ModeofPayment": this.state.modeofPayment,
+              "FeesStructureDetailId":this.state.id,
+              "FeesTypeMasterId":this.state.feestypeId,
+              "FeesStructureMasterId": this.state.feestructureId,
+              "Amount": this.state.amount,
+              "OtherDescription":this.state.otherDescription,
               "StatusId":this.state.active?"1":"0"
               }
+          // if(this.state.amount){
+          //   data.TotalFees = this.state.amount
+          // }
           this.setState({isLoading:true})
 
-          fetch(api_Url+`updateFeeTypeMaster`,{
+          fetch(api_Url+`updateFeesStructureDetail`,{
             method:"POST",
             headers :{
               "Accept":"Application/json",
@@ -420,7 +502,7 @@ validateForm =()=>{
               toast.success(result.message,{
 
               })
-              this.getFeeType(this.state.current_page, this.state.per_page)
+              this.getFeesStructureDetail(this.state.current_page, this.state.per_page)
              this.handleClose()
             }
             else{
@@ -644,14 +726,17 @@ validateForm =()=>{
     }
   }
 
-  showFeeType = () => {
-    if (this.state.feetypeList !== undefined) {
-      return this.state.feetypeList.map((fees, i) => {
+  showFeesStructureDetail = () => {
+    if (this.state.feesDetailList !== undefined) {
+      return this.state.feesDetailList.map((fees, i) => {
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{fees.FeesType}</td>
-            <td>{fees.ModeofPayment}</td>
+            <td>{fees.Amount}</td>
+            <td>{fees.OtherDescription}</td>
+            <td>{fees.FeesStructureDetailId}</td>
+            <td>{fees.FeesStructureMasterId}</td>
+            <td>{fees.FeesTypeMasterId}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
             <td>{fees.StatusId==1?"Active":"In-Active"}</td>
 
@@ -659,9 +744,9 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editFeeType(fees)} class="ti-pencil"></i>
+            <i  onClick={() => this.editFeesStructureDetail(fees)} class="ti-pencil"></i>
             {" "}  {" "}
-            {<i  onClick={() => this.deleteFeeType(fees)} class="ti-trash"></i>}
+            {<i  onClick={() => this.deleteFeesStructureDetail(fees)} class="ti-trash"></i>}
             </td>
 
 
@@ -697,7 +782,7 @@ validateForm =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getFeeType(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
+            onClick={() => this.getFeesStructureDetail(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
           >
             {number}
           </span>
@@ -774,7 +859,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='section'  shown='master' />
+      <SideBar tabIndex='feestructuredetail'  shown='master' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -795,11 +880,11 @@ uploadFile=(e, type, i)=>{
               <div className="row align-items-center">
                 <div className="col-sm-6">
                   <div className="breadcrumbs-area clearfix">
-                    <h4 className="page-title pull-left">Fees Type</h4>
+                    <h4 className="page-title pull-left">Fees Structure Detail</h4>
 
                     <ul className="breadcrumbs pull-left">
                       <li><a >Home</a></li>
-                      <li><span>Fees Type</span></li>
+                      <li><span>Fees Structure Detail</span></li>
                     </ul>
                   </div>
                 </div>
@@ -846,7 +931,7 @@ uploadFile=(e, type, i)=>{
                             data-target="#add"
                           >
                             {" "}
-                      Add Fees Type {" "}
+                      Add Fees Structure {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
                         </p>
@@ -859,8 +944,11 @@ uploadFile=(e, type, i)=>{
                               <tr class="text-white">
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
-                                <th scope="col">FeeType Name</th>
-                                <th scope="col">Mode Of Payment</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Other Description</th>
+                                <th scope="col">Fees Structure DetailId</th>
+                                <th scope="col">Fees Structure MasterId</th>
+                                <th scope="col">Fees Type MasterId</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
 
@@ -869,25 +957,25 @@ uploadFile=(e, type, i)=>{
                             </thead>
 
 
-                            <tbody>{this.showFeeType()}</tbody>
+                            <tbody>{this.showFeesStructureDetail()}</tbody>
 
 
                           </table>
-                          {this.state.feetypeList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
+                          {this.state.feesDetailList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
 
 
                         </div>
-                        {this.state.feetypeList.length>0&&
+                        {this.state.feesDetailList.length>0&&
                       <div className={styles.pagination}>
                       <span className={this.state.current_page=='1'?"disabled":""}
                         onClick={()=> {
                           if(this.state.current_page=='1'){return;}
-                          this.getFeeType(this.state.current_page-1, this.state.per_page, this.state.searchStr)}}>Previous</span>
-                        {this.state.feetypeList.length > 0 && this.renderPageNumbers()}
+                          this.getFeesStructureDetail(this.state.current_page-1, this.state.per_page, this.state.searchStr)}}>Previous</span>
+                        {this.state.feesDetailList.length > 0 && this.renderPageNumbers()}
                     <span  className={Math.ceil(this.state.total / this.state.per_page)==this.state.current_page?"disabled":""}
                         onClick={()=> {
                           if(Math.ceil(this.state.total / this.state.per_page)==this.state.current_page){return;}
-                          this.getFeeType(+this.state.current_page+1, this.state.per_page, this.state.searchStr)}}>Next</span>
+                          this.getFeesStructureDetail(+this.state.current_page+1, this.state.per_page, this.state.searchStr)}}>Next</span>
                    </div>}
                         </div>
                       </div>
@@ -911,15 +999,29 @@ uploadFile=(e, type, i)=>{
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
             <div>
-						<Col sm={4}> Fees Type Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+              <Col sm={4}> Fees Type<small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                    <Col sm={9}>
+                      <FormControl as="select" value={this.state.feestypeId} name="feestypeId" onChange={this.handleInputs} class="form-control">
+                        <option value='0'>-Select Fees Type-</option> {this.state.feetypeList.length > 0 ? this.state.feetypeList.map(classId =>
+                          <option key={classId.FeesTypeMasterId} value={classId.FeesTypeMasterId}>{classId.FeesType}</option>) : null} </FormControl>
+                      <small className={this.state.displaytext + " text-danger"}>{this.state.feestypeId_ErMsg}</small>
+              </Col>
+            <Col sm={4}> Fees Structure <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                  <Col sm={9}>
+                    <FormControl as="select" value={this.state.feestructureId} name="feestructureId" onChange={this.handleInputs} class="form-control">
+                      <option value='0'>-Select Fees Structure-</option> {this.state.classList.length > 0 ? this.state.feesStructureList.map(classId =>
+                        <option key={classId.FeesStructureMasterId} value={classId.FeesStructureMasterId}>{classId.FeesStructureType}</option>) : null} </FormControl>
+                    <small className={this.state.displaytext + " text-danger"}>{this.state.feestructureId_ErMsg}</small>
+            </Col>
+            <Col sm={4}> Amount</Col>
 						<Col sm={9}>
-							<FormControl type="text" placeholder="Fees Type" value={this.state.feesType} onChange={this.handleInputs} name="feesType" />
-							<small className={this.state.displaytext + " text-danger"}>{this.state.feesType_ErMsg}</small>
+							<FormControl type="text" placeholder="Amount" value={this.state.amount} onChange={this.handleInputs} name="amount" />
+							<small className={this.state.displaytext + " text-danger"}>{this.state.amount_ErMsg}</small>
 						</Col>
-            <Col sm={4}> Mode Of Payment <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            <Col sm={4}>Other Description</Col>
 						<Col sm={9}>
-							<FormControl type="text" placeholder="Mode of Payment" value={this.state.modeofPayment} onChange={this.handleInputs} name="modeofPayment" />
-							<small className={this.state.displaytext + " text-danger"}>{this.state.modeofPayment_ErMsg}</small>
+							<FormControl type="text" placeholder="Other Description" value={this.state.otherDescription} onChange={this.handleInputs} name="otherDescription" />
+							<small className={this.state.displaytext + " text-danger"}>{this.state.otherDescription_ErMsg}</small>
 						</Col>
             <Col sm={9}>
               <input type="checkbox"  checked={this.state.active} onChange={this.onChageCheckboxActive} name="active" /> Is Active
@@ -930,7 +1032,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageFeeType} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageFeesStructureDetail} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -946,7 +1048,7 @@ uploadFile=(e, type, i)=>{
 					<FormGroup controlId="formHorizontalEmail">
                          {/*
 						<Col sm={3}> Country Name </Col> */}
-						<Col sm={9}> Are you sure you want to delete <strong>{this.state.feesType}</strong> ?
+						<Col sm={9}> Are you sure you want to delete <strong>{this.state.feesStructure}</strong> ?
 							<p className={this.state.displaytext + " text-danger"}>{this.state.descriptionErrorMessage}</p>
 						</Col>
 					</FormGroup>
@@ -954,7 +1056,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleDeleteClose}>Close</Button>
-				<Button type="submit" onClick={this.deleteFeeTypeById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" onClick={this.deleteFeesStructureDetailById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -985,4 +1087,4 @@ uploadFile=(e, type, i)=>{
 
 
 
-export default FeeType
+export default FeesStructureDetail
