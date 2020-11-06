@@ -26,8 +26,8 @@ class NewStudent extends React.Component {
   constructor() {
     super();
     this.state = {
-      enquiryList: [],
-      //enquiryList:[],
+      studentList: [],
+      //studentList:[],
       studentId:"",
       studentId_ErMsg:"",
       resultDt: "",
@@ -35,13 +35,13 @@ class NewStudent extends React.Component {
       resultDate_ErMsg: "",
       appt: 0,
       appt_ErMsg:"",
-      enquiryList: [],
+      //studentList: [],
       change: false,
       count: false,
       courseList: [],
       classList:[],
       chapterList:[],
-      //enquiryList:[],
+      //studentList:[],
       id: '',
       btnValue: "Submit",
       show: false,
@@ -124,7 +124,7 @@ class NewStudent extends React.Component {
         debugger
         console.log("this.state.appt",this.state.appt)
         if(this.state.count){
-         this.getEnquiry(this.state.current_page)
+         this.getStudent(this.state.current_page)
         }
       });
       }
@@ -163,7 +163,7 @@ class NewStudent extends React.Component {
     if (token === null) {
       return this.props.history.push('/login');
     } else {
-      this.getEnquiry(1)
+      this.getStudent(1)
     }
   }
 
@@ -229,19 +229,11 @@ class NewStudent extends React.Component {
     }
 
 /// GET Student LIST
-getEnquiry = async pageNumber => {
+getStudent = async pageNumber => {
   this.setState({isLoading:true})
 try{
-  let value = '1';
-  if(this.state.status == 'active'){
-    value = '1';
-  } else if(this.state.status == 'inactive'){
-    value = '0';
-    debugger
-  } else {
-  }
-//http://35.200.220.64:4000/connektschool/getEnquiryBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751 &classId=1
-const response = await fetch( api_Url+`getEnquiryBySchoolClassId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&classId=${this.state.classId}&enquiryTaken=&FromDate=2020-11-03&ToDate=2020-11-03`,{
+//url=`getStudentListBySchoolId?pageNo=${pageNumber}&size=${this.state.per_page}&classId=${this.props.match.params.id}&studentname=${this.state.searchStr}`
+const response = await fetch( api_Url+`getStudentListBySchoolId?pageNo=${pageNumber}&size=${this.state.per_page}&classId=${this.state.classId}&studentname=`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -256,7 +248,7 @@ const data = await response.json();
    console.log(data)
    debugger
    this.setState({
-       enquiryList: data.EnquiryData,
+       studentList: data.SearchData,
        total: data.TotalCount[0].Total,
        current_page:pageNumber,
      });
@@ -264,7 +256,7 @@ const data = await response.json();
 
  } else {
      this.setState({
-      enquiryList: []
+      studentList: []
      });
  }
 this.setState({isLoading:false})
@@ -330,7 +322,7 @@ validateForm =()=>{
 
        })
        this.setState({id:""},()=>{
-        this.getEnquiry(this.state.current_page, this.state.per_page)
+        this.getStudent(this.state.current_page, this.state.per_page)
 
        })
        this.handleDeleteClose()
@@ -379,7 +371,7 @@ validateForm =()=>{
         debugger
       if(result.success){
         this.setState({courseId:"",chapterId:"", classId:""},()=>{
-          this.getEnquiry(this.state.current_page, this.state.per_page, this.state.searchStr);
+          this.getStudent(this.state.current_page, this.state.per_page, this.state.searchStr);
         })
         toast.success(result.message,{
         })
@@ -429,7 +421,7 @@ validateForm =()=>{
         toast.success(result.message,{
         })
         this.setState({courseId:"",chapterId:"", classId:""},()=>{
-          this.getEnquiry(this.state.current_page, this.state.per_page, this.state.searchStr);
+          this.getStudent(this.state.current_page, this.state.per_page, this.state.searchStr);
 
         })
         this.handleClose()
@@ -680,25 +672,24 @@ validateForm =()=>{
   }
 
   showEnquiry = () => {
-    console.log('enquiryList')
-    console.log(this.state.enquiryList.length)
-    if (this.state.enquiryList !== undefined) {
-      return this.state.enquiryList.map((enquiry, i) => {
+    console.log('studentList')
+    console.log(this.state.studentList.length)
+    if (this.state.studentList !== undefined) {
+      return this.state.studentList.map((enquiry, i) => {
            return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{enquiry.EnquiryName}</td>
-            <td>{enquiry.GuardianName}</td>
-            <td>{enquiry.StudentClass}</td>
-            <td>{enquiry.EnquiryMobile}</td>
-            <td>{enquiry.GuardianMobile}</td>
-            <td> {moment(enquiry.EnquiryDate).format('DD-MMM-YYYY')}</td>
-            <td>{enquiry.LocalAddress}</td>
-            <td>{enquiry.PermanentAddress}</td>
-            <td>{enquiry.Remarks}</td>
-            <td>{enquiry.EnquiryTaken}</td>
+            <td>{enquiry.EnrollmentNumber?enquiry.EnrollmentNumber:'-'}</td>
+            <td>{enquiry.StudentName}</td>
+            <td>{enquiry.studentclass}</td>
+            <td>{enquiry.Section}</td>
+            <td>{enquiry.StudentUsername}</td>
+            <td>{enquiry.StudentGender}</td>
+            <td> {moment(enquiry.StudentDOB).format('DD-MMM-YYYY')}</td>
+            <td>{enquiry.Medium?enquiry.Medium:'-'}</td>
+            <td>{enquiry.PreviousSchool?enquiry.PreviousSchool:'-'}</td>
             <td>
-            <i  onClick={() => this.editHoliday(enquiry)} class="ti-pencil"></i>
+            <Link to={`students/${enquiry.StudentId}`}> <i  class="ti-pencil"></i></Link>
             {" "}  {" "}
             <i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i>
             </td>
@@ -719,7 +710,7 @@ validateForm =()=>{
   };
 // on search exam
 onSearchHoliday =()=>{
-  this.getEnquiry(1)
+  this.getStudent(1)
 }
 
   renderPageNumbers = () => {
@@ -745,7 +736,7 @@ onSearchHoliday =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getEnquiry(number, this.state.per_page, this.state.classId, this.state.courseId, this.state.status)}
+            onClick={() => this.getStudent(number, this.state.per_page, this.state.classId, this.state.courseId, this.state.status)}
           >
             {number}
           </span>
@@ -928,27 +919,27 @@ uploadFile=(e, type)=>{
 
 
                           </table>
-                          {this.state.enquiryList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
+                          {this.state.studentList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
 
 
                         </div>
-                        {this.state.enquiryList.length>0&&
+                        {this.state.studentList.length>0&&
                       <div className={styles.pagination}>
                       <span className={this.state.current_page=='1'?"disabled":""}
                         onClick={()=> {
                           if(this.state.current_page=='1'){
                             debugger
                             return;}
-                          this.getEnquiry(this.state.current_page-1, this.state.per_page, this.state.searchStr)
+                          this.getStudent(this.state.current_page-1, this.state.per_page, this.state.searchStr)
                         }}>Previous</span>
-                      {this.state.enquiryList.length > 0 && this.renderPageNumbers()}
+                      {this.state.studentList.length > 0 && this.renderPageNumbers()}
                     <span  className={Math.ceil(this.state.total / this.state.per_page)==this.state.current_page?"disabled":""}
                       onClick={()=> {
                         if(Math.ceil(this.state.total / this.state.per_page)==this.state.current_page){
                           debugger
                           return;
                         }
-                        this.getEnquiry(+this.state.current_page+1, this.state.per_page, this.state.searchStr)
+                        this.getStudent(+this.state.current_page+1, this.state.per_page, this.state.searchStr)
                       }}>Next</span>
                    </div>}
                         </div>

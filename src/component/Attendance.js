@@ -26,6 +26,8 @@ class AttendanceFetch extends React.Component {
   constructor() {
     super();
     this.state = {
+      toDate: moment(new Date()).format("YYYY-MM-DD"),
+      fromDate:moment(new Date()).format("YYYY-MM-DD"),
       attendanceList:[],
       studentId:"",
       studentId_ErMsg:"",
@@ -139,6 +141,16 @@ class AttendanceFetch extends React.Component {
                 startDate:moment(date).format("YYYY-MM-DD")
          })
          }
+         else if(type=='from'){
+            this.setState({
+                fromDate:moment(date).format("YYYY-MM-DD")
+         })
+       }
+       else if(type=='to'){
+          this.setState({
+              toDate:moment(date).format("YYYY-MM-DD")
+       })
+       }
          else if(type=='end'){
             this.setState({
                 completionDt:date,
@@ -241,7 +253,7 @@ try{
   }
 //http://35.200.220.64:4000/connektschool/getAttendanceBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751
 //http://35.200.220.64:4000/connektschool/getAttendanceBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751
-const response = await fetch( api_Url+`getAttendanceBySchoolClassCourseAndStudentId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&FromDate=2020-10-31&ToDate=2020-11-03&classId=${this.state.classId}&courseId=${this.state.courseId}&studentId=`,{
+const response = await fetch( api_Url+`getAttendanceBySchoolClassCourseAndStudentId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&FromDate=${this.state.fromDate}&ToDate=${this.state.toDate}&classId=${this.state.classId}&courseId=${this.state.courseId}&studentId=`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -834,18 +846,15 @@ uploadFile=(e, type)=>{
 
 
               <ul className="filter-ul">
-                    {/*<li>
-                      <span>Chapter Name</span>
-                      <select className="input-s br-w-1" name="chapterId" value={this.state.chapterId} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Chapter-</option>
-                        {this.state.chapterList.length > 0 ? this.state.chapterList.map(chapter =>
-                          <option key={chapter.ChapterId} value={chapter.ChapterId}>{chapter.ChapterName}</option>
-                        ) : null}
-
-                      </select>{" "}
-                    </li>*/}
-
-                    {/*<li>
+                    {<li style={{width: 186}}>
+                      <span>From Date</span>
+                      <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.fromDate}  onChange={(e) => this.handleChange(e,'from')} placeholderText="MM-DD-YYYY" />
+                    </li>}
+                    {<li style={{width: 186}}>
+                      <span>To Date</span>
+                      <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.toDate}  onChange={(e) => this.handleChange(e,'to')} placeholderText="MM-DD-YYYY" />
+                    </li>}
+                    {/*<li> fetch
                       <span>Test Name</span><br></br>
                       <input className="input-s br-w-1" type="text" placeholder="Test Name" name="searchStr" value={this.state.searchStr} onChange={this.handleInputs} />
                     </li>*/}

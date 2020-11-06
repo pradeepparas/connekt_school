@@ -26,6 +26,36 @@ class InsertNewStudent extends React.Component {
   constructor() {
     super();
     this.state = {
+      studentName:"",
+      studentName_ErMsg:"",
+      studentUsername:"",
+      studentUsername_ErMsg:"",
+      password:"",
+      password_ErMsg:"",
+      enrollment:"",
+      gender:"",
+      gender_ErMsg:"",
+      birthDate:"",
+      birthDate_ErMsg:"",
+      classId:"",
+      classId_ErMsg:"",
+      sectionId:"",
+      enquiryId:"",
+      medium:"",
+      previousSchool:"",
+      anyDisability:"",
+      childInterests:"",
+      nationality:"",
+      religionId:"",
+      casteId:"",
+      category:"",
+      religionList: [],
+      casteList: [],
+      sectionList: [],
+      enquiryId: "",
+      enquiryList: [],
+      toDate: moment(new Date()).format("YYYY-MM-DD"),
+      fromDate:moment(new Date()).format("YYYY-MM-DD"),
       enquiryName:"",
       guardianName:"",
       enquiryMobile:"",
@@ -50,8 +80,6 @@ class InsertNewStudent extends React.Component {
       per_page: pageSize[1].size,
       current_page: 1,
       isLoading:false,
-      classId:"",
-      classId_ErMsg:"",
       courseId_ErMsg:"",
       chapterId_ErMsg:"",
       holidayName_ErMsg:'',
@@ -72,27 +100,27 @@ class InsertNewStudent extends React.Component {
 
   }
 
-  editHoliday = (data) => {
-    console.log(data)
-    debugger
-    this.setState({
-       show: true,
-       holidayName: data.HolidayName,
-       startDate: moment(data.FromDate).format("YYYY-MM-DD"),
-       endDate: moment(data.ToDate).format("YYYY-MM-DD"),
-       id: data.HolidayId,
-      insertType:"single",
-      // courseImage:[],
-       title: 'Update Holiday',
-       active:data.StatusId==1?true:false,
-       btntitle: 'Update',
-       isAdd: false,
-       isEdit: true,
-       isDelete: false,
-       displaytext: 'hide_block',
-        });
-
-  };
+  // editHoliday = (data) => {
+  //   console.log(data)
+  //   debugger
+  //   this.setState({
+  //      show: true,
+  //      holidayName: data.HolidayName,
+  //      startDate: moment(data.FromDate).format("YYYY-MM-DD"),
+  //      endDate: moment(data.ToDate).format("YYYY-MM-DD"),
+  //      id: data.HolidayId,
+  //     insertType:"single",
+  //     // courseImage:[],
+  //      title: 'Update Holiday',
+  //      active:data.StatusId==1?true:false,
+  //      btntitle: 'Update',
+  //      isAdd: false,
+  //      isEdit: true,
+  //      isDelete: false,
+  //      displaytext: 'hide_block',
+  //       });
+  //
+  // };
 
 
   // ON CHANGE INSERT TYPE
@@ -123,10 +151,50 @@ class InsertNewStudent extends React.Component {
         this.setState({courseId:"",  chapterList: []})
         this.getCoursebyId(e.target.value)
         this.getStudentList(e.target.value)
+        this.getEnquiry(e.target.value)
       }
       }
   }
 
+  getEnquiry = async pageNumber => {
+    this.setState({isLoading:true})
+  try{
+    let id = pageNumber ? pageNumber: this.state.classId;
+    debugger
+  //http://35.200.220.64:4000/connektschool/getEnquiryBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751 &classId=1
+  const response = await fetch( api_Url+`getEnquiryBySchoolClassId?page=1&size=50&status=1&classId=${id}&enquiryTaken=&FromDate=${this.state.fromDate}&ToDate=${this.state.toDate}`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log(data)
+     debugger
+     this.setState({
+         enquiryList: data.EnquiryData,
+       });
+
+
+   } else {
+       this.setState({
+        enquiryList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+    toast.error('Error found',err)
+    console.log('error console')
+    console.log(err)
+  }
+  };
 
      // ON CHANGE DATE
      handleChange = (date, type) => {
@@ -137,10 +205,19 @@ class InsertNewStudent extends React.Component {
                 startDate:moment(date).format("YYYY-MM-DD")
          })
          }
-         else if(type=='end'){
+         else if(type=='from'){
+           this.setState({
+               fromDate:moment(date).format("YYYY-MM-DD")
+        })
+         }
+         else if(type=='to'){
+           this.setState({
+               toDate:moment(date).format("YYYY-MM-DD")
+        })
+         }
+         else if(type=='birth'){
             this.setState({
-                completionDt:date,
-                enquiryDate:moment(date).format("YYYY-MM-DD")
+                birthDate:moment(date).format("YYYY-MM-DD")
          })
        } else {
          this.setState({
@@ -160,10 +237,14 @@ class InsertNewStudent extends React.Component {
     if (token === null) {
       return this.props.history.push('/login');
     } else {
+
       if(this.props.match.params.id!=='insert'){
-        this.getEnquiryById(1)
+        this.getStudentById(1)
       }
       this.getClass(1)
+      this.getReligion()
+      this.getCaste();
+      this.getSection();
       //this.getStudentList(1)
       //this.getHoliday(1)
     }
@@ -202,12 +283,125 @@ class InsertNewStudent extends React.Component {
   }
   };
 
-  getEnquiryById = async(id) => {
-    //http://35.200.220.64:4000/connektschool/getEnquiryById?page=1&size=10&status=1&enquiryId=1
+// get religion details for drop down
+  getReligion = async() => {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getEnquiryById?page=1&size=10&status=1&enquiryId=${this.props.match.params.id}`,{
+  const response = await fetch( api_Url+`getReligionBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           religionList: data.ReligionData,
+       });
+
+   } else {
+       this.setState({
+        religionList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+  }
+
+// get Caste for drop down
+  getCaste = async() => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getCasteBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           casteList: data.CasteData,
+       });
+
+   } else {
+       this.setState({
+        casteList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+  }
+
+// get Section for drop down
+  getSection = async() => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+
+  const response = await fetch( api_Url+`getSectionBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           sectionList: data.SectionData,
+       });
+
+   } else {
+       this.setState({
+        sectionList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+  }
+
+// get Enquiry Details by Id
+  getStudentById = async(id) => {
+    //http://35.200.220.64:4000/connektschool/getStudentById?page=1&size=10&status=1&enquiryId=1
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getStudentMainById?studentId=${this.props.match.params.id}`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -225,21 +419,24 @@ class InsertNewStudent extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
-         id: this.props.match.params.id,
-         enquiryName: data.EnquiryData[0].EnquiryName,
-         classId: data.EnquiryData[0].ClassId,
-         guardianName: data.EnquiryData[0].GuardianName,
-         studentId: data.EnquiryData[0].StudentId,
-         enquiryDate: moment(data.EnquiryData[0].EnquiryDate).format("YYYY-MM-DD"),
-         enquiryMobile: data.EnquiryData[0].EnquiryMobile,
-         guardianMobile: data.EnquiryData[0].GuardianMobile,
-         localAddress: data.EnquiryData[0].LocalAddress,
-         permanentAddress: data.EnquiryData[0].PermanentAddress,
-         enquiryTaken: data.EnquiryData[0].EnquiryTaken,
-         remarks: data.EnquiryData[0].Remarks,
-         dropoutReason: data.EnquiryData[0].DropOutReason,
-         isEdit:true,
-         isAdd:false
+           id: this.props.match.params.id,
+           studentName: data.Student[0].StudentName,
+           gender: data.Student[0].StudentGender,
+           birthDate: moment(data.Student[0].StudentDOB).format("YYYY-MM-DD"),
+           classId: data.Student[0].ClassId,
+           enrollment: data.Student[0].EnrollmentNumber,
+           medium: data.Student[0].Medium,
+           previousSchool: data.Student[0].PreviousSchool,
+           enquiryId: data.Student[0].EnquiryId,
+           anyDisability: data.Student[0].AnyDisability,
+           childInterests: data.Student[0].ChildInterests,
+           sectionId: data.Student[0].Section,
+           nationality: data.Student[0].Nationality,
+           religionId: data.Student[0].Religion,
+           casteId: data.Student[0].Caste,
+           category: data.Student[0].Category,
+           isEdit:true,
+           isAdd:false
        });
 
    } else {
@@ -460,29 +657,32 @@ validateForm =()=>{
   debugger
    var isValid=true;
    var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/
-  if(this.state.classId==''){
+  if(this.state.studentName.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class is required", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:""})
+        return this.setState({studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",})
     }
-
-    else  if(this.state.courseId==''){
+    else  if(this.state.isAdd&&this.state.studentUsername.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", courseId_ErMsg:"Course is required",studentId_ErMsg:"", attendanceTime_ErMsg:"", attendanceDate_ErMsg:""})
+        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"Student Username is required", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",})
     }
-    else  if(this.state.studentId==''){
+    else  if(this.state.isAdd&&this.state.password.toString().trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"Student Name is required", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:""})
+        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"password is required", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",})
     }
-    else  if(this.state.attendanceDate.trim()==''){
+    else  if(this.state.gender==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"Date is required",attendanceTime_ErMsg:""})
+        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"gender is required", birthDate_ErMsg:"",classId_ErMsg:"",})
     }
-    else  if(this.state.attendanceTime.trim()=='' || !this.state.attendanceTime.match(timeValid)){
+    else  if(this.state.birthDate.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:"attendance time is required"})
+        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"Date of birth is required",classId_ErMsg:"",})
+    }
+    else  if(this.state.classId==''){
+        isValid= false
+        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"class is required",})
     }
     else{
-        this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceTime_ErMsg:"", attendanceDate_ErMsg:""})
+        return this.setState({studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",})
         return isValid
     }
 }
@@ -528,38 +728,79 @@ validateForm =()=>{
   }
 
   // manage exam
-  manageEnquiry= (e) => {
+  manageStudent= (e) => {
     debugger
     e.preventDefault();
-      // if(!this.validateForm()){
-      //   return
-      // }
+      if(!this.validateForm()){
+        return
+      }
+//       {
+//     "StudentName":"Somya Dem",
+//     "StudentGender": "Female",
+//     "StudentUsername": "Somya27",
+//     "StudentDOB": "2010-10-10",
+//     "StudentPassword":"123456",
+//     "ClassId": 1,
+//     "EnrollmentNumber":"AB123",
+//     "Medium":"English",
+//     "PreviousSchool": "Demo",
+//     "EnquiryId": "0",
+//     "AnyDisability": "No",
+//     "ChildInterests": "Singing",
+//     "Section": "A",
+//     "Nationality": "Indian",
+//     "Religion": "Hindu",
+//     "Caste": "Sindhi",
+//     "Category":"General"
+// }
+//
+// All the below metioned parameters can be NULL
+//  EnrollmentNumber,Medium,PreviousSchool,
+// EnquiryId,AnyDisability,ChildInterests,Section,Nationality,
+// Religion,Caste,Category
       var data = {
-        "GuardianMobile": this.state.guardianMobile,
-        "LocalAddress": this.state.localAddress,
-        "PermanentAddress":this.state.permanentAddress,
+        "StudentName": this.state.studentName,
+        "StudentGender": this.state.gender,
+        //"StudentUsername":this.state.studentUsername,
+        "StudentDOB": this.state.birthDate,
+        //"StudentPassword":this.state.password,
         "ClassId":this.state.classId,
-        "EnquiryDate": this.state.enquiryDate,
-        "EnquiryTaken": this.state.enquiryTaken,
+       "EnrollmentNumber": this.state.enrollment,
+       "Medium": this.state.medium,
+       "PreviousSchool": this.state.previousSchool,
+       "EnquiryId": this.state.enquiryId,
+        "AnyDisability": this.state.anyDisability,
+        "ChildInterests": this.state.childInterests,
+        "Section":this.state.sectionId,
+        "Nationality": this.state.nationality,
+        "Religion": this.state.religionId,
+        "Caste": this.state.casteId,
+        "Category": this.state.category
        }
-       if(this.state.enquiryMobile){
-         data.EnquiryMobile = this.state.enquiryMobile
-       }
-       if(this.state.remarks){
-         data.Remarks = this.state.remarks
-       }
-       if(this.state.dropoutReason){
-         data.DropOutReason = this.state.dropoutReason
-       }
+       // if(this.state.enrollment){
+       //   data.EnrollmentNumber = this.state.enrollment
+       // }
+       // if(this.state.medium){
+       //   data.Medium = this.state.medium
+       // }
+       // if(this.state.previousSchool){
+       //   data.PreviousSchool = this.state.previousSchool
+       // }
+       // if(this.state.enquiryId){
+       //   data.EnquiryId = this.state.enquiryId
+       // }
+       // if(this.state.enquiryId){
+       //   data.EnquiryId = this.state.enquiryId
+       // }
 
 
    if(this.state.isAdd){
-     data.EnquiryName = this.state.enquiryName;
-     data.GuardianName = this.state.guardianName;
+      data.StudentUsername = this.state.studentUsername;
+      data.StudentPassword = this.state.password;
     this.setState({isLoading:true})
   //   http://35.200.220.64:4000/connektschool/insertEnquiry
   //  return;
-    fetch(api_Url+`insertEnquiry`,{
+    fetch(api_Url+`insertStudentWeb`,{
       method:"POST",
       headers :{
         "Accept":"Application/json",
@@ -588,11 +829,11 @@ validateForm =()=>{
    }
    else if(this.state.isEdit){
     debugger
-    data.EnquiryId = this.props.match.params.id;
-    data.StatusId = 1;
+    data.StudentId = this.props.match.params.id;
+    data.StatusId = "1";
    this.setState({isLoading:true})
    // http://35.200.220.64:1500/aarambhTesting/updateHoliday
-    fetch(api_Url+`updateEnquiry`,{
+    fetch(api_Url+`updateStudentMainWeb`,{
       method:"POST",
       headers :{
         "Accept":"Application/json",
@@ -889,7 +1130,7 @@ validateForm =()=>{
   };
 // on search exam
 onSearchHoliday =()=>{
-  this.getHoliday(1)
+  this.getEnquiry()
 }
 
 
@@ -1013,27 +1254,16 @@ uploadFile=(e, type)=>{
 
 
               <ul className="filter-ul">
+              {<li style={{width: 186}}>
+                <span>Enquiry From Date</span>
+                <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.fromDate}  onChange={(e) => this.handleChange(e,'from')} placeholderText="MM-DD-YYYY" />
+              </li>}
+              {<li style={{width: 186}}>
+                <span>Enquiry To Date</span>
+                <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.toDate}  onChange={(e) => this.handleChange(e,'to')} placeholderText="MM-DD-YYYY" />
+              </li>}
                     <li>
-                      <span>Status</span>
-                      <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Status-</option>
-                        <option value={'active'}>Active</option>
-                        <option value={'inactive'}>In-Active</option>
-                      </select>{" "}
-                    </li>
-                    <li>
-                      <span>Page Size</span>
-                      <select className="input-s br-w-1" name="per_page" value={this.state.per_page} onChange={this.handleInputs}>
-                      {pageSize.length > 0 ? pageSize.map(size =>
-                          <option key={size.id} value={size.id}>{size.size}</option>
-                        ) : null}
-
-
-                      </select>{" "}
-
-                    </li>
-                    <li>
-                      <button className="search-button" onClick={this.onSearchHoliday}>Search</button>
+                      <button className="search-button" onClick={this.onSearchHoliday}>Get Enquiry Name</button>
                     </li>
                   </ul>
 
@@ -1042,11 +1272,11 @@ uploadFile=(e, type)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Add Enquiry":"Update Enquiry"}</h4>
+                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Add Student Details":"Update Student Details"}</h4>
                       </div>
                       {/*{
                         {
-                        "StudentName":"Somya Dem",
+                        "StudentId":"Somya Dem",
                         "StudentGender": "Female",
                         "StudentUsername": "Somya27",
                         "StudentDOB": "2010-10-10",
@@ -1072,18 +1302,19 @@ uploadFile=(e, type)=>{
 
 
                       */}
-                      {this.props.match.params.id==='insert'&&<><div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Student Name" value={this.state.studentName} onChange={this.handleInputs} name="studentName" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentName_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      {this.props.match.params.id=='insert'&&<><div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Student Username<small style={{color: 'red', fontSize: 18}}>*</small> </span><span style={{marginLeft: 30,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Student Username" value={this.state.studentUsername} onChange={this.handleInputs} name="studentUsername" />
-                      </div></>}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentUsername_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Password<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 86,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="password" className="input-s br-w-1" placeholder="Password" value={this.state.password} onChange={this.handleInputs} name="password" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Enrollment Number</span><span style={{marginLeft: 32,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enrollment Number" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
@@ -1098,11 +1329,12 @@ uploadFile=(e, type)=>{
                    <input type="radio" value="Female" onChange={this.handleInputs} className="gen-input" name="gender"checked={this.state.gender=='Female'} />Female
                  </label>
                       </span>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.gender_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Date of Birth<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 67,marginRight: 25}}> : </span>
-                      <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.birthDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      </div>
+                      <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.birthDate} onChange={(e) => {this.handleChange(e,'birth')}} placeholderText="MM-DD-YYYY" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.birthDate_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 76,marginRight: 25}}> : </span>
                       <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
@@ -1112,24 +1344,30 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Section</span><span style={{marginLeft: 108,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Section" value={this.state.section} onChange={this.handleInputs} name="section" />
+                      <select style={{width: '35%'}} className="input-s br-w-1" name="sectionId" value={this.state.sectionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Section-</option>
+                        {this.state.sectionList.length > 0 ? this.state.sectionList.map(cls =>
+                          <option key={cls.SectionMasterId} value={cls.SectionName}>{cls.SectionName}</option>
+                        ) : null}
+
+                      </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 92,marginRight: 25}}> : </span>
-                      <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                      <select style={{width: '35%'}} className="input-s br-w-1" name="enquiryId" value={this.state.enquiryId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Enquiry Name-</option>
-                        {this.state.classList.length > 0 ? this.state.classList.map(cls =>
-                          <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
+                        {this.state.enquiryList.length > 0 ? this.state.enquiryList.map(cls =>
+                          <option key={cls.EnquiryId} value={cls.EnquiryId}>{cls.EnquiryName}</option>
                         ) : null}
 
                       </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Medium</span><span style={{marginLeft: 103,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Medium" value={this.state.meduim} onChange={this.handleInputs} name="meduim" />
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Medium" value={this.state.medium} onChange={this.handleInputs} name="medium" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>PreviousSchool</span><span style={{marginLeft: 59,marginRight: 25}}> : </span>
@@ -1145,21 +1383,33 @@ uploadFile=(e, type)=>{
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Nationality</span><span style={{marginLeft: 86,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Nationality" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Nationality" value={this.state.nationality} onChange={this.handleInputs} name="nationality" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Religion</span><span style={{marginLeft: 105,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      <select style={{width: '35%'}} className="input-s br-w-1" name="religionId" value={this.state.religionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Religion-</option>
+                        {this.state.religionList.length > 0 ? this.state.religionList.map(cls =>
+                          <option key={cls.ReligionMasterId} value={cls.ReligionName}>{cls.ReligionName}</option>
+                        ) : null}
+
+                      </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Caste</span><span style={{marginLeft: 119,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      <select style={{width: '35%'}} className="input-s br-w-1" name="casteId" value={this.state.casteId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Caste-</option>
+                        {this.state.casteList.length > 0 ? this.state.casteList.map(cls =>
+                          <option key={cls.CasteMasterId} value={cls.CasteName}>{cls.CasteName}</option>
+                        ) : null}
+
+                      </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
                       <span style={{marginLeft: 13}}>Category</span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Category" value={this.state.category} onChange={this.handleInputs} name="category" />
                       </div>
-                      <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                      <button className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                       </div>
                     </div>
 
@@ -1210,7 +1460,7 @@ uploadFile=(e, type)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageEnquiry} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageStudent} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>

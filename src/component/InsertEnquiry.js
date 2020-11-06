@@ -459,30 +459,44 @@ class InsertEnquiry extends React.Component {
 validateForm =()=>{
   debugger
    var isValid=true;
+   var mobileValid =this.state.guardianMobile.toString().match(/^[0]?[6789]\d{9}$/)
    var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/
-  if(this.state.classId==''){
+   if(this.state.enquiryName.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class is required", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"Enquiry Name is required",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+   }
+   else if(this.state.guardianName.trim()==''){
+        isValid= false
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"Guardian name is required",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+   }
+
+   else if(this.state.guardianMobile.toString().trim()==''||!mobileValid){
+        isValid= false
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"Guardian name is required",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+   }
+   else if(this.state.classId==''){
+        isValid= false
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
 
     else  if(this.state.courseId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", courseId_ErMsg:"Course is required",studentId_ErMsg:"", attendanceTime_ErMsg:"", attendanceDate_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
     else  if(this.state.studentId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"Student Name is required", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:""})
+      return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
     else  if(this.state.attendanceDate.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"Date is required",attendanceTime_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
     else  if(this.state.attendanceTime.trim()=='' || !this.state.attendanceTime.match(timeValid)){
         isValid= false
-        return this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceDate_ErMsg:"", attendanceTime_ErMsg:"attendance time is required"})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
     else{
-        this.setState({classId_ErMsg:"", studentId_ErMsg:"", courseId_ErMsg:"", attendanceTime_ErMsg:"", attendanceDate_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
         return isValid
     }
 }
@@ -1064,23 +1078,25 @@ uploadFile=(e, type)=>{
 
                       */}
                       {this.props.match.params.id==='insert'&&<><div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Name</span><span style={{marginLeft: 81,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Enquiry Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 81,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.enquiryName} onChange={this.handleInputs} name="enquiryName" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryName_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Guardian Name </span><span style={{marginLeft: 72,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Guardian Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 72,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.guardianName} onChange={this.handleInputs} name="guardianName" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.guardianName_ErMsg}</div>
                       </div></>}
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Mobile Number</span><span style={{marginLeft: 21,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Enquiry Mobile Number</span><span style={{marginLeft: 29,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Mobile Number" value={this.state.enquiryMobile} onChange={this.handleInputs} name="enquiryMobile" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Guardian Mobile Number</span><span style={{marginLeft: 12,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Guardian Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 12,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.guardianMobile_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Class Name</span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
                       <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
@@ -1088,30 +1104,31 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Date</span><span style={{marginLeft: 88,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Enquiry Date<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 88,marginRight: 25}}> : </span>
                       <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.enquiryDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryDate_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Local Address</span><span style={{marginLeft: 83,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 83,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.localAddress_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Permanent Address</span><span style={{marginLeft: 47,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 47,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.permanentAddress_ErMsg}</div></div>
 
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Taken</span><span style={{marginLeft: 82,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Enquiry Taken<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 82,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Remarks</span><span style={{marginLeft: 115,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Remarks</span><span style={{marginLeft: 122,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
                       </div>
                       <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 71,marginRight: 25}}> : </span>
                       <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
                       </div>
                       <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>

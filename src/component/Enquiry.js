@@ -276,6 +276,7 @@ catch(err)
   console.log(err)
 }
 };
+
   handleClose = () => {
     this.setState({ show: false, classId:"", courseId:"", chapterId:"", examDoc: []});
   };
