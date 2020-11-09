@@ -91,6 +91,7 @@ import InsertEnquiry from './component/InsertEnquiry';
 import NewStudent from './component/NewStudent';
 import InsertNewStudent from './component/InsertNewStudent';
 import Section from './component/Section';
+import Session from './component/Session';
 import Caste from './component/Caste';
 import Religion from './component/Religion';
 import FeeType from './component/FeeType';
@@ -143,6 +144,7 @@ render() {
           <Route path="/feetype" exact={true} component= { FeeType } />
           <Route path="/feestructure" exact={true} component= { FeesStructure } />
           <Route path="/feestructuredetail" exact={true} component= { FeesStructureDetail } />
+          <Route path="/session" exact={true} component= { Session } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
           {/* <Route path="/bookatutor" exact={true} component={ Bookatutor } /> */}
           {/* <Route path="/termsconditions" exact={true} component={ Termsconditions } /> */}
