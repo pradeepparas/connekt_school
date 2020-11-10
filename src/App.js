@@ -97,6 +97,8 @@ import Religion from './component/Religion';
 import FeeType from './component/FeeType';
 import FeesStructure from './component/FeesStructure';
 import FeesStructureDetail from './component/FeesStructureDetail';
+import InstallmentMaster from './component/InstallmentMaster';
+import InstallmentDetail from './component/InstallmentDetail';
 
 class App extends React.Component {
 render() {
@@ -145,6 +147,8 @@ render() {
           <Route path="/feestructure" exact={true} component= { FeesStructure } />
           <Route path="/feestructuredetail" exact={true} component= { FeesStructureDetail } />
           <Route path="/session" exact={true} component= { Session } />
+          <Route path="/installment" exact={true} component= { InstallmentMaster } />
+          <Route path="/installmentdetail" exact={true} component= { InstallmentDetail } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
           {/* <Route path="/bookatutor" exact={true} component={ Bookatutor } /> */}
           {/* <Route path="/termsconditions" exact={true} component={ Termsconditions } /> */}
