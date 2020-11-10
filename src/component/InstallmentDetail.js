@@ -2,6 +2,8 @@ import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 import styles from "../css/App.module.css";
 import { Button } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 import { Modal } from "react-bootstrap";
 import { Form, FormGroup, FormControl, Col } from "react-bootstrap";
 import SideBar from './SideBar';
@@ -19,11 +21,13 @@ const imageUrl = myConstClass.imageUrl
 const pageSize = myConstClass.pageSize
 const file1 = myConstClass.fileSize
 
-class InstallmentMaster extends React.Component {
+class InstallmentDetail extends React.Component {
   constructor() {
     super();
     this.state = {
+      installdetailList: [],
       count: false,
+      installId:"",
       fsize: 0,
       installmentList: [],
       classList:[],
@@ -44,13 +48,13 @@ class InstallmentMaster extends React.Component {
       current_page: 1,
       isLoading:false,
       classId:"",
-      installmentName:"",
+      installmentDetail:"",
       courseDescription:"",
       courseOtherDetails:"",
       courseImage:[],
       courseFile:[],
       classId_ErMsg:"",
-      installmentName_ErMsg:"",
+      installmentDetail_ErMsg:"",
       courseDescription_ErMsg:"",
       courseOtherDetails_ErMsg:"",
       courseImage_ErMsg:"",
@@ -71,7 +75,7 @@ class InstallmentMaster extends React.Component {
             () => {
               if(this.state.count){
                 this.getClass(this.state.current_page);
-                this.getInstallmentMaster(this.state.current_page)
+                this.getInstallmentDetail(this.state.current_page)
               }
             });
       }
@@ -95,11 +99,50 @@ class InstallmentMaster extends React.Component {
     } else {
 
    this.getClass(1);
-   this.getInstallmentMaster(1)
+   this.getInstallmentMasterId();
+   this.getInstallmentDetail(1)
 
 
     }
   }
+
+  /// GET CLASS LIST by sir
+  getInstallmentMasterId = async pageNumber => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+
+  const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           installmentList: data.InstallmentMaster,
+       });
+
+   } else {
+       this.setState({
+        installmentList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+   };
 
 // ON CHANGE INSERT TYPE
 onChangeInsertType =(e)=>{
@@ -111,12 +154,12 @@ onChangeInsertType =(e)=>{
       show: true,
       chapterFile:[], fileName:"",
       title: 'Add Course',
-       installmentName:"",
+       installmentDetail:"",
       courseDescription:"",
       courseOtherDetails:"",
       courseImage:[],
       classId_ErMsg:"",
-      installmentName_ErMsg:"",
+      installmentDetail_ErMsg:"",
       courseDescription_ErMsg:"",
       courseOtherDetails_ErMsg:"",
       courseImage_ErMsg:"",
@@ -132,20 +175,20 @@ onChangeInsertType =(e)=>{
   };
 // EDIT COURSE
 
-editInstallmentMaster = (data) => {
+editInstallmentDetail = (data) => {
   console.log(data)
   debugger
   this.setState({
     show: true,
-    totalAmount: data.TotalAmount,
+    amount: data.TotalAmount,
     classId: data.ClassId,
     insertType:"single",
     title: 'Update Installment',
-    installmentName:data.InstallmentName,
+    installmentDetail:data.InstallmentName,
     active:data.StatusId==1?true:false,
     remark: data.Remark? data.Remark:'',
-    id:data.InstallmentMasterId,
-    installmentName_ErMsg:"",
+    id:data.InstallmentDetailId,
+    installmentDetail_ErMsg:"",
     btntitle: 'Update',
     isAdd: false,
     isEdit: true,
@@ -191,17 +234,17 @@ catch(err)
 
 /// ON SEARCH COURSE
 onSearchCourese=()=>{
-this.getInstallmentMaster(1, this.state.current_page, this.state.classId, this.state.status)
+this.getInstallmentDetail(1, this.state.current_page, this.state.classId, this.state.status)
 }
 
 
 // delete session
-deleteInstallmentMaster = (data) => {
+deleteInstallmentDetail = (data) => {
   console.log(data)
   debugger
    this.setState({
-     id: data.InstallmentMasterId,
-     title: 'Delete InstallmentMaster',
+     id: data.InstallmentDetailId,
+     title: 'Delete InstallmentDetail',
      btntitle: 'Delete',
      btnValue: "Delete",
      show: false,
@@ -209,24 +252,24 @@ deleteInstallmentMaster = (data) => {
      isEdit: false,
      isAdd: false,
      isDelete: true,
-     installmentName: data.InstallmentName,
+     installmentDetail: data.InstallmentName,
      displaytext: 'hide_block',
    })
 
 }
 
 // delete session by Id
-deleteInstallmentMasterById = async(e) => {
+deleteInstallmentDetailById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteInstallmentMaster?status=0&InstallmentMasterId=1
+  //http://35.200.220.64:4000/connektschool/deleteInstallmentDetail?status=0&InstallmentDetailId=1
   this.setState({isLoading:true})
 //   {
 //     "status": "200",
 //     "error": true,
-//     "message": "InstallmentMaster Deleted."
+//     "message": "InstallmentDetail Deleted."
 // }
-  fetch(api_Url+`deleteInstallmentMaster?status=0&InstallmentMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteInstallmentDetail?status=0&InstallmentDetailId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -242,7 +285,7 @@ deleteInstallmentMasterById = async(e) => {
 
      })
      this.setState({id:""},()=>{
-      this.getInstallmentMaster(this.state.current_page, this.state.per_page)
+      this.getInstallmentDetail(this.state.current_page, this.state.per_page)
 
      })
      this.handleDeleteClose()
@@ -260,7 +303,7 @@ deleteInstallmentMasterById = async(e) => {
 }
 
 /// GET CLASS LIST by sir
-getInstallmentMaster = async pageNumber => {
+getInstallmentDetail = async pageNumber => {
   debugger
   this.setState({isLoading:true})
 try{
@@ -272,7 +315,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&InstallmentMasterId=`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -287,14 +330,14 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         installmentList: data.InstallmentMaster,
+         installdetailList: data.InstallmentDetail,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
 
  } else {
      this.setState({
-      installmentList: []
+      installdetailList: []
      });
  }
 this.setState({isLoading:false})
@@ -322,23 +365,23 @@ validateForm =()=>{
    var isValid=true;
     if(this.state.classId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"Class name is required", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-   else if(this.state.installmentName.trim()==''){
+   else if(this.state.installmentDetail.trim()==''){
        isValid= false
-        return this.setState({classId_ErMsg:"", installmentName_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
     else if(this.state.courseDescription.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
     }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
-    //     return this.setState({classId_ErMsg:"", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+    //     return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     // }
     // else  if(this.state.isAdd&&this.state.courseImage.length==0){
     //     isValid= false
-    //     return this.setState({classId_ErMsg:"", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
+    //     return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
         return isValid
@@ -348,19 +391,22 @@ validateForm =()=>{
 
 
   // manage Course
-  manageInstallmentMaster = (e) => {
+  manageInstallmentDetail = (e) => {
     debugger
     e.preventDefault();
 
    if(this.state.isAdd){
     var data = {
-        "InstallmentName": this.state.installmentName,
-        "ClassId": this.state.classId,
-        "TotalAmount": this.state.totalAmount,
-        "Remark": this.state.remark
+        "InstallmentDetail": this.state.installmentDetail,
+        "Amount": this.state.amount,
+        "FromDate": this.state.fromDate,
+        "ToDate": this.state.toDate,
+        "InstallmentMasterId": this.state.installId,
+        "Remark": this.state.remark,
+        "Penalty": this.state.penalty
       }
 
-    let url= `insertInstallmentMaster`;
+    let url= `insertInstallmentDetail`;
       let header={
         "Accept":"Application/json",
         "Content-Type": "application/json",
@@ -380,7 +426,7 @@ validateForm =()=>{
 
               })
               this.setState({classId:""},()=>{
-                this.getInstallmentMaster(this.state.current_page, this.state.per_page, this.state.classId, this.state.status)
+                this.getInstallmentDetail(this.state.current_page, this.state.per_page, this.state.classId, this.state.status)
 
               })
              this.handleClose()
@@ -402,15 +448,15 @@ validateForm =()=>{
 
    else if(this.state.isEdit){
           var data = {
-              "InstallmentMasterId":this.state.id,
-              "InstallmentName": this.state.installmentName,
-              "TotalAmount": this.state.totalAmount,
+              "InstallmentDetailId":this.state.id,
+              "InstallmentName": this.state.installmentDetail,
+              "TotalAmount": this.state.amount,
               "Remark": this.state.remark,
               "StatusId":this.state.active?"1":"0"
               }
           this.setState({isLoading:true})
 
-          fetch(api_Url+`updateInstallmentMaster`,{
+          fetch(api_Url+`updateInstallmentDetail`,{
             method:"POST",
             headers :{
               "Accept":"Application/json",
@@ -427,7 +473,7 @@ validateForm =()=>{
 
               })
               this.setState({classId:""})
-              this.getInstallmentMaster(this.state.current_page, this.state.per_page)
+              this.getInstallmentDetail(this.state.current_page, this.state.per_page)
              this.handleClose()
             }
             else{
@@ -651,9 +697,9 @@ validateForm =()=>{
     }
   }
 
-  showInstallmentMaster = () => {
-    if (this.state.installmentList !== undefined) {
-      return this.state.installmentList.map((session, i) => {
+  showInstallmentDetail = () => {
+    if (this.state.installdetailList !== undefined) {
+      return this.state.installdetailList.map((session, i) => {
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
@@ -667,9 +713,9 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editInstallmentMaster(session)} class="ti-pencil"></i>
+            <i  onClick={() => this.editInstallmentDetail(session)} class="ti-pencil"></i>
             {" "}  {" "}
-            {<i  onClick={() => this.deleteInstallmentMaster(session)} class="ti-trash"></i>}
+            {<i  onClick={() => this.deleteInstallmentDetail(session)} class="ti-trash"></i>}
             </td>
 
 
@@ -705,7 +751,7 @@ validateForm =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getInstallmentMaster(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
+            onClick={() => this.getInstallmentDetail(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
           >
             {number}
           </span>
@@ -713,6 +759,24 @@ validateForm =()=>{
       }
     });
   };
+
+  // ON CHANGE DATE
+  handleChange = (date, type) => {
+      if(type=='from'){
+         this.setState({
+             fromDt:date,
+             fromDate:moment(date).format("YYYY-MM-DD")
+      })
+      }
+      else{
+         this.setState({
+             toDt:date,
+             toDate:moment(date).format("YYYY-MM-DD")
+      })
+      }
+
+ };
+
 // upload image file
 uploadFile=(e, type, i)=>{
     debugger
@@ -803,11 +867,11 @@ uploadFile=(e, type, i)=>{
               <div className="row align-items-center">
                 <div className="col-sm-6">
                   <div className="breadcrumbs-area clearfix">
-                    <h4 className="page-title pull-left">InstallmentMaster</h4>
+                    <h4 className="page-title pull-left">InstallmentDetail</h4>
 
                     <ul className="breadcrumbs pull-left">
                       <li><a >Home</a></li>
-                      <li><span>InstallmentMaster</span></li>
+                      <li><span>InstallmentDetail</span></li>
                     </ul>
                   </div>
                 </div>
@@ -844,7 +908,7 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">InstallmentMaster List</h4>
+                        <h4 class="header-title">InstallmentDetail List</h4>
                         <p className={styles.addCountry}>
                           <button
                             onClick={this.handleShow}
@@ -854,7 +918,7 @@ uploadFile=(e, type, i)=>{
                             data-target="#add"
                           >
                             {" "}
-                      Add InstallmentMaster {" "}
+                      Add InstallmentDetail {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
                         </p>
@@ -879,25 +943,25 @@ uploadFile=(e, type, i)=>{
                             </thead>
 
 
-                            <tbody>{this.showInstallmentMaster()}</tbody>
+                            <tbody>{this.showInstallmentDetail()}</tbody>
 
 
                           </table>
-                          {this.state.installmentList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
+                          {this.state.installdetailList.length == 0 && <p style={{ textAlign: "center" }}> No Record Found</p>}
 
 
                         </div>
-                        {this.state.installmentList.length>0&&
+                        {this.state.installdetailList.length>0&&
                       <div className={styles.pagination}>
                       <span className={this.state.current_page=='1'?"disabled":""}
                         onClick={()=> {
                           if(this.state.current_page=='1'){return;}
-                          this.getInstallmentMaster(this.state.current_page-1, this.state.per_page, this.state.searchStr)}}>Previous</span>
-                        {this.state.installmentList.length > 0 && this.renderPageNumbers()}
+                          this.getInstallmentDetail(this.state.current_page-1, this.state.per_page, this.state.searchStr)}}>Previous</span>
+                        {this.state.installdetailList.length > 0 && this.renderPageNumbers()}
                     <span  className={Math.ceil(this.state.total / this.state.per_page)==this.state.current_page?"disabled":""}
                         onClick={()=> {
                           if(Math.ceil(this.state.total / this.state.per_page)==this.state.current_page){return;}
-                          this.getInstallmentMaster(+this.state.current_page+1, this.state.per_page, this.state.searchStr)}}>Next</span>
+                          this.getInstallmentDetail(+this.state.current_page+1, this.state.per_page, this.state.searchStr)}}>Next</span>
                    </div>}
                         </div>
                       </div>
@@ -921,23 +985,45 @@ uploadFile=(e, type, i)=>{
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
             <div>
-						<Col sm={4}> Installment Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            <Col sm={4}> Installment Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            <Col sm={9}>
+              <FormControl as="select" value={this.state.installId} name="installId" onChange={this.handleInputs} class="form-control">
+                <option>-Select Installment Name-</option> {this.state.installmentList.length > 0 ? this.state.installmentList.map(classId =>
+                  <option key={classId.InstallmentMasterId} value={classId.InstallmentMasterId}>{classId.InstallmentName}</option>) : null} </FormControl>
+              <small className={this.state.displaytext + " text-danger"}>{this.state.installId_ErMsg}</small>
+            </Col>
+						<Col sm={4}> Installment Detail <small style={{color: 'red', fontSize: 18}}>*</small></Col>
 						<Col sm={9}>
-							<FormControl type="text" placeholder="Installment Name" value={this.state.installmentName} onChange={this.handleInputs} name="installmentName" />
-							<small className={this.state.displaytext + " text-danger"}>{this.state.installmentName_ErMsg}</small>
+							<FormControl type="text" placeholder="Installment Detail" value={this.state.installmentDetail} onChange={this.handleInputs} name="installmentDetail" />
+							<small className={this.state.displaytext + " text-danger"}>{this.state.installmentDetail_ErMsg}</small>
 						</Col>
-            {this.state.isAdd&&<><Col sm={4}> Class Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            {/*this.state.isAdd&&<><Col sm={4}> Class Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
             <Col sm={9}>
               <FormControl as="select" value={this.state.classId} name="classId" onChange={this.handleInputs} class="form-control">
                 <option>-Select Class Name-</option> {this.state.classList.length > 0 ? this.state.classList.map(classId =>
                   <option key={classId.ClassId} value={classId.ClassId}>{classId.StudentClass}</option>) : null} </FormControl>
               <small className={this.state.displaytext + " text-danger"}>{this.state.classId_ErMsg}</small>
-            </Col></>}
-            <Col sm={4}> Total Amount <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            </Col></>*/}
+            <Col sm={4}>Amount <small style={{color: 'red', fontSize: 18}}>*</small></Col>
 						<Col sm={9}>
-							<FormControl type="text" placeholder="Total Amount" value={this.state.totalAmount} onChange={this.handleInputs} name="totalAmount" />
-							<small className={this.state.displaytext + " text-danger"}>{this.state.totalAmount_ErMsg}</small>
+							<FormControl type="text" placeholder="Amount" value={this.state.amount} onChange={this.handleInputs} name="amount" />
+							<small className={this.state.displaytext + " text-danger"}>{this.state.amount_ErMsg}</small>
 						</Col>
+            <Col sm={4}>From Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                   <Col sm={9}>
+                       <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.fromDt} value={this.state.fromDate} minDate={new Date()} maxDate={this.state.toDate ? new Date(this.state.toDate) : ''} onChange={(e) => this.handleChange(e,'from')} placeholderText="MM-DD-YYYY" />
+                    <small className={this.state.displaytext + " text-danger"}>{this.state.fromDate_ErMsg}</small>
+           </Col>
+           <Col sm={4}>To Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                  <Col sm={9}>
+                      <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.toDt} value={this.state.toDate} minDate={this.state.fromDate? new Date(this.state.fromDate) : new Date()}  onChange={(e) => this.handleChange(e,'to')} placeholderText="MM-DD-YYYY" />
+                   <small className={this.state.displaytext + " text-danger"}>{this.state.toDate_ErMsg}</small>
+          </Col>
+          <Col sm={4}> Penalty</Col>
+          <Col sm={9}>
+            <FormControl type="text" placeholder="Penalty" value={this.state.penalty} onChange={this.handleInputs} name="penalty" />
+            <small className={this.state.displaytext + " text-danger"}>{this.state.penalty_ErMsg}</small>
+          </Col>
             <Col sm={4}> Remark</Col>
 						<Col sm={9}>
 							<FormControl type="text" placeholder="Remark" value={this.state.remark} onChange={this.handleInputs} name="remark" />
@@ -952,7 +1038,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInstallmentMaster} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInstallmentDetail} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -968,7 +1054,7 @@ uploadFile=(e, type, i)=>{
 					<FormGroup controlId="formHorizontalEmail">
                          {/*
 						<Col sm={3}> Country Name </Col> */}
-						<Col sm={9}> Are you sure you want to delete <strong>{this.state.installmentName}</strong> ?
+						<Col sm={9}> Are you sure you want to delete <strong>{this.state.installmentDetail}</strong> ?
 							<p className={this.state.displaytext + " text-danger"}>{this.state.descriptionErrorMessage}</p>
 						</Col>
 					</FormGroup>
@@ -976,7 +1062,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleDeleteClose}>Close</Button>
-				<Button type="submit" onClick={this.deleteInstallmentMasterById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" onClick={this.deleteInstallmentDetailById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1007,4 +1093,4 @@ uploadFile=(e, type, i)=>{
 
 
 
-export default InstallmentMaster
+export default InstallmentDetail

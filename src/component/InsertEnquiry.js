@@ -461,39 +461,39 @@ validateForm =()=>{
    var isValid=true;
    var mobileValid =this.state.guardianMobile.toString().match(/^[0]?[6789]\d{9}$/)
    var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/
-   if(this.state.enquiryName.trim()==''){
+   if(this.state.isAdd&&this.state.enquiryName.trim()==''){
         isValid= false
         return this.setState({enquiryName_ErMsg:"Enquiry Name is required",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
    }
-   else if(this.state.guardianName.trim()==''){
+   else if(this.state.isAdd&&this.state.guardianName.trim()==''){
         isValid= false
         return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"Guardian name is required",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
    }
 
    else if(this.state.guardianMobile.toString().trim()==''||!mobileValid){
         isValid= false
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"Guardian name is required",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"Guardian number is required or invalid number",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
    }
    else if(this.state.classId==''){
         isValid= false
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"Class Name is required",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
 
-    else  if(this.state.courseId==''){
+    else  if(this.state.enquiryDate==''){
         isValid= false
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"Date is required",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
-    else  if(this.state.studentId==''){
+    else  if(this.state.localAddress.toString().trim()==''){
         isValid= false
-      return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+      return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"local address is required",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
     }
-    else  if(this.state.attendanceDate.trim()==''){
+    else  if(this.state.permanentAddress.toString().trim()==''){
         isValid= false
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"Permanent address is required",enquiryTaken_ErMsg:""})
     }
-    else  if(this.state.attendanceTime.trim()=='' || !this.state.attendanceTime.match(timeValid)){
+    else  if(this.state.enquiryTaken.toString().trim()==''){
         isValid= false
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:"Enquiry taken field is required"})
     }
     else{
         return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
@@ -545,9 +545,9 @@ validateForm =()=>{
   manageEnquiry= (e) => {
     debugger
     e.preventDefault();
-      // if(!this.validateForm()){
-      //   return
-      // }
+      if(!this.validateForm()){
+        return
+      }
       var data = {
         "GuardianMobile": this.state.guardianMobile,
         "LocalAddress": this.state.localAddress,
@@ -568,6 +568,7 @@ validateForm =()=>{
 
 
    if(this.state.isAdd){
+     debugger
      data.EnquiryName = this.state.enquiryName;
      data.GuardianName = this.state.guardianName;
     this.setState({isLoading:true})
@@ -1053,83 +1054,81 @@ uploadFile=(e, type)=>{
 
 
 
-                  <div class="card">
+                  <div style={{overflow: 'visible'}} class="card">
                     <div class="card-body">
                       <div className="">
                         <h4 class="header-title">{this.props.match.params.id==='insert'?"Add Enquiry":"Update Enquiry"}</h4>
                       </div>
-                      {/*{
-                        "EnquiryName": "Enq2",
-                        "GuardianName": "G2",
-                        "EnquiryMobile": 0,
-                        "GuardianMobile": "1234567890",
-                        "LocalAddress": "dd",
-                        "PermanentAddress":"ee",
-                        "ClassId":1,
-                        "EnquiryDate": "2020.10.30",
-                        "EnquiryTaken": "Test"
 
-                      }
-
-                      "Remarks":"Registered",
-                      "DropOutReason":"",
-                      Remarks, EnquiryMobile and DropOutReason can be null.
-
-
-                      */}
-                      {this.props.match.params.id==='insert'&&<><div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 81,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.enquiryName} onChange={this.handleInputs} name="enquiryName" />
+                      {this.props.match.params.id==='insert'&&
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Enquiry Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
+                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.enquiryName} onChange={this.handleInputs} name="enquiryName" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryName_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Guardian Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 72,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.guardianName} onChange={this.handleInputs} name="guardianName" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.guardianName_ErMsg}</div>
-                      </div></>}
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Mobile Number</span><span style={{marginLeft: 29,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Mobile Number" value={this.state.enquiryMobile} onChange={this.handleInputs} name="enquiryMobile" />
+                      <div style={{flexDirection: 'row',width: 493}}>
+                      <span style={{marginLeft: 13}}>Guardian Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 70,marginRight: 25}}> : </span>
+                      <input style={{width: '45%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.guardianName} onChange={this.handleInputs} name="guardianName" />
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.guardianName_ErMsg}</div>
+                      </div></div>}
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Enquiry Mobile Number</span><span style={{marginLeft: 11,marginRight: 25}}> : </span>
+                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Mobile Number" value={this.state.enquiryMobile} onChange={this.handleInputs} name="enquiryMobile" />
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Guardian Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 12,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.guardianMobile_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 97,marginRight: 25}}> : </span>
-                      <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                      <input style={{width: '45%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.guardianMobile_ErMsg}</div></div>
+                      </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
+                      <select style={{width: '48%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
                           <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
                         ) : null}
-
                       </select>{" "}
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Enquiry Date<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 88,marginRight: 25}}> : </span>
-                      <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.enquiryDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryDate_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 83,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.localAddress_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 47,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.permanentAddress_ErMsg}</div></div>
-
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Enquiry Taken<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 82,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Remarks</span><span style={{marginLeft: 122,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" />
+                      <DatePicker style={{width: 300}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.enquiryDate} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryDate_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 71,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
+                      </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 66,marginRight: 30}}> : </div>
+                      <textarea style={{width: '48%',height: 50}} rows="3" type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" /></div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.localAddress_ErMsg}</div></div>
+                      <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 47,marginRight: 30}}> : </div>
+                      <textarea style={{width: '45%',height: 50}} type="text" rows="3" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" /></div>
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.permanentAddress_ErMsg}</div></div>
+                      </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Enquiry Taken<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 65,marginRight: 25}}> : </span>
+                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
+                      <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 122,marginRight: 30}}> : </div>
+                      <textarea style={{width: '45%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
+                      </div>
+                      </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 52,marginRight: 25}}> : </span>
+                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
+                      </div>
                       </div>
                       <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                       </div>
