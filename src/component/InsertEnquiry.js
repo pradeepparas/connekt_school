@@ -496,7 +496,7 @@ validateForm =()=>{
         return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:"Enquiry taken field is required"})
     }
     else{
-        return this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
+        this.setState({enquiryName_ErMsg:"",guardianName_ErMsg:"",guardianMobile_ErMsg:"",classId_ErMsg:"",enquiryDate_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"",enquiryTaken_ErMsg:""})
         return isValid
     }
 }
@@ -546,6 +546,7 @@ validateForm =()=>{
     debugger
     e.preventDefault();
       if(!this.validateForm()){
+        debugger
         return
       }
       var data = {
@@ -1064,30 +1065,30 @@ uploadFile=(e, type)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Enquiry Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
-                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.enquiryName} onChange={this.handleInputs} name="enquiryName" />
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Name" value={this.state.enquiryName} onChange={this.handleInputs} name="enquiryName" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryName_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Guardian Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 70,marginRight: 25}}> : </span>
-                      <input style={{width: '45%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.guardianName} onChange={this.handleInputs} name="guardianName" />
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Guardian Name" value={this.state.guardianName} onChange={this.handleInputs} name="guardianName" />
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.guardianName_ErMsg}</div>
                       </div></div>}
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Enquiry Mobile Number</span><span style={{marginLeft: 11,marginRight: 25}}> : </span>
-                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Mobile Number" value={this.state.enquiryMobile} onChange={this.handleInputs} name="enquiryMobile" />
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Mobile Number" value={this.state.enquiryMobile} onChange={this.handleInputs} name="enquiryMobile" />
                       </div>
                       <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Guardian Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 12,marginRight: 25}}> : </span>
-                      <input style={{width: '45%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Guardian Mobile Number" value={this.state.guardianMobile} onChange={this.handleInputs} name="guardianMobile" />
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.guardianMobile_ErMsg}</div></div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
-                      <select style={{width: '48%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                      <span style={{marginLeft:  13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
                           <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
@@ -1105,29 +1106,29 @@ uploadFile=(e, type)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 66,marginRight: 30}}> : </div>
-                      <textarea style={{width: '48%',height: 50}} rows="3" type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" /></div>
+                      <textarea style={{width: '40%',height: 50}} rows="3" type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" /></div>
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.localAddress_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 47,marginRight: 30}}> : </div>
-                      <textarea style={{width: '45%',height: 50}} type="text" rows="3" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" /></div>
+                      <textarea style={{width: '38%',height: 50}} type="text" rows="3" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" /></div>
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.permanentAddress_ErMsg}</div></div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Enquiry Taken<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 65,marginRight: 25}}> : </span>
-                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 122,marginRight: 30}}> : </div>
-                      <textarea style={{width: '45%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
+                      <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
                       </div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 52,marginRight: 25}}> : </span>
-                      <input style={{width: '48%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
                       </div>
                       </div>
                       <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>

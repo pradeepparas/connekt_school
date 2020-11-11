@@ -26,6 +26,8 @@ class Enquiry extends React.Component {
   constructor() {
     super();
     this.state = {
+      toDate: moment(new Date()).format("YYYY-MM-DD"),
+      fromDate:moment(new Date()).format("YYYY-MM-DD"),
       enquiryList: [],
       //enquiryList:[],
       studentId:"",
@@ -145,7 +147,18 @@ class Enquiry extends React.Component {
                 completionDt:date,
                 endDate:moment(date).format("YYYY-MM-DD")
          })
-       } else {
+       }
+       else if(type=='from'){
+          this.setState({
+              fromDate:moment(date).format("YYYY-MM-DD")
+       })
+     }
+     else if(type=='to'){
+        this.setState({
+            toDate:moment(date).format("YYYY-MM-DD")
+     })
+     }
+        else {
          this.setState({
              resultDt:date,
              resultDate:moment(date).format("YYYY-MM-DD")
@@ -241,7 +254,7 @@ try{
   } else {
   }
 //http://35.200.220.64:4000/connektschool/getEnquiryBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751 &classId=1
-const response = await fetch( api_Url+`getEnquiryBySchoolClassId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&classId=${this.state.classId}&enquiryTaken=&FromDate=2020-11-03&ToDate=2020-11-05`,{
+const response = await fetch( api_Url+`getEnquiryBySchoolClassId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&classId=${this.state.classId}&enquiryTaken=&FromDate=${this.state.fromDate}&ToDate=${this.state.toDate}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -858,6 +871,14 @@ uploadFile=(e, type)=>{
                       <span>Test Name</span><br></br>
                       <input className="input-s br-w-1" type="text" placeholder="Test Name" name="searchStr" value={this.state.searchStr} onChange={this.handleInputs} />
                     </li>*/}
+                    {<li style={{width: 186}}>
+                      <span>From Date</span>
+                      <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.fromDate}  onChange={(e) => this.handleChange(e,'from')} placeholderText="MM-DD-YYYY" />
+                    </li>}
+                    {<li style={{width: 186}}>
+                      <span>To Date</span>
+                      <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.toDate}  onChange={(e) => this.handleChange(e,'to')} placeholderText="MM-DD-YYYY" />
+                    </li>}
                     <li>
                       <span>Status</span>
                       <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
@@ -887,7 +908,7 @@ uploadFile=(e, type)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">Student List</h4>
+                        <h4 class="header-title">Enquiry List</h4>
                         <p className={styles.addCountry}>
                         <Link to="enquiry/insert" >
                           <button
