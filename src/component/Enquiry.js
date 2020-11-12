@@ -26,6 +26,11 @@ class Enquiry extends React.Component {
   constructor() {
     super();
     this.state = {
+      statusId: "",
+      statusDetails: [{statusId:"4",statusName:"In-Active Enquiry"},
+                      {statusId:"1",statusName:"Active Enquiry"},
+                      {statusId:"2",statusName:"Registered"},
+                      {statusId:"3",statusName:"Dropout"}],
       toDate: moment(new Date()).format("YYYY-MM-DD"),
       fromDate:moment(new Date()).format("YYYY-MM-DD"),
       enquiryList: [],
@@ -246,12 +251,18 @@ getEnquiry = async pageNumber => {
   this.setState({isLoading:true})
 try{
   let value = '1';
-  if(this.state.status == 'active'){
-    value = '1';
-  } else if(this.state.status == 'inactive'){
-    value = '0';
-    debugger
-  } else {
+  // if(this.state.status == 'active'){
+  //   value = '1';
+  // } else if(this.state.status == 'inactive'){
+  //   value = '0';
+  //   debugger
+  // } else {
+  // }
+  if(this.state.statusId){
+    value = this.state.statusId;
+    if(this.state.statusId=='4'){
+      value = '0'
+    }
   }
 //http://35.200.220.64:4000/connektschool/getEnquiryBySchoolClassCourseAndStudentId?page=1&size=10&status=1&FromDate=2020.10.01&ToDate=2020.10.31&classId=1&courseId=3&studentId=751 &classId=1
 const response = await fetch( api_Url+`getEnquiryBySchoolClassId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&classId=${this.state.classId}&enquiryTaken=&FromDate=${this.state.fromDate}&ToDate=${this.state.toDate}`,{
@@ -704,17 +715,24 @@ validateForm =()=>{
             <td>{enquiry.EnquiryName}</td>
             <td>{enquiry.GuardianName}</td>
             <td>{enquiry.StudentClass}</td>
-            <td>{enquiry.EnquiryMobile}</td>
+            <td>{enquiry.EnquiryMobile?enquiry.EnquiryMobile:'-'}</td>
             <td>{enquiry.GuardianMobile}</td>
             <td> {moment(enquiry.EnquiryDate).format('DD-MMM-YYYY')}</td>
             <td>{enquiry.LocalAddress}</td>
             <td>{enquiry.PermanentAddress}</td>
-            <td>{enquiry.Remarks}</td>
-            <td>{enquiry.EnquiryTaken}</td>
+            <td>{enquiry.StatusId=='0'&&'In-Active'||enquiry.StatusId=='1'&&'Active'||enquiry.StatusId=='2'&&'Registered'||enquiry.StatusId=='3'&&'DropOut'}</td>
+            <td>{enquiry.DropOutReason?enquiry.DropOutReason:'-'}</td>
+            <td>{enquiry.Remarks?enquiry.Remarks:'-'}</td>
+            <td>{enquiry.EnquiryTaken?enquiry.EnquiryTaken:'-'}</td>
+
             <td>
-            <Link to={`enquiry/${enquiry.EnquiryId}`}> <i  class="ti-pencil"></i></Link>
-            {" "}  {" "}
-            <i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i>
+            {enquiry.StatusId==1?<><Link to={`enquiry/${enquiry.EnquiryId}`}> <i  class="ti-pencil"></i></Link>{" "}{" "}<i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i></>:'-'}
+            {/*enquiry.StatusId?<i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i>:null*/}
+            {/*enquiry.StatusId != '1' &&<select style={{width: '40%'}} className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+              <option value={'0'}>-Status-</option>
+              <option value={'active'}>Active</option>
+              <option value={'inactive'}>In-Active</option>
+            </select>*/}
             </td>
             {/**/}{/**/}
 
@@ -881,10 +899,11 @@ uploadFile=(e, type)=>{
                     </li>}
                     <li>
                       <span>Status</span>
-                      <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Status-</option>
-                        <option value={'active'}>Active</option>
-                        <option value={'inactive'}>In-Active</option>
+                      <select className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+                      <option value={'0'}>-Select Status-</option>
+                      {this.state.statusDetails.length > 0 ? this.state.statusDetails.map(cls =>
+                        <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
+                      ) : null}
                       </select>{" "}
                     </li>
                     <li>
@@ -940,6 +959,8 @@ uploadFile=(e, type)=>{
                                 <th scope="col">Enquiry Date</th>
                                 <th scope="col">Local Address</th>
                                 <th scope="col">Permanent Address</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">DropOut Reason</th>
                                 <th scope="col">Remarks</th>
                                 <th scope="col">Taken</th>
                                 <th scope="col">Action</th>

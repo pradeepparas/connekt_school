@@ -26,6 +26,8 @@ class InsertNewStudent extends React.Component {
   constructor() {
     super();
     this.state = {
+      studentMobile_ErMsg: "",
+      studentMobile: "",
       bloodGroup: [{groupId:"1",groupName:"A+"},
                     {groupId:"2",groupName:"A-"},
                     {groupId:"3",groupName:"B+"},
@@ -209,6 +211,10 @@ class InsertNewStudent extends React.Component {
    } else {
        // this.setState({
        // });
+       if(id){
+         toast.success(`No details are found for EnquiryId = ${id}`)
+       }
+
    }
   this.setState({isLoading:false})
   }
@@ -522,6 +528,7 @@ class InsertNewStudent extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
+           status: data.Student[0].StatusId? 'active': 'inactive',
            id: this.props.match.params.id,
            studentName: data.Student[0].StudentName,
            gender: data.Student[0].StudentGender,
@@ -538,6 +545,11 @@ class InsertNewStudent extends React.Component {
            religionId: data.Student[0].Religion,
            casteId: data.Student[0].Caste,
            category: data.Student[0].Category,
+           bloodgroupId: data.Student[0].BloodGroup,
+           studentMobile: data.Student[0].StudentMobile?data.Student[0].StudentMobile:'',
+           enrollment: data.Student[0].EnrollmentNumber?data.Student[0].EnrollmentNumber:'',
+           localAddress:data.Student[0].LocalAddress,
+           permanentAddress: data.Student[0].PermanentAddress,
            isEdit:true,
            isAdd:false
        });
@@ -759,17 +771,21 @@ class InsertNewStudent extends React.Component {
 validateForm =()=>{
   debugger
    var isValid=true;
-   var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/
-  if(this.state.studentName.trim()==''){
+   if(this.state.studentMobile)
+   {
+     var mobileValid =this.state.studentMobile.toString().match(/^[0]?[6789]\d{9}$/)
+   }
+   var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/;
+   if(this.state.isAdd&&this.state.admission==''){
+     isValid= false
+     return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"admission type is required", studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+   }
+   else if(this.state.studentName.trim()==''){
         debugger
         isValid= false
-        return this.setState({studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"", studentMobile_ErMsg:"", studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
     }
-    // else  if(this.state.isAdd&&this.state.studentUsername.trim()==''){
-    //   debugger
-    //     isValid= false
-    //     return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"Student Username is required", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
-    // }
+
     // else  if(this.state.isAdd&&this.state.password.toString().trim()==''){
     //   debugger
     //     isValid= false
@@ -778,28 +794,41 @@ validateForm =()=>{
     else  if(this.state.gender==''){
       debugger
         isValid= false
-        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"gender is required", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"", studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"gender is required", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
     }
     else  if(this.state.birthDate.trim()==''){
       debugger
         isValid= false
-        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"Date of birth is required",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"Date of birth is required",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
     }
     else  if(this.state.classId==''){
       debugger
         isValid= false
-        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"class is required",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"class is required",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+    }
+    else if(this.state.isEdit&&(this.state.studentMobile.toString().trim()==''||!mobileValid)){
+      isValid= false
+    return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"student mobile is empty or invalid", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
     }
     else  if(this.state.localAddress.toString().trim()==''){
         isValid= false
-      return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"local address is required",permanentAddress_ErMsg:""})
+      return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"local address is required",permanentAddress_ErMsg:""})
     }
     else  if(this.state.permanentAddress.toString().trim()==''){
         isValid= false
-        return this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"permanent address is required"})
+        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"permanent address is required"})
+    }
+    else  if(this.state.isAdd&&this.state.studentUsername.trim()==''){
+      debugger
+        isValid= false
+        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"Student Username is required", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+    }
+    else if(this.state.bloodgroupId==''){
+      isValid= false
+      return this.setState({bloodgroupId_ErMsg:"blodd group is required", studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
     }
     else{
-        this.setState({studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        this.setState({bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
         return isValid
     }
 }
@@ -851,74 +880,96 @@ validateForm =()=>{
       if(!this.validateForm()){
         return
       }
-      toast.success("all are true")
-      return
-//       {
-//     "StudentName":"Somya Dem",
-//     "StudentGender": "Female",
-//     "StudentUsername": "Somya27",
-//     "StudentDOB": "2010-10-10",
-//     "StudentPassword":"123456",
-//     "ClassId": 1,
-//     "EnrollmentNumber":"AB123",
-//     "Medium":"English",
-//     "PreviousSchool": "Demo",
-//     "EnquiryId": "0",
-//     "AnyDisability": "No",
-//     "ChildInterests": "Singing",
-//     "Section": "A",
-//     "Nationality": "Indian",
-//     "Religion": "Hindu",
-//     "Caste": "Sindhi",
-//     "Category":"General"
-// }
-//
-// All the below metioned parameters can be NULL
-//  EnrollmentNumber,Medium,PreviousSchool,
-// EnquiryId,AnyDisability,ChildInterests,Section,Nationality,
-// Religion,Caste,Category
+      // toast.success("all are true")
+      // return
+
       var data = {
+        "EnquiryId": this.state.admission==='1'?"0":this.state.enquiryId,
         "StudentName": this.state.studentName,
         "StudentGender": this.state.gender,
         //"StudentUsername":this.state.studentUsername,
         "StudentDOB": this.state.birthDate,
-        //"StudentPassword":this.state.password,
+        //"StudentPassword": "123456",
         "ClassId":this.state.classId,
-       "EnrollmentNumber": this.state.enrollment,
-       "Medium": this.state.medium,
-       "PreviousSchool": this.state.previousSchool,
-       "EnquiryId": this.state.enquiryId,
-        "AnyDisability": this.state.anyDisability,
-        "ChildInterests": this.state.childInterests,
-        "Section":this.state.sectionId,
-        "Nationality": this.state.nationality,
-        "Religion": this.state.religionId,
-        "Caste": this.state.casteId,
-        "Category": this.state.category
+       //"EnrollmentNumber": this.state.enrollment,
+       //"Medium": this.state.medium,
+       //"PreviousSchool": this.state.previousSchool,
+       //"EnquiryId": this.state.enquiryId,
+        //"AnyDisability": this.state.anyDisability,
+        //"ChildInterests": this.state.childInterests,
+        //"Section":this.state.sectionId,
+        //"Nationality": this.state.nationality,
+        //"Religion": this.state.religionId,
+        //"Caste": this.state.casteId,
+        //"Category": this.state.category,
+        //"FatherName": this.state.fatherName,
+        //"FatherMobile": this.state.fatherMobile,
+        //"MotherName": this.state.motherName,
+        //"MotherMobile": this.state.motherMobile,
+        "LocalAddress": this.state.localAddress,
+        "PermanentAddress": this.state.permanentAddress,
+        "BloodGroup": this.state.bloodgroupId
        }
-       // if(this.state.enrollment){
-       //   data.EnrollmentNumber = this.state.enrollment
-       // }
-       // if(this.state.medium){
-       //   data.Medium = this.state.medium
-       // }
-       // if(this.state.previousSchool){
-       //   data.PreviousSchool = this.state.previousSchool
-       // }
+       if(this.state.enrollment){
+         data.EnrollmentNumber = this.state.enrollment
+       }
+       if(this.state.medium){
+         data.Medium = this.state.medium
+       }
+       if(this.state.previousSchool){
+         data.PreviousSchool = this.state.previousSchool
+       }
        // if(this.state.enquiryId){
        //   data.EnquiryId = this.state.enquiryId
        // }
-       // if(this.state.enquiryId){
-       //   data.EnquiryId = this.state.enquiryId
+       if(this.state.anyDisability){
+         data.AnyDisability = this.state.anyDisability
+       }
+       if(this.state.childInterests){
+         data.ChildInterests = this.state.childInterests
+       }
+       if(this.state.sectionId){
+         data.Section = this.state.sectionId
+       }
+       if(this.state.nationality){
+         data.Nationality = this.state.nationality
+       }
+       if(this.state.religionId){
+         data.Religion = this.state.religionId
+       }
+       if(this.state.casteId){
+         data.Caste = this.state.casteId
+       }
+       if(this.state.category){
+         data.Category = this.state.category
+       }
+       if(this.state.fatherName){
+         data.FatherName = this.state.fatherName
+       }
+       if(this.state.fatherMobile){
+         data.FatherMobile = this.state.fatherMobile
+       }
+       if(this.state.motherName){
+         data.MotherName = this.state.motherName
+       }
+       if(this.state.motherMobile){
+         data.MotherMobile = this.state.motherMobile
+       }
+       // if(this.state.bloodgroupId){
+       //   data.BloodGroup = this.state.bloodgroupId
        // }
+
+       //str = str.split(" ").join("")
 
 
    if(this.state.isAdd){
       data.StudentUsername = this.state.studentUsername;
-      data.StudentPassword = this.state.password;
+      data.StudentPassword = "123456";
     this.setState({isLoading:true})
   //   http://35.200.220.64:4000/connektschool/insertEnquiry
   //  return;
+    console.log(data)
+    debugger
     fetch(api_Url+`insertStudentWeb`,{
       method:"POST",
       headers :{
@@ -948,8 +999,10 @@ validateForm =()=>{
    }
    else if(this.state.isEdit){
     debugger
+
+    data.StudentMobile = this.state.studentMobile;
     data.StudentId = this.props.match.params.id;
-    data.StatusId = "1";
+    data.StatusId = this.state.status==='active'?"1":"0";
    this.setState({isLoading:true})
    // http://35.200.220.64:1500/aarambhTesting/updateHoliday
     fetch(api_Url+`updateStudentMainWeb`,{
@@ -1393,35 +1446,7 @@ uploadFile=(e, type)=>{
                       <div className="">
                         <h4 class="header-title">{this.props.match.params.id==='insert'?"Add Admission Details":"Update Admission Details"}</h4>
                       </div>
-                      {/*{
-                        {
-                        "StudentId":"Somya Dem",
-                        "StudentGender": "Female",
-                        "StudentUsername": "Somya27",
-                        "StudentDOB": "2010-10-10",
-                        "StudentPassword":"123456",
-                        "ClassId": 1,
-                        "EnrollmentNumber":"AB123",
-                        "Medium":"English",
-                        "PreviousSchool": "Demo",
-                        "EnquiryId": "0",
-                        "AnyDisability": "No",
-                        "ChildInterests": "Singing",
-                        "Section": "A",
-                        "Nationality": "Indian",
-                        "Religion": "Hindu",
-                        "Caste": "Sindhi",
-                        "Category":"General"
-                      }
-
-                      All the below metioned parameters can be NULL
-                      EnrollmentNumber,Medium,PreviousSchool,
-                      EnquiryId,AnyDisability,ChildInterests,Section,Nationality,
-                      Religion,Caste,Category
-
-
-                      */}
-                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      {this.props.match.params.id ==='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Admission Type<small style={{color: 'red', fontSize: 18}}>*</small> </span><span style={{marginLeft: 49,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="admission" value={this.state.admission} onChange={this.handleInputs}>
@@ -1436,7 +1461,7 @@ uploadFile=(e, type)=>{
                       {this.state.admission=="2"&&<><div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 91,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id" value={this.state.enquiryId} onChange={this.handleInputs} name="enquiryId" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}</div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}</div>}
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 30}}> : </span>
@@ -1474,7 +1499,7 @@ uploadFile=(e, type)=>{
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.gender_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Date of Birth</span><span style={{marginLeft: 76,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Date of Birth<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 67,marginRight: 25}}> : </span>
                       <DatePicker style={{ width: "322px" }} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.birthDt} value={this.state.birthDate} maxDate={new Date()} onChange={(e) => this.handleChange(e,'birth')} placeholderText="MM-DD-YYYY" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.birthDate_ErMsg}</div>
                       </div>
@@ -1502,6 +1527,25 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       </div>
                       </div>
+
+                      {this.props.match.params.id !=='insert'&&<><div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 109,marginRight: 30}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Status-</option>
+                        <option value={'active'}>Active</option>
+                        <option value={'inactive'}>In-Active</option>
+                      </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.status_ErMsg}</div>
+                      </div>
+                      <div style={{flexDirection: 'row',width: 492}}>
+                      <span style={{marginLeft: 13}}>Student Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Student's contact number" value={this.state.studentMobile} onChange={this.handleInputs} name="studentMobile" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentMobile_ErMsg}</div>
+                      </div>
+                      </div></>}
+
+
                       {/*<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 92,marginRight: 30}}> : </span>
@@ -1630,15 +1674,20 @@ uploadFile=(e, type)=>{
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Blood Group</span><span style={{marginLeft: 76,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Blood Group<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 69,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="bloodgroupId" value={this.state.bloodgroupId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Blood Group-</option>
                         {this.state.bloodGroup.length > 0 ? this.state.bloodGroup.map(cls =>
-                          <option key={cls.groupId} value={cls.groupId}>{cls.groupName}</option>
+                          <option key={cls.groupId} value={cls.groupName}>{cls.groupName}</option>
                         ) : null}
 
                       </select>{" "}
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.bloodgroupId_ErMsg}</div>
                       </div>
+                      {this.props.match.params.id==='insert'&&<div style={{flexDirection: 'row',width: 492}}>
+                      <span style={{marginLeft: 13}}>Student Username<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 32,marginRight: 25}}> : </span>
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Student username" value={this.state.studentUsername} onChange={this.handleInputs} name="studentUsername" />
+                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.studentUsername_ErMsg}</div></div>}
                       </div>
 
                       <button className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>

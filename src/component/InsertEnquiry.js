@@ -26,6 +26,11 @@ class InsertEnquiry extends React.Component {
   constructor() {
     super();
     this.state = {
+      statusId: "",
+      statusDetails: [{statusId:"0",statusName:"Inactive Enquiries"},
+                      {statusId:"1",statusName:"Active Enquiries"},
+                      {statusId:"2",statusName:"Registered"},
+                      {statusId:"3",statusName:"Dropout"}],
       enquiryName:"",
       guardianName:"",
       enquiryMobile:"",
@@ -605,7 +610,7 @@ validateForm =()=>{
    else if(this.state.isEdit){
     debugger
     data.EnquiryId = this.props.match.params.id;
-    data.StatusId = 1;
+    data.StatusId = this.state.statusId;
    this.setState({isLoading:true})
    // http://35.200.220.64:1500/aarambhTesting/updateHoliday
     fetch(api_Url+`updateEnquiry`,{
@@ -1028,7 +1033,7 @@ uploadFile=(e, type)=>{
 
 
 
-              <ul className="filter-ul">
+              {/*<ul className="filter-ul">
                     <li>
                       <span>Status</span>
                       <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
@@ -1051,7 +1056,7 @@ uploadFile=(e, type)=>{
                     <li>
                       <button className="search-button" onClick={this.onSearchHoliday}>Search</button>
                     </li>
-                  </ul>
+                  </ul>*/}
 
 
 
@@ -1087,7 +1092,7 @@ uploadFile=(e, type)=>{
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft:  13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
+                      <span style={{marginLeft:  13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 79,marginRight: 25}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
@@ -1105,11 +1110,11 @@ uploadFile=(e, type)=>{
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 66,marginRight: 30}}> : </div>
+                      <div style={{marginLeft: 13}}>Local Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 69,marginRight: 28}}> : </div>
                       <textarea style={{width: '40%',height: 50}} rows="3" type="text" className="input-s br-w-1" placeholder="Local Address" value={this.state.localAddress} onChange={this.handleInputs} name="localAddress" /></div>
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.localAddress_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 47,marginRight: 30}}> : </div>
+                      <div style={{marginLeft: 13}}>Permanent Address<small style={{color: 'red', fontSize: 18}}>*</small></div><div style={{marginLeft: 51,marginRight: 28}}> : </div>
                       <textarea style={{width: '38%',height: 50}} type="text" rows="3" className="input-s br-w-1" placeholder="Permanent Address" value={this.state.permanentAddress} onChange={this.handleInputs} name="permanentAddress" /></div>
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.permanentAddress_ErMsg}</div></div>
                       </div>
@@ -1119,17 +1124,32 @@ uploadFile=(e, type)=>{
                       <span style={{marginLeft: 13}}>Enquiry Taken<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 65,marginRight: 25}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
+
+                      {this.props.match.params.id==='insert'?
                       <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 122,marginRight: 30}}> : </div>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 125,marginRight: 28}}> : </div>
                       <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
-                      </div>
+                      </div> : <div style={{flexDirection: 'row',width: 493}}>
+                      <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 132,marginRight: 25}}> : </span>
+                      <select style={{width: '38%'}} className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Status-</option>
+                        {this.state.statusDetails.length > 0 ? this.state.statusDetails.map(cls =>
+                          <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
+                        ) : null}
+                      </select>{" "}
+                      </div>}
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Drop Out Reason</span><span style={{marginLeft: 52,marginRight: 25}}> : </span>
-                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
-                      </div>
+                      {this.props.match.params.id!=='insert'&&<><div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 108,marginRight: 28}}> : </div>
+                      <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
+                      </div></>}
+                      {this.state.statusId==='3'&&<div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Drop Out Reason</div><div style={{marginLeft: 75,marginRight: 28}}> : </div>
+                      <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Dropout Reason" value={this.state.dropoutReason} onChange={this.handleInputs} name="dropoutReason" />
+                      </div></div>}
+
                       </div>
                       <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                       </div>

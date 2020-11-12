@@ -815,11 +815,11 @@ uploadFile=(e, type)=>{
               <div className="row align-items-center">
                 <div className="col-sm-6">
                   <div className="breadcrumbs-area clearfix">
-                    <h4 className="page-title pull-left">Student</h4>
+                    <h4 className="page-title pull-left">Admission</h4>
 
                     <ul className="breadcrumbs pull-left">
                       <li><a >Home</a></li>
-                      <li><span>Student</span></li>
+                      <li><span>Admission</span></li>
                     </ul>
                   </div>
                 </div>
@@ -877,7 +877,7 @@ uploadFile=(e, type)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">Student List</h4>
+                        <h4 class="header-title">Admissions List</h4>
                         <p className={styles.addCountry}>
                         <Link to="students/insert" >
                           <button
@@ -888,7 +888,7 @@ uploadFile=(e, type)=>{
                             data-target="#add"
                           >
                             {" "}
-                      Add Student {" "}
+                      Add Admission {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button></Link>
                         </p>
