@@ -147,8 +147,8 @@ h5 {font-family:'Work Sans Bold'; font-style:normal; font-weight:normal}
 }
 .btn-primary:hover {
     color: #fff;
-    background-color: #80aaff;
-    border-color: #80aaff;
+    background-color: #0066cc;
+    border-color: #0066cc;
 }
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle{
     color: #fff;
@@ -1270,8 +1270,8 @@ input { outline: none;  border: none;}
 }
 
 .login100-form-btn:hover {
-    /* background-color: #57b846; */
-    background-color:#d43337;
+    /* background-color: #57b846; #007BFF*/
+    background-color:#0066cc;
 }
 
 .txt3 {
@@ -1608,6 +1608,7 @@ input::-webkit-inner-spin-button {
 }
 
 .searchbutton123 {
+    margin-top: 15px;
     width: 130px;
     height: 37px;
     background-color: #66b3ff;
@@ -1625,4 +1626,4 @@ input::-webkit-inner-spin-button {
   margin-left: 220px;
   margin-bottom: 9px;
 }
-/*hover #FF8800*/
+/*hover #FF8800 login100-form-btn*/
