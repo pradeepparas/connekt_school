@@ -242,17 +242,17 @@ toggleClass =(e, type)=>{
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'exam-result-school' ? 'active' : ''} to="/exam-result-school" > Result   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'holiday' ? 'active' : ''} to="/holiday" > Holidays   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'enquiry' ? 'active' : ''} to="/enquiry" > Enquiry   </Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'students' ? 'active' : ''} to="/students" > Student   </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'students' ? 'active' : ''} to="/students" > Admissions   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'section' ? 'active' : ''} to="/section" > Section   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'caste' ? 'active' : ''} to="/caste" > Caste   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'religion' ? 'active' : ''} to="/religion" > Religion   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'feetype' ? 'active' : ''} to="/feetype" > Fee Type   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'notification' ? 'active' : ''} to="/notification" > Notification</Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'feestructure' ? 'active' : ''} to="/feestructure" > Fees Structure</Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'feestructuredetail' ? 'active' : ''} to="/feestructuredetail" > Fees Structure Detail</Link></li>
+                                                {/*<li><Link className="cursor1" className={this.props.tabIndex == 'feestructuredetail' ? 'active' : ''} to="/feestructuredetail" > Fees Structure Detail</Link></li>*/}
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'session' ? 'active' : ''} to="/session" > Session</Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'installment' ? 'active' : ''} to="/installment" > Installment</Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'installmentdetail' ? 'active' : ''} to="/installmentdetail" > Installment Details</Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'installment' ? 'active' : ''} to="/installment" >Create Installment</Link></li>
+                                                {/*<li><Link className="cursor1" className={this.props.tabIndex == 'installmentdetail' ? 'active' : ''} to="/installmentdetail" > Installment Details</Link></li>*/}
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'childinterests' ? 'active' : ''} to="/childinterests" > Child Interests</Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'school-medium' ? 'active' : ''} to="/school-medium" > School Medium</Link></li>
 
