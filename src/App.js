@@ -148,7 +148,7 @@ render() {
           <Route path="/caste" exact={true} component= { Caste } />
           <Route path="/religion" exact={true} component= { Religion } />
           <Route path="/feetype" exact={true} component= { FeeType } />
-          <Route path="/feetype/:id" exact={true} component= { InsertFeesType } />
+          <Route path="/feetype/:id1/:id2" exact={true} component= { InsertFeesType } />
           <Route path="/feestructure" exact={true} component= { FeesStructure } />
           <Route path="/feestructure/:id" exact={true} component= { InsertFeesStructure } />
           <Route path="/session" exact={true} component= { Session } />
