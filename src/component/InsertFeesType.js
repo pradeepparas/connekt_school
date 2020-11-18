@@ -23,10 +23,15 @@ class InsertFeesType extends React.Component {
   constructor() {
     super();
     this.state = {
+      sessionId: "",
+      sessionId_ErMsg: '',
+      statusDetails: [{statusId:"2",statusName:"Inactive"},
+                      {statusId:"1",statusName:"Active"}],
       modeofPayment: "",
       count: false,
       fsize: 0,
       feetypeList: [],
+      sessionList: [],
       classList: [],
       modeList:[{modeId:'1',modeName:'Single'},{modeId:'2',modeName:'Multiple'}],
       status:"",
@@ -36,7 +41,7 @@ class InsertFeesType extends React.Component {
       show: false,
       showDeleteModal: false,
       isEdit: false,
-      isAdd: false,
+      isAdd: true,
       isDelete: false,
       displaytext: 'hide_block',
       title: '',
@@ -100,10 +105,95 @@ class InsertFeesType extends React.Component {
    debugger
    this.getClass(1);
    this.getInsertFeesType(1)
-
-
+   this.getSession()
+   if(this.props.match.params.id1!=='insert'){
+     this.getFeeTypeById(1)
+     this.setState({isEdit: true})
+   }
     }
   }
+
+  getFeeTypeById = async () => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getFeesTypeId?page=1&size=10&status=${this.props.match.params.id2}&id=${this.props.match.params.id1}`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     console.log(data)
+     debugger
+     console.log(data,'datABBBBBBBBBBB',)
+    // console.log(list, 'list')
+    //  console.log(data,'datA',)
+     console.log('list')
+       this.setState({
+         id: this.props.match.params.id1,
+         feesType: data.FeesType[0].FeesType,
+         statusId: data.FeesType[0].StatusId=='1'?'1':'2',
+         modeofPayment: data.FeesType[0].ModeofPayment,
+         sessionId: data.FeesType[0].SessionId,
+         isEdit:true,
+         isAdd:false
+       });
+
+   } else {
+      debugger
+       this.setState({
+        //courseList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+    debugger
+  }
+  }
+
+  /// GET CLASS LIST by sir
+  getSession = async pageNumber => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getSessionBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           sessionList: data.SessionData,
+       });
+
+   } else {
+       this.setState({
+        sessionList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+   };
 
 // ON CHANGE INSERT TYPE
 onChangeInsertType =(e)=>{
@@ -318,27 +408,20 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
+    if(this.state.feesType.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({ feesType_ErMsg:"Fees Type is required", modeofPayment_ErMsg:"", sessionId_ErMsg:""})
     }
-   else if(this.state.feesType.trim()==''){
-       isValid= false
-        return this.setState({classId_ErMsg:"", feesType_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    }
-    else if(this.state.courseDescription.trim()==''){
+    else if(this.state.modeofPayment==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+        return this.setState({feesType_ErMsg:"", modeofPayment_ErMsg:"Mode of payment is required", sessionId_ErMsg:""})
     }
-    // else  if(this.state.courseOtherDetails.trim()==''){
-    //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    // }
-    // else  if(this.state.isAdd&&this.state.courseImage.length==0){
-    //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesType_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
-    // }
+    else if(this.state.sessionId==''){
+        isValid= false
+        return this.setState({ feesType_ErMsg:"", modeofPayment_ErMsg:"", sessionId_ErMsg:"Session is required"})
+    }
     else{
+        this.setState({ feesType_ErMsg:"", modeofPayment_ErMsg:"", sessionId_ErMsg:"" })
         return isValid
     }
 }
@@ -349,22 +432,28 @@ validateForm =()=>{
   manageInsertFeesType = (e) => {
     debugger
     e.preventDefault();
+    if(!this.validateForm()){
+      debugger
+      return
+    }
 
+    debugger
    if(this.state.isAdd){
      var data = {
        "FeesType": this.state.feesType,
-       "ModeofPayment": this.state.modeofPayment
+       "ModeofPayment": this.state.modeofPayment,
+       "SessionId": this.state.sessionId
      }
-    // var data = {
-    //     "InsertFeesTypeName": this.state.feesType
-    //   }
-    let url= `insertInsertFeesTypeMaster`;
+
+    let url= `insertFeeTypeMaster`;
       let header={
         "Accept":"Application/json",
         "Content-Type": "application/json",
         'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
       }
     this.setState({isLoading:true})
+    console.log(data)
+    debugger
          fetch(api_Url+url,{
             method:"POST",
            headers:header,
@@ -377,11 +466,8 @@ validateForm =()=>{
               toast.success(result.message,{
 
               })
-              this.setState({classId:""},()=>{
-                this.getInsertFeesType(this.state.current_page, this.state.per_page, this.state.classId, this.state.status)
+              this.props.history.goBack()
 
-              })
-             this.handleClose()
             }
             else{
            toast.error(result.message,{
@@ -399,15 +485,20 @@ validateForm =()=>{
    }
 
    else if(this.state.isEdit){
+          console.log(this.state.statusId)
+          debugger
           var data = {
-              "FeesTypeMasterId":this.state.id,
+              "FeesTypeMasterId":this.props.match.params.id1,
               "FeesType": this.state.feesType,
               "ModeofPayment": this.state.modeofPayment,
-              "StatusId":this.state.active?"1":"0"
+              "StatusId":this.state.statusId=='1'?"1":"0",
+              "SessionId": this.state.sessionId
               }
+              console.log(data)
+              debugger
           this.setState({isLoading:true})
 
-          fetch(api_Url+`updateInsertFeesTypeMaster`,{
+          fetch(api_Url+`updateFeeTypeMaster`,{
             method:"POST",
             headers :{
               "Accept":"Application/json",
@@ -423,8 +514,9 @@ validateForm =()=>{
               toast.success(result.message,{
 
               })
-              this.getInsertFeesType(this.state.current_page, this.state.per_page)
-             this.handleClose()
+              this.props.history.goBack();
+              //this.getInsertFeesType(this.state.current_page, this.state.per_page)
+             //this.handleClose()
             }
             else{
            toast.error(result.message,{
@@ -675,7 +767,11 @@ validateForm =()=>{
     }
   };
 
-
+  cancelFeesType = () => {
+    if(this.props.match.params.id1=='insert'){
+      this.setState({feesType: '', modeofPayment: ''})
+    }
+  }
 
   renderPageNumbers = () => {
     let pageNumbers = [];
@@ -823,21 +919,54 @@ uploadFile=(e, type, i)=>{
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft:  13}}>Fees Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 40,marginRight: 25}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Fees Type" value={this.state.feesType} onChange={this.handleInputs} name="feesType" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesType_ErMsg}</div>
+                      <div style={{marginLeft: 172}} className={this.state.displaytext + " text-danger error123"}>{this.state.feesType_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Mode Of Payment<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 40,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="modeofPayment" value={this.state.modeofPayment} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Mode-</option>
                         {this.state.modeList.length > 0 ? this.state.modeList.map(cls =>
-                          <option key={cls.modeId} value={cls.modeId}>{cls.modeName}</option>
+                          <option key={cls.modeId} value={cls.modeName}>{cls.modeName}</option>
                         ) : null}
                       </select>{" "}
-                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.modeofPayment_ErMsg}</div>
+                      <div style={{marginLeft: 222}} className={this.state.displaytext + " text-danger error123"}>{this.state.modeofPayment_ErMsg}</div>
                       </div>
                       </div>
 
+                      {this.props.match.params.id1=='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Session-</option>
+                        {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
+                          <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
+                        ) : null}
+                      </select>{" "}
+                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div>
+                      </div>
+                      </div>}
 
+
+                      {this.props.match.params.id1!='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 62,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Status-</option>
+                        {this.state.statusDetails.length > 0 ? this.state.statusDetails.map(cls =>
+                          <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
+                        ) : null}
+                      </select>{" "}
+                      </div>
+                      <div style={{flexDirection: 'row',width: 492}}>
+                      <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 105,marginRight: 25}}> : </span>
+                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Session-</option>
+                        {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
+                          <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
+                        ) : null}
+                      </select>{" "}
+                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div></div>
+                      </div>}
 
                       {/*<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
@@ -845,7 +974,7 @@ uploadFile=(e, type, i)=>{
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Taken" value={this.state.enquiryTaken} onChange={this.handleInputs} name="enquiryTaken" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryTaken_ErMsg}</div></div>
 
-                      {this.props.match.params.id==='insert'?
+                      {this.props.match.params.id1==='insert'?
                       <div style={{flexDirection: 'row',width: 493}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 125,marginRight: 28}}> : </div>
                       <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
@@ -861,7 +990,7 @@ uploadFile=(e, type, i)=>{
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
-                      {this.props.match.params.id!=='insert'&&<><div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      {this.props.match.params.id1!=='insert'&&<><div style={{flexDirection: 'row',width: 460}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 108,marginRight: 28}}> : </div>
                       <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remarks} onChange={this.handleInputs} name="remarks" /></div>
                       </div></>}
@@ -875,7 +1004,10 @@ uploadFile=(e, type, i)=>{
                       </div>
 
                     </div>
-                    <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                    <div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 83}}>
+                      <button className="searchbutton123" onClick={this.cancelFeesType}>Cancel</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertFeesType}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
+                    </div>
                 </div>
               </div>
             </div>

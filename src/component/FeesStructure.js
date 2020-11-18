@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 import styles from "../css/App.module.css";
 import { Button } from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 import { Modal } from "react-bootstrap";
 import { Form, FormGroup, FormControl, Col } from "react-bootstrap";
 import SideBar from './SideBar';
@@ -657,7 +658,7 @@ validateForm =()=>{
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
             <td>{fees.FeesStructureType}</td>
-            <td>{fees.ClassId}</td>
+            <td>{fees.StudentClass}</td>
             <td>{fees.TotalFees? fees.TotalFees:'-'}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
             <td>{fees.StatusId==1?"Active":"In-Active"}</td>
@@ -666,8 +667,9 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editFeesStructure(fees)} class="ti-pencil"></i>
-            {" "}  {" "}
+            <Link to={`feestructure/${fees.FeesStructureMasterId}`}> <i  class="ti-pencil"></i></Link>
+            {/*<i  onClick={() => this.editFeesStructure(fees)} class="ti-pencil"></i>*/}
+            {" "}  {" "}<Link to={`feestructure/${fees.FeesStructureMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteFeesStructure(fees)} class="ti-trash"></i>}
             </td>
 
@@ -781,7 +783,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='section'  shown='master' />
+      <SideBar tabIndex='feestructure'  shown='master' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -843,10 +845,11 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">Fees Type List</h4>
+                        <h4 class="header-title">Fees Structure List</h4>
                         <p className={styles.addCountry}>
+                          <Link to="feestructure/insert" >
                           <button
-                            onClick={this.handleShow}
+                            //onClick={this.handleShow}
                             className="btn btn-warning btn-xs"
                             data-title="Add"
                             data-toggle="modal"
@@ -856,6 +859,7 @@ uploadFile=(e, type, i)=>{
                       Add Fees Structure {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
+                          </Link>
                         </p>
                       </div>
 

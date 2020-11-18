@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 import styles from "../css/App.module.css";
+import {Link} from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
 import { Form, FormGroup, FormControl, Col } from "react-bootstrap";
@@ -659,7 +660,7 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editFeeType(fees)} class="ti-pencil"></i>
+            <Link to={`feetype/${fees.FeesTypeMasterId}/${fees.StatusId}`}><i /*onClick={() => this.editFeeType(fees)}*/ class="ti-pencil"></i></Link>
             {" "}  {" "}
             {<i  onClick={() => this.deleteFeeType(fees)} class="ti-trash"></i>}
             </td>
@@ -774,7 +775,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='section'  shown='master' />
+      <SideBar tabIndex='feetype'  shown='master' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -838,6 +839,7 @@ uploadFile=(e, type, i)=>{
                       <div className="">
                         <h4 class="header-title">Fees Type List</h4>
                         <p className={styles.addCountry}>
+                          <Link to="feetype/insert/insert" >
                           <button
                             onClick={this.handleShow}
                             className="btn btn-warning btn-xs"
@@ -849,6 +851,7 @@ uploadFile=(e, type, i)=>{
                       Add Fees Type {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
+                          </Link>
                         </p>
                       </div>
 
