@@ -669,7 +669,7 @@ validateForm =()=>{
             <td>
             <Link to={`feestructure/${fees.FeesStructureMasterId}`}> <i  class="ti-pencil"></i></Link>
             {/*<i  onClick={() => this.editFeesStructure(fees)} class="ti-pencil"></i>*/}
-            {" "}  {" "}<Link to={`feestructure/${fees.FeesStructureMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
+            {" "}  {" "}<Link to={`feestructures/${fees.FeesStructureMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteFeesStructure(fees)} class="ti-trash"></i>}
             </td>
 

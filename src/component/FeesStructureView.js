@@ -20,10 +20,11 @@ const imageUrl = myConstClass.imageUrl
 const pageSize = myConstClass.pageSize
 const file1 = myConstClass.fileSize
 
-class InsertFeesStructure extends React.Component {
+class FeesStructureView extends React.Component {
   constructor() {
     super();
     this.state = {
+      feesDetailList: [],
       sessionId: '',
       sessionList: [],
       listArray: [],
@@ -79,7 +80,7 @@ class InsertFeesStructure extends React.Component {
             () => {
               if(this.state.count){
                 this.getClass(this.state.current_page);
-                this.getInsertFeesStructure(this.state.current_page)
+                this.getFeesStructureView(this.state.current_page)
               }
             });
       }
@@ -103,13 +104,8 @@ class InsertFeesStructure extends React.Component {
     } else {
       if(this.props.match.params.id!=='insert'){
         this.getStructureTypeById(1)
-        //this.getStructureDetailById();
+        this.getStructureDetailById();
       }
-   this.getClass(1);
-   //this.getInsertFeesStructure(1)
-   this.getFeeType();
-   this.getSession()
-
     }
   }
 
@@ -130,53 +126,17 @@ class InsertFeesStructure extends React.Component {
    if(data.success){
      console.log(data)
      debugger
-     console.log(data,'datABBBBBBBBBBB',)
-    // console.log(list, 'list')
-    //  console.log(data,'datA',)
-        let list = [{
-          "feesTypeId": '',
-          //     "FeesStructureMasterId":this.props.params.match.id,
-          "amount":'',
-          "otherDescription": ''
-    }]
-    // list.shift()
+     console.log(data,'Fees structure details',)
 
-     // console.log('list')
-     // let list = [{
-     //     "feesTypeId": item.FeesTypeMasterId,
-     //     "FeesStructureMasterId":this.props.params.match.id,
-     //     "amount":item.Amount,
-     //     "otherDescription":item.OtherDescription
-     // }]
-     //
-      data.FeesStructureDetail.map((item,index) => {
-        list.push({
-          "feesTypeId": item.FeesTypeMasterId,
-         //"FeesStructureMasterId":this.props.params.match.id,
-         "amount":item.Amount,
-         "otherDescription":item.OtherDescription
-        })
-      })
-
-      list.shift()
-     console.log(list)
      debugger
        this.setState({
-
-         id: this.props.match.params.id,
-         listArray: list,
-         // feesStructure: data.FeesStructure[0].FeesStructureType,
-         // classId: data.FeesStructure[0].ClassId,
-         // totalFees: data.FeesStructure[0].TotalFees,
-         // sessionId: data.FeesStructure[0].SessionId,
-         isEdit:true,
-         isAdd:false
+          feesDetailList: data.FeesStructureDetail
        });
 
    } else {
       debugger
        this.setState({
-        //courseList: []
+        feesDetailList: []
        });
    }
   this.setState({isLoading:false})
@@ -210,19 +170,17 @@ class InsertFeesStructure extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
-         id: this.props.match.params.id,
-         feesStructure: data.FeesStructure[0].FeesStructureType,
-         classId: data.FeesStructure[0].ClassId,
-         totalFees: data.FeesStructure[0].TotalFees,
-         sessionId: data.FeesStructure[0].SessionId,
-         isEdit:true,
-         isAdd:false
+         studentClass: data.FeesStructure[0].StudentClass,
+         feesStructureType: data.FeesStructure[0].FeesStructureType,
+         sessionName: data.FeesStructure[0].SessionId,
+         totalFees: data.FeesStructure[0].TotalFees
+         //feesDetailList: data.FeesStructure,
        });
 
    } else {
       debugger
        this.setState({
-        //courseList: []
+        //feesDetailList: []
        });
    }
   this.setState({isLoading:false})
@@ -342,7 +300,7 @@ onChangeInsertType =(e)=>{
   };
 // EDIT COURSE
 
-editInsertFeesStructure = (data) => {
+editFeesStructureView = (data) => {
   console.log(data)
   debugger
   this.setState({
@@ -350,9 +308,9 @@ editInsertFeesStructure = (data) => {
     classId:data.ClassId,
      insertType:"single",
     title: 'Update Fees Structure',
-    feesStructure:data.InsertFeesStructureType,
+    feesStructure:data.FeesStructureViewType,
     active:data.StatusId==1?true:false,
-    id:data.InsertFeesStructureMasterId,
+    id:data.FeesStructureViewMasterId,
     totalFees: data.TotalFees?data.TotalFees:"",
     totalFees_ErMsg: "",
     feesStructure_ErMsg:"",
@@ -401,16 +359,16 @@ catch(err)
 
 /// ON SEARCH COURSE
 onSearchCourese=()=>{
-this.getInsertFeesStructure(1, this.state.current_page, this.state.classId, this.state.status)
+this.getFeesStructureView(1, this.state.current_page, this.state.classId, this.state.status)
 }
 
 
 // delete section
-deleteInsertFeesStructure = (data) => {
+deleteFeesStructureView = (data) => {
   console.log(data)
   debugger
    this.setState({
-     id: data.InsertFeesStructureMasterId,
+     id: data.FeesStructureViewMasterId,
      title: 'Delete Fees Structure',
      btntitle: 'Delete',
      btnValue: "Delete",
@@ -419,19 +377,19 @@ deleteInsertFeesStructure = (data) => {
      isEdit: false,
      isAdd: false,
      isDelete: true,
-     feesStructure: data.InsertFeesStructureType,
+     feesStructure: data.FeesStructureViewType,
      displaytext: 'hide_block',
    })
 
 }
 
 // delete fee by Id
-deleteInsertFeesStructureById = async(e) => {
+deleteFeesStructureViewById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteInsertFeesStructure?status=0&InsertFeesStructureMasterId=1
+  //http://35.200.220.64:4000/connektschool/deleteFeesStructureView?status=0&FeesStructureViewMasterId=1
   this.setState({isLoading:true})
-  fetch(api_Url+`deleteFeeStructureMaster?status=0&InsertFeesStructureMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteFeeStructureMaster?status=0&FeesStructureViewMasterId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -447,7 +405,7 @@ deleteInsertFeesStructureById = async(e) => {
 
      })
      this.setState({id:""},()=>{
-      this.getInsertFeesStructure(this.state.current_page, this.state.per_page)
+      this.getFeesStructureView(this.state.current_page, this.state.per_page)
 
      })
      this.handleDeleteClose()
@@ -465,7 +423,7 @@ deleteInsertFeesStructureById = async(e) => {
 }
 
 /// GET CLASS LIST by sir
-getInsertFeesStructure = async pageNumber => {
+getFeesStructureView = async pageNumber => {
   debugger
   this.setState({isLoading:true})
 try{
@@ -477,7 +435,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInsertFeesStructureBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getFeesStructureViewBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -492,7 +450,7 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         feesStructureList: data.InsertFeesStructure,
+         feesStructureList: data.FeesStructureView,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
@@ -521,305 +479,6 @@ toast.error('uploading failed')
     this.setState({ showDeleteModal: false });
   };
 
-// validate form
-validateForm =()=>{
-  debugger
-   var isValid=true;
-    if(this.state.classId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", feesStructure_ErMsg:"",totalFees_ErMsg:"", sessionId_ErMsg:""})
-    }
-    else if(this.state.totalFees==''||isNaN(this.state.totalFees)){
-        isValid= false
-         return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"",totalFees_ErMsg:"total fees is required or invalid number", sessionId_ErMsg:""})
-     }
-   else if(this.state.feesStructure.trim()==''){
-       isValid= false
-        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"Fees Structure type is required", totalFees_ErMsg:"", sessionId_ErMsg:""})
-    }
-    else if(this.state.sessionId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", totalFees_ErMsg:"", sessionId_ErMsg:"Session is required"})
-    }
-    // else  if(this.state.courseOtherDetails.trim()==''){
-    //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    // }
-    // else  if(this.state.isAdd&&this.state.courseImage.length==0){
-    //     isValid= false
-    //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
-    // }
-    else{
-        this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", totalFees_ErMsg:"", session_ErMsg:""})
-        return isValid
-    }
-}
-
-
-
-  // manage Course
-  manageInsertFeesStructure = (e) => {
-
-    debugger
-    e.preventDefault();
-    if(!this.validateForm()){
-      debugger
-      return
-    }
-
-
-    var empty = false
-    for(let i=0;i<this.state.listArray.length;i++){
-      if(this.state.listArray[i].feesTypeId == ''){
-        empty = true;
-        break;
-      }
-    }
-    // this.state.listArray.map((a)=> {
-    //   if(a.feesTypeId == ''){
-    //     empty = true;
-    //     break;
-    //   }
-    // })
-    if(empty){
-      toast.error('Fees Type is required');
-      return
-    }
-    console.log(this.state.listArray)
-    debugger
-    const uniqueValues = new Set(this.state.listArray.map(v => v.feesTypeId));
-    if (uniqueValues.size < this.state.listArray.length) {
-      toast.error('Fees Type should be unquie')
-      return;
-    }
-
-    let count = 0;
-    this.state.listArray.map((a)=> {
-      count = count + parseFloat(a.amount?a.amount:0)
-    })
-    console.log(count)
-    debugger
-    if(count!=parseFloat(this.state.totalFees)){
-      toast.error('Amount should less or equal to Total Fees')
-      return;
-    }
-    //toast.success('true')
-    //return
-   if(this.state.isAdd||this.props.match.params.id=='insert'){
-     var data = {
-       "FeesStructureType": this.state.feesStructure,
-       "ClassId": this.state.classId,
-       "SessionId": this.state.sessionId
-     }
-     if(this.state.totalFees){
-       data.TotalFees = this.state.totalFees;
-     }
-
-    let url= `insertFeeStructureMaster`;
-      let header={
-        "Accept":"Application/json",
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
-      }
-      console.log(data)
-      debugger
-    this.setState({isLoading:true})
-         fetch(api_Url+url,{
-            method:"POST",
-           headers:header,
-            body: JSON.stringify(data)
-          })
-          .then(res=>res.json())
-          .then(result=>{
-              debugger
-            if(result.success){
-              // toast.success(result.message,{
-              //
-              // })
-              console.log(result)
-              debugger
-             this.getInsertFeesStructure(result.id)
-
-             //this.handleClose()
-            }
-            else{
-           toast.error(result.message,{
-
-           })
-           toast.error(result.error,{
-
-           })
-            }
-            this.setState({isLoading:false})
-
-          }).catch(e => {
-            toast.error(e)
-          })
-   }
-
-   else if(this.state.isEdit){
-//      {
-// "FeesStructureMasterId":1,
-// "FeesStructureType":"Anytime",
-// "TotalFees": "10000",
-// "ClassId":1,
-// "StatusId":"0",
-// "SessionId":1
-// }
-          var data = {
-              "FeesStructureMasterId":this.props.match.params.id,
-              "FeesStructureType": this.state.feesStructure,
-              "ClassId": this.state.classId,
-              "StatusId":"1",
-              "SessionId": this.state.sessionId,
-              "TotalFees": this.state.totalFees
-              }
-          // if(this.state.totalFees){
-          //   data.TotalFees = this.state.totalFees
-          // }
-          this.setState({isLoading:true})
-
-          fetch(api_Url+`updateFeeStructureMaster`,{
-            method:"POST",
-            headers :{
-              "Accept":"Application/json",
-              "Content-Type":"Application/json",
-              "Authorization":"Bearer "+sessionStorage.getItem("auth_token"),
-            },
-            body:JSON.stringify(data)
-          })
-          .then(res=>res.json())
-          .then(result=>{
-              debugger
-            if(result.success){
-              // toast.success(result.message,{
-              //
-              // })
-              this.getInsertFeesStructure();
-             //  this.getInsertFeesStructure(this.state.current_page, this.state.per_page)
-             // this.handleClose()
-            }
-            else{
-           toast.error(result.message,{
-
-           })
-            }
-            this.setState({isLoading:false})
-
-          })
-   }
-  }
-
-  getInsertFeesStructure = async(id)=> {
-
-    if(this.state.isAdd){
-      this.setState({isLoading:true})
-    debugger
-    console.log(id)
-    debugger
-          let list = [{
-          "FeesTypeMasterId": id,
-          "FeesStructureMasterId":'',
-          "Amount":'',
-          "OtherDescription":''
-      }]
-      this.state.listArray.map((data, index)=> {
-        list.push({"FeesTypeMasterId":data.feesTypeId,
-          "FeesStructureMasterId":id,
-          "Amount":data.amount,
-          "OtherDescription": data.otherDescription
-      })
-      })
-      list.shift()
-      console.log(list)
-      debugger
-
-      this.setState({isLoading:true})
-      fetch(api_Url+`insertFeesStructureDetail`,{
-        method:"POST",
-        headers :{
-          "Accept":"Application/json",
-          "Content-Type":"Application/json",
-          "Authorization":"Bearer "+sessionStorage.getItem("auth_token"),
-        },
-        body:JSON.stringify(list)
-      })
-      .then(res=>res.json())
-      .then(result=>{
-          debugger
-        if(result.success){
-          console.log(result)
-          debugger
-          toast.success(result.message,{
-          })
-          this.props.history.goBack()
-
-        }
-        else{
-       toast.error(result.message,{
-
-       })
-        }
-        this.setState({isLoading:false})
-
-      })
-    }
-    else if(this.state.isEdit){
-
-      this.setState({isLoading:true})
-    debugger
-    console.log(id)
-    debugger
-          let list = [{
-          "FeesTypeMasterId": this.props.match.params.id,
-          "FeesStructureMasterId":'',
-          "Amount":'',
-          "OtherDescription":'',
-          "StatusId":"1"
-      }]
-      this.state.listArray.map((data, index)=> {
-        list.push({"FeesTypeMasterId":data.feesTypeId,
-            "FeesStructureMasterId":this.props.match.params.id,
-            "Amount":data.amount,
-            "OtherDescription": data.otherDescription,
-            "StatusId":"1"
-      })
-      })
-      list.shift()
-      console.log(list)
-      debugger
-
-      this.setState({isLoading:true})
-      fetch(api_Url+`updateFeesStructureDetail`,{
-        method:"POST",
-        headers :{
-          "Accept":"Application/json",
-          "Content-Type":"Application/json",
-          "Authorization":"Bearer "+sessionStorage.getItem("auth_token"),
-        },
-        body:JSON.stringify(list)
-      })
-      .then(res=>res.json())
-      .then(result=>{
-          debugger
-        if(result.success){
-          console.log(result)
-          debugger
-          toast.success(result.message,{
-          })
-          this.props.history.goBack()
-
-        }
-        else{
-       toast.error(result.message,{
-
-       })
-        }
-        this.setState({isLoading:false})
-
-      })
-    }
-  }
   // Upload team image
 
   onCrop = (preview) => {
@@ -1031,95 +690,20 @@ validateForm =()=>{
     }
   }
 
-  showInsertFeesStructure = () => {
-    if (this.state.feesStructureList !== undefined) {
-      return this.state.feesStructureList.map((fees, i) => {
+  showFeesStructureView = () => {
+    if (this.state.feesDetailList !== undefined) {
+      return this.state.feesDetailList.map((fees, i) => {
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{fees.InsertFeesStructureType}</td>
-            <td>{fees.StudentClass}</td>
-            <td>{fees.TotalFees? fees.TotalFees:'-'}</td>
-            {/*<td>{fee.CourseOtherDetails}</td>*/}
-            <td>{fees.StatusId==1?"Active":"In-Active"}</td>
-
-
-            {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
-
-            <td>
-            <i  onClick={() => this.editInsertFeesStructure(fees)} class="ti-pencil"></i>
-            {" "}  {" "}<Link to={`feestructure/${fees.InsertFeesStructureMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
-            {<i  onClick={() => this.deleteInsertFeesStructure(fees)} class="ti-trash"></i>}
-            </td>
-
-
-
+            <td>{fees.FeesType}</td>
+            <td>{fees.Amount? fees.Amount:'-'}</td>
+            <td>{fees.OtherDescription?fees.OtherDescription:'-'}</td>
           </tr>
         );
       });
     }
   };
-
-  renderTable = ()=> {
-        if (this.state.listArray !== undefined) {
-          return this.state.listArray.map((list, i) => {
-               return (
-              <tr style={{padding: 155}} key={i}>
-                <td>{(i+1)}</td>
-
-                <td key={i}>{<select style={{marginLeft: -2,borderColor: 'white',width: 170}} className="tableinput" name="feesTypeId" value={list.feesTypeId} onChange={(e) => {this.feesStructureDetails(e,i,'F')}}>
-                  <option value={'0'}>-Select Fees Type-</option>
-                  {this.state.feetypeList.length > 0 ? this.state.feetypeList.map(cls =>
-                    <option key={cls.FeesTypeMasterId} value={cls.FeesTypeMasterId}>{cls.FeesType}</option>
-                  ) : null}
-                </select>}</td>
-                <td key={i}>{<input style={{marginLeft: -2,width: 170}} className="tableinput" type="number" placeholder="Amount" name="amount" value={list.amount} onChange={(e)=>{this.feesStructureDetails(e,i,'A')}} />}</td>
-                <td key={i}>{<input style={{marginLeft: -2, width: 170}} className="tableinput" type="text" placeholder="Other Description" name="otherDescription" value={list.otherDescription} onChange={(e)=>{this.feesStructureDetails(e,i,'O')}} />}</td>
-              </tr>
-            );
-          });
-        }
-     }
-
-     // Fees Structure Details Handling
-     feesStructureDetails = (e,i,type) => {
-       console.log(e)
-       let items = [...this.state.listArray];
-       let a = []
-       let item = {...items[i]};
-       if(type=='F'){
-         debugger
-         item.feesTypeId = e.target.value;
-       }
-       if(type=='A'){
-         item.amount = e.target.value;
-       }
-       if(type=='O'){
-         item.otherDescription = e.target.value;
-       }
-       items[i] = item;
-       this.setState({listArray: items});
-     }
-
-     // Fees Structure Details listArray length generate
-     showInputs = async () => {
-       //this.setState({studentmarks:this.state.searchStr? true : false})
-       let a = [];
-       for(let i=1;i<=parseInt(this.state.listLength); i++){
-         a.push({feesTypeId:'',amount:'',otherDescription:''})
-       }
-       console.log(a)
-       debugger
-       await this.setState({
-         listArray: a
-       },() => {
-         if(this.props.match.params.id!='insert'){
-           this.getStructureDetailById()
-         }
-         console.log(this.state.listArray)
-         debugger
-       })
-     }
 
   renderPageNumbers = () => {
     let pageNumbers = [];
@@ -1144,7 +728,7 @@ validateForm =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getInsertFeesStructure(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
+            onClick={() => this.getFeesStructureView(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
           >
             {number}
           </span>
@@ -1318,40 +902,23 @@ uploadFile=(e, type, i)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 67,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Class-</option>
-                        {this.state.classList.length > 0 ? this.state.classList.map(cls =>
-                          <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
+                      {this.state.studentClass}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Total Fees<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 23,marginRight: 30}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Total Fees" value={this.state.totalFees} onChange={this.handleInputs} name="totalFees" />
-                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.totalFees_ErMsg}</div>
+                      {this.state.totalFees}
                       </div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Fees Structure Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 18,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="feesStructure" value={this.state.feesStructure} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Fees Structure-</option>
-                        {this.state.feesStructureList.length > 0 ? this.state.feesStructureList.map(cls =>
-                          <option key={cls.StructureId} value={cls.StructureName}>{cls.StructureName}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
+                      {this.state.feesStructureType}
+                      </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 39,marginRight: 30}}> : </span>
-                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Session-</option>
-                        {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
-                          <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div></div>
+                      {this.state.sessionName}
+                      </div>
                       </div>
 
                       <div style={{marginTop: 10}} class="table-responsive">
@@ -1366,42 +933,12 @@ uploadFile=(e, type, i)=>{
                               <th scope="col">OtherDescription</th>
                             </tr>
                           </thead>
-                          <tbody>{this.renderTable()}</tbody>
+                          <tbody>{this.showFeesStructureView()}</tbody>
                         </table>
 
                       </div>
-                      {/*<i class="fa  fa-plus-circle" style={{marginTop: 3,fontSize: 30,marginRight: 2}} onClick={() => {handleAddClick()}}></i>*/}
-                      {/*this.state.list.map((x, i) => {
-                        return(<div><div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Fees Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="feesStructure" value={x.feesStructure} onChange={e => handleInputChange(e, i, 'feesStructure')}>
-                        <option value={'0'}>-Select Fees Type-</option>
-                        {this.state.feesStructureList.length > 0 ? this.state.feesStructureList.map(cls =>
-                          <option key={cls.StructureId} value={cls.StructureName}>{cls.StructureName}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Amount<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Amount" value={x.amount} onChange={e => handleInputChange(e, i, 'amount')} name="amount" />
-                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.amount_ErMsg}</div>
-                      </div>
-                      </div>
-
-                      <div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Other Description</span><span style={{marginLeft: 36,marginRight: 30}}> : </span>
-                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Other Description" value={x.otherDescription} onChange={e => handleInputChange(e, i, 'otherDescription')} name="otherDescription" />
-                      </div>
-                      </div></div>)})*/}
-
                       </div>
                     </div>
-                    {this.state.listLength&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
-                      <button className="searchbutton123" onClick={this.manageInsertFeesStructure}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertFeesStructure}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
-                    </div>}
                 </div>
               </div>
             </div>
@@ -1446,7 +983,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInsertFeesStructure} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageFeesStructureView} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1470,7 +1007,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleDeleteClose}>Close</Button>
-				<Button type="submit" onClick={this.deleteInsertFeesStructureById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" onClick={this.deleteFeesStructureViewById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1501,4 +1038,4 @@ uploadFile=(e, type, i)=>{
 
 
 
-export default InsertFeesStructure
+export default FeesStructureView
