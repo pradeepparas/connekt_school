@@ -98,11 +98,13 @@ import FeeType from './component/FeeType';
 import FeesStructure from './component/FeesStructure';
 import FeesStructureDetail from './component/FeesStructureDetail';
 import InstallmentMaster from './component/InstallmentMaster';
+import InsertInstallment from './component/InsertInstallment'
 import InstallmentDetail from './component/InstallmentDetail';
 import ChildInterests from './component/ChildInterests';
 import SchoolMedium from './component/SchoolMedium';
 import InsertFeesType from './component/InsertFeesType';
 import InsertFeesStructure from './component/InsertFeesStructure';
+import FeesStructureView from './component/FeesStructureView';
 
 class App extends React.Component {
 render() {
@@ -150,10 +152,11 @@ render() {
           <Route path="/feetype" exact={true} component= { FeeType } />
           <Route path="/feetype/:id1/:id2" exact={true} component= { InsertFeesType } />
           <Route path="/feestructure" exact={true} component= { FeesStructure } />
+          <Route path="/feestructures/:id" exact={true} component= { FeesStructureView } />
           <Route path="/feestructure/:id" exact={true} component= { InsertFeesStructure } />
           <Route path="/session" exact={true} component= { Session } />
           <Route path="/installment" exact={true} component= { InstallmentMaster } />
-          <Route path="/installment/:id" exact={true} component= { InstallmentDetail } />
+          <Route path="/installment/:id" exact={true} component= { InsertInstallment } />
           <Route path="/childinterests" exact={true} component= { ChildInterests } />
           <Route path="/school-medium" exact={true} component= { SchoolMedium } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
