@@ -1,5 +1,6 @@
 import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
+import {Link} from 'react-router-dom';
 import styles from "../css/App.module.css";
 import { Button } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
@@ -110,7 +111,7 @@ onChangeInsertType =(e)=>{
     this.setState({
       show: true,
       chapterFile:[], fileName:"",
-      title: 'Add Course',
+      title: 'Add Installment',
        installmentName:"",
       courseDescription:"",
       courseOtherDetails:"",
@@ -221,11 +222,7 @@ deleteInstallmentMasterById = async(e) => {
   e.preventDefault();
   //http://35.200.220.64:4000/connektschool/deleteInstallmentMaster?status=0&InstallmentMasterId=1
   this.setState({isLoading:true})
-//   {
-//     "status": "200",
-//     "error": true,
-//     "message": "InstallmentMaster Deleted."
-// }
+
   fetch(api_Url+`deleteInstallmentMaster?status=0&InstallmentMasterId=${this.state.id}`,{
    method:"GET",
    headers :{
@@ -320,17 +317,18 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    }
-   else if(this.state.installmentName.trim()==''){
+   if(this.state.installmentName.trim()==''){
        isValid= false
-        return this.setState({classId_ErMsg:"", installmentName_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({totalAmount_ErMsg:"",classId_ErMsg:"", installmentName_ErMsg:"Installment name is required",})
     }
-    else if(this.state.courseDescription.trim()==''){
+    else if(this.state.isAdd&&this.state.classId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+        return this.setState({totalAmount_ErMsg:"",classId_ErMsg:"Class name is required", installmentName_ErMsg:"",})
+    }
+
+    else if(this.state.totalAmount==''){
+        isValid= false
+        return this.setState({totalAmount_ErMsg:"Total Amount is required", classId_ErMsg:"", installmentName_ErMsg:"", })
     }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
@@ -341,6 +339,7 @@ validateForm =()=>{
     //     return this.setState({classId_ErMsg:"", installmentName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
+        this.setState({totalAmount_ErMsg:"", classId_ErMsg:"", installmentName_ErMsg:"", })
         return isValid
     }
 }
@@ -351,7 +350,10 @@ validateForm =()=>{
   manageInstallmentMaster = (e) => {
     debugger
     e.preventDefault();
-
+    if(!this.validateForm()){
+      debugger
+      return
+    }
    if(this.state.isAdd){
     var data = {
         "InstallmentName": this.state.installmentName,
@@ -657,7 +659,7 @@ validateForm =()=>{
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{session.ClassId}</td>
+            <td>{session.StudentClass}</td>
             <td>{session.InstallmentName}</td>
             <td>{session.TotalAmount}</td>
             <td>{session.Remark?session.Remark:'-'}</td>
@@ -667,8 +669,8 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editInstallmentMaster(session)} class="ti-pencil"></i>
-            {" "}  {" "}
+            {<Link to={`installment/${session.InstallmentMasterId}`}> <i  class="ti-pencil"></i></Link>}
+            {" "}  {" "}<Link to={`installments/${session.InstallmentMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteInstallmentMaster(session)} class="ti-trash"></i>}
             </td>
 
@@ -803,11 +805,11 @@ uploadFile=(e, type, i)=>{
               <div className="row align-items-center">
                 <div className="col-sm-6">
                   <div className="breadcrumbs-area clearfix">
-                    <h4 className="page-title pull-left">InstallmentMaster</h4>
+                    <h4 className="page-title pull-left">Installments</h4>
 
                     <ul className="breadcrumbs pull-left">
                       <li><a >Home</a></li>
-                      <li><span>InstallmentMaster</span></li>
+                      <li><span>Installments</span></li>
                     </ul>
                   </div>
                 </div>
@@ -844,19 +846,21 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">InstallmentMaster List</h4>
+                        <h4 class="header-title">Installment List</h4>
                         <p className={styles.addCountry}>
+                        <Link to="installment/insert" >
                           <button
-                            onClick={this.handleShow}
+                            //onClick={this.handleShow}
                             className="btn btn-warning btn-xs"
                             data-title="Add"
                             data-toggle="modal"
                             data-target="#add"
                           >
                             {" "}
-                      Add InstallmentMaster {" "}
+                      Create Installment {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
+                          </Link>
                         </p>
                       </div>
 
@@ -868,7 +872,7 @@ uploadFile=(e, type, i)=>{
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
                                 <th scope="col">Class Name</th>
-                                <th scope="col">Installment Name</th>
+                                <th scope="col">No. of Installments</th>
                                 <th scope="col">Total Amount</th>
                                 <th scope="col">Remarks</th>
                                 <th scope="col">Status</th>

@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import ReactDOM from "react-dom";
 import styles from "../css/App.module.css";
+import {Link} from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
 import { Form, FormGroup, FormControl, Col } from "react-bootstrap";
@@ -388,18 +389,18 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
+    if(this.state.feestypeId==''){
         isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({feestypeId_ErMsg:"Fees Type is required", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-   else if(this.state.feesStructure.trim()==''){
+   else if(this.state.amount==''){
        isValid= false
-        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({feestypeId_ErMsg:"", amount_ErMsg:"Amount is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-    else if(this.state.courseDescription.trim()==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
-    }
+    // else if(this.state.courseDescription.trim()==''){
+    //     isValid= false
+    //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+    // }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
     //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
@@ -409,6 +410,7 @@ validateForm =()=>{
     //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
+        this.setState({feestypeId_ErMsg:"", amount_ErMsg:"Amount is required",})
         return isValid
     }
 }
@@ -423,7 +425,7 @@ validateForm =()=>{
    if(this.state.isAdd){
       var data = {
           "FeesTypeMasterId":this.state.feestypeId,
-          "FeesStructureMasterId":this.state.feestructureId,
+          "FeesStructureMasterId":this.props.match.params.id,
           "Amount":this.state.amount,
           "OtherDescription":this.state.otherDescription
       }
@@ -476,7 +478,7 @@ validateForm =()=>{
           var data = {
               "FeesStructureDetailId":this.state.id,
               "FeesTypeMasterId":this.state.feestypeId,
-              "FeesStructureMasterId": this.state.feestructureId,
+              "FeesStructureMasterId": this.props.match.params.id,
               "Amount": this.state.amount,
               "OtherDescription":this.state.otherDescription,
               "StatusId":this.state.active?"1":"0"
@@ -732,11 +734,10 @@ validateForm =()=>{
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
+            <td>{fees.FeesType}</td>
+            <td>{fees.FeesStructureType}</td>
             <td>{fees.Amount}</td>
             <td>{fees.OtherDescription}</td>
-            <td>{fees.FeesStructureDetailId}</td>
-            <td>{fees.FeesStructureMasterId}</td>
-            <td>{fees.FeesTypeMasterId}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
             <td>{fees.StatusId==1?"Active":"In-Active"}</td>
 
@@ -859,7 +860,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='feestructuredetail'  shown='master' />
+      <SideBar tabIndex='feestructure'  shown='master' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -944,11 +945,10 @@ uploadFile=(e, type, i)=>{
                               <tr class="text-white">
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
+                                <th scope="col">Fees Type</th>
+                                <th scope="col">Fees Structure Type</th>
                                 <th scope="col">Amount</th>
                                 <th scope="col">Other Description</th>
-                                <th scope="col">Fees Structure DetailId</th>
-                                <th scope="col">Fees Structure MasterId</th>
-                                <th scope="col">Fees Type MasterId</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
 
@@ -1006,14 +1006,14 @@ uploadFile=(e, type, i)=>{
                           <option key={classId.FeesTypeMasterId} value={classId.FeesTypeMasterId}>{classId.FeesType}</option>) : null} </FormControl>
                       <small className={this.state.displaytext + " text-danger"}>{this.state.feestypeId_ErMsg}</small>
               </Col>
-            <Col sm={4}> Fees Structure <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            {/*<Col sm={4}> Fees Structure <small style={{color: 'red', fontSize: 18}}>*</small></Col>
                   <Col sm={9}>
                     <FormControl as="select" value={this.state.feestructureId} name="feestructureId" onChange={this.handleInputs} class="form-control">
                       <option value='0'>-Select Fees Structure-</option> {this.state.classList.length > 0 ? this.state.feesStructureList.map(classId =>
                         <option key={classId.FeesStructureMasterId} value={classId.FeesStructureMasterId}>{classId.FeesStructureType}</option>) : null} </FormControl>
                     <small className={this.state.displaytext + " text-danger"}>{this.state.feestructureId_ErMsg}</small>
-            </Col>
-            <Col sm={4}> Amount</Col>
+            </Col>*/}
+            <Col sm={4}> Amount<small style={{color: 'red', fontSize: 18}}>*</small></Col>
 						<Col sm={9}>
 							<FormControl type="text" placeholder="Amount" value={this.state.amount} onChange={this.handleInputs} name="amount" />
 							<small className={this.state.displaytext + " text-danger"}>{this.state.amount_ErMsg}</small>

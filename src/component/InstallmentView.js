@@ -22,7 +22,7 @@ const imageUrl = myConstClass.imageUrl
 const pageSize = myConstClass.pageSize
 const file1 = myConstClass.fileSize
 
-class InsertInstallment extends React.Component {
+class InstallmentView extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -86,7 +86,7 @@ class InsertInstallment extends React.Component {
             () => {
               if(this.state.count){
                 this.getClass(this.state.current_page);
-                this.getInsertInstallment(this.state.current_page)
+                this.getInstallmentView(this.state.current_page)
               }
             });
             if(e.target.name == 'installmentName'){
@@ -159,7 +159,7 @@ class InsertInstallment extends React.Component {
         this.getInstallmentDetailById();
       }
    this.getClass(1);
-   //this.getInsertInstallment(1)
+   //this.getInstallmentView(1)
    this.getFeeType();
    this.getSession()
 
@@ -273,6 +273,7 @@ class InsertInstallment extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
+          studentClass: data.InstallmentMaster[0].StudentClass,
           id: this.props.match.params.id,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.InstallmentMaster[0].ClassId,
@@ -409,7 +410,7 @@ onChangeInsertType =(e)=>{
   };
 // EDIT COURSE
 
-editInsertInstallment = (data) => {
+editInstallmentView = (data) => {
   console.log(data)
   debugger
   this.setState({
@@ -417,9 +418,9 @@ editInsertInstallment = (data) => {
     classId:data.ClassId,
      insertType:"single",
     title: 'Update Fees Structure',
-    feesStructure:data.InsertInstallmentType,
+    feesStructure:data.InstallmentViewType,
     active:data.StatusId==1?true:false,
-    id:data.InsertInstallmentMasterId,
+    id:data.InstallmentViewMasterId,
     totalAmount: data.TotalFees?data.TotalFees:"",
     totalAmount_ErMsg: "",
     feesStructure_ErMsg:"",
@@ -468,16 +469,16 @@ catch(err)
 
 /// ON SEARCH COURSE
 onSearchCourese=()=>{
-this.getInsertInstallment(1, this.state.current_page, this.state.classId, this.state.status)
+this.getInstallmentView(1, this.state.current_page, this.state.classId, this.state.status)
 }
 
 
 // delete section
-deleteInsertInstallment = (data) => {
+deleteInstallmentView = (data) => {
   console.log(data)
   debugger
    this.setState({
-     id: data.InsertInstallmentMasterId,
+     id: data.InstallmentViewMasterId,
      title: 'Delete Fees Structure',
      btntitle: 'Delete',
      btnValue: "Delete",
@@ -486,19 +487,19 @@ deleteInsertInstallment = (data) => {
      isEdit: false,
      isAdd: false,
      isDelete: true,
-     feesStructure: data.InsertInstallmentType,
+     feesStructure: data.InstallmentViewType,
      displaytext: 'hide_block',
    })
 
 }
 
 // delete fee by Id
-deleteInsertInstallmentById = async(e) => {
+deleteInstallmentViewById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteInsertInstallment?status=0&InsertInstallmentMasterId=1
+  //http://35.200.220.64:4000/connektschool/deleteInstallmentView?status=0&InstallmentViewMasterId=1
   this.setState({isLoading:true})
-  fetch(api_Url+`deleteFeeStructureMaster?status=0&InsertInstallmentMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteFeeStructureMaster?status=0&InstallmentViewMasterId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -514,7 +515,7 @@ deleteInsertInstallmentById = async(e) => {
 
      })
      this.setState({id:""},()=>{
-      this.getInsertInstallment(this.state.current_page, this.state.per_page)
+      this.getInstallmentView(this.state.current_page, this.state.per_page)
 
      })
      this.handleDeleteClose()
@@ -532,7 +533,7 @@ deleteInsertInstallmentById = async(e) => {
 }
 
 /// GET CLASS LIST by sir
-getInsertInstallment = async pageNumber => {
+getInstallmentView = async pageNumber => {
   debugger
   this.setState({isLoading:true})
 try{
@@ -544,7 +545,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInsertInstallmentBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getInstallmentViewBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -559,7 +560,7 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         feesStructureList: data.InsertInstallment,
+         feesStructureList: data.InstallmentView,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
@@ -621,7 +622,7 @@ validateForm =()=>{
 
 
   // manage Course
-  manageInsertInstallment = (e) => {
+  manageInstallmentView = (e) => {
     if(this.state.totalAmount==''){
       toast.error('fee structure is not present for selected class');
     }
@@ -763,7 +764,7 @@ validateForm =()=>{
               //
               // })
               this.insertInstallment()
-             //  this.getInsertInstallment(this.state.current_page, this.state.per_page)
+             //  this.getInstallmentView(this.state.current_page, this.state.per_page)
              // this.handleClose()
             }
             else{
@@ -1144,13 +1145,13 @@ validateForm =()=>{
     }
   }
 
-  showInsertInstallment = () => {
+  showInstallmentView = () => {
     if (this.state.feesStructureList !== undefined) {
       return this.state.feesStructureList.map((fees, i) => {
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{fees.InsertInstallmentType}</td>
+            <td>{fees.InstallmentViewType}</td>
             <td>{fees.StudentClass}</td>
             <td>{fees.TotalFees? fees.TotalFees:'-'}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
@@ -1160,9 +1161,9 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editInsertInstallment(fees)} class="ti-pencil"></i>
-            {" "}  {" "}<Link to={`feestructure/${fees.InsertInstallmentMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
-            {<i  onClick={() => this.deleteInsertInstallment(fees)} class="ti-trash"></i>}
+            <i  onClick={() => this.editInstallmentView(fees)} class="ti-pencil"></i>
+            {" "}  {" "}<Link to={`feestructure/${fees.InstallmentViewMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
+            {<i  onClick={() => this.deleteInstallmentView(fees)} class="ti-trash"></i>}
             </td>
             </tr>
         );
@@ -1178,20 +1179,13 @@ validateForm =()=>{
                 <td>{(i+1)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Installment No." name="installmentDetail" value={list.installmentDetail} onChange={(e)=>{this.feesStructureDetails(e,i,'I')}} />}</td>*/}
                 <td>Installment {(i+1)} {i==0&&`(admission,transport)`}</td>
-                <td key={i}><div style={{marginLeft: 0}}><DatePicker style={{ width: "322px",marginLeft: 0}} className="tableinput"
-                peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
-                selected={this.state.assignDt} value={list.fromDate} minDate={new Date()}
-                maxDate={list.toDate ? new Date(list.toDate) : ''}
-                onChange={(e)=>{this.feesStructureDetails(e,i,'F')}} placeholderText="MM-DD-YYYY" /></div></td>
+                <td key={i}>{list.fromDate}</td>
 
-                <td key={i}><DatePicker style={{ width: "322px",marginLeft: 0 }} className="tableinput"
-                peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
-                selected={this.state.assignDt} value={list.toDate} minDate={list.fromDate ? new Date(list.fromDate) : new Date()}
-                onChange={(e)=>{this.feesStructureDetails(e,i,'T')}} placeholderText="MM-DD-YYYY" /></td>
+                <td key={i}>{list.toDate}</td>
                 <td>{parseFloat(this.state.totalAmount/this.state.installmentName).toFixed(2)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Amount" name="amount" value={list.amount} onChange={(e)=>{this.feesStructureDetails(e,i,'A')}} />}</td>*/}
-                <td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Penalty" name="penalty" value={list.penalty} onChange={(e)=>{this.feesStructureDetails(e,i,'P')}} />}</td>
-                <td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Remarks" name="remark" value={list.remark} onChange={(e)=>{this.feesStructureDetails(e,i,'R')}} />}</td>
+                <td key={i}>{list.penalty?list.penalty:'-'}</td>
+                <td key={i}>{list.remark?list.remark:'-'}</td>
               </tr>
             );
           });
@@ -1270,7 +1264,7 @@ validateForm =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getInsertInstallment(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
+            onClick={() => this.getInstallmentView(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
           >
             {number}
           </span>
@@ -1438,18 +1432,12 @@ uploadFile=(e, type, i)=>{
                   <div style={{overflow: 'visible'}} class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Insert Installment":"Update Installment"}</h4>
+                        <h4 class="header-title">{"View Installment"}</h4>
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 77,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Class-</option>
-                        {this.state.classList.length > 0 ? this.state.classList.map(cls =>
-                          <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
+                      {this.state.studentClass}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Total Fees<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 55,marginRight: 30}}> : </span>
@@ -1462,12 +1450,12 @@ uploadFile=(e, type, i)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Number of Installments<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 4,marginRight: 30}}> : </span>
-                      <input style={{width: '40%'}} type="number" className="input-s br-w-1" placeholder="Enter Numbers" value={this.state.installmentName} onChange={this.handleInputs} name="installmentName" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.installmentName_ErMsg}</div>
+                      {this.state.installmentName}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 73,marginRight: 30}}> : </div>
-                      <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
+                      {this.state.remark?this.state.remark:'-'}
+                      </div>
                       </div>
                       </div>
 
@@ -1519,10 +1507,10 @@ uploadFile=(e, type, i)=>{
 
                       </div>
                     </div>
-                    {this.state.installmentName&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
-                      <button className="searchbutton123" onClick={this.manageInsertInstallment}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertInstallment}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
-                    </div>}
+                    {/*this.state.installmentName&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
+                      <button className="searchbutton123" onClick={this.manageInstallmentView}>Cancel</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInstallmentView}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                    </div>*/}
                 </div>
               </div>
             </div>
@@ -1567,7 +1555,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInsertInstallment} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInstallmentView} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1591,7 +1579,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleDeleteClose}>Close</Button>
-				<Button type="submit" onClick={this.deleteInsertInstallmentById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" onClick={this.deleteInstallmentViewById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1622,4 +1610,4 @@ uploadFile=(e, type, i)=>{
 
 
 
-export default InsertInstallment
+export default InstallmentView
