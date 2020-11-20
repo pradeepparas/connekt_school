@@ -105,6 +105,7 @@ import SchoolMedium from './component/SchoolMedium';
 import InsertFeesType from './component/InsertFeesType';
 import InsertFeesStructure from './component/InsertFeesStructure';
 import FeesStructureView from './component/FeesStructureView';
+import InstallmentView from './component/InstallmentView';
 
 class App extends React.Component {
 render() {
@@ -156,6 +157,7 @@ render() {
           <Route path="/feestructure/:id" exact={true} component= { InsertFeesStructure } />
           <Route path="/session" exact={true} component= { Session } />
           <Route path="/installment" exact={true} component= { InstallmentMaster } />
+          <Route path="/installments/:id" exact={true} component= { InstallmentView } />
           <Route path="/installment/:id" exact={true} component= { InsertInstallment } />
           <Route path="/childinterests" exact={true} component= { ChildInterests } />
           <Route path="/school-medium" exact={true} component= { SchoolMedium } />
