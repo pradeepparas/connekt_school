@@ -26,6 +26,10 @@ class InsertInstallment extends React.Component {
   constructor() {
     super();
     this.state = {
+      name: '',
+      value: 0.0,
+      feeType: [],
+      masterId: '',
       remark: '',
       installmentName: '',
       installmentName_ErMsg: '',
@@ -121,15 +125,21 @@ class InsertInstallment extends React.Component {
     // console.log(list, 'list')
     //  console.log(data,'datA',)
     this.setState({totalAmount: data.FeesStructure[0].TotalFees,
-                  fixedAmount: data.FeesStructure[0].TotalFees})
+                  fixedAmount: data.FeesStructure[0].TotalFees},() => {
+                    this.getFeesStructureMasterId()
+                  })
 
    } else {
       debugger
       toast.error('please enter fee structure for selected class')
        this.setState({
         totalAmount: '',
-        fixedAmount: ''
-       });
+        fixedAmount: '',
+        name:'',
+        count: 0.0
+      },()=> {
+
+      });
    }
   this.setState({isLoading:false})
   }
@@ -274,6 +284,7 @@ class InsertInstallment extends React.Component {
      console.log('list')
        this.setState({
           id: this.props.match.params.id,
+          studentClass: data.InstallmentMaster[0].StudentClass,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.InstallmentMaster[0].ClassId,
          // totalAmount: data.FeesStructure[0].TotalFees,
@@ -284,6 +295,8 @@ class InsertInstallment extends React.Component {
          installmentName: data.InstallmentMaster[0].InstallmentName,
          isEdit:true,
          isAdd:false
+       },()=> {
+         //this.getFeesStructureMasterId()
        });
 
    } else {
@@ -299,6 +312,101 @@ class InsertInstallment extends React.Component {
     debugger
   }
   }
+
+
+
+  getFeesStructureMasterId = async() => {
+  //  http://35.200.220.64:4000/connektschool/getFeesStructureByClassIdAndFeeStructureType?page=1&size=10&classId=5&status=1&feesStructureType=Installment
+  this.setState({isLoading:true})
+try{
+const response = await fetch( api_Url+`getFeesStructureByClassIdAndFeeStructureType?page=1&size=50&classId=${this.state.classId}&status=1&feesStructureType=Installment`,{
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+    }
+  }
+);
+const data = await response.json();
+ if(data.success){
+   debugger
+   console.log('data', data)
+   debugger
+   this.setState({
+         masterId: data.FeesStructure[0].FeesStructureMasterId,
+     }, () => {
+       this.getFeesTypeById()
+     });
+
+ } else {
+     this.setState({
+      masterId: []
+     });
+ }
+this.setState({isLoading:false})
+}
+catch(err)
+{
+this.setState({isLoading: false})
+toast.error('uploading failed')
+}
+  }
+
+// fees Type
+  getFeesTypeById = async() => {
+    // http://35.200.220.64:4000/connektschool/getFeesStructureDetailByStructureId?status=1&id=13&page=1&size=1
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getFeesStructureDetailByStructureId?status=1&id=${this.state.masterId}&page=1&size=50`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     let count = 0
+     let name = ''
+     data.FeesStructureDetail.map((item,index) => {
+       if(item.ModeofPayment=='Single'){
+         name = name + item.FeesType+',';
+         count = +count+(+item.Amount)
+         console.log(count)
+         debugger
+       }
+     })
+     console.log(count,name)
+     debugger
+     this.setState({
+           name: name,
+           value: count,
+       });
+
+   } else {
+       this.setState({
+         count: 0,
+         feeType: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+  }
+
+
+
+
+
 
 
   /// GET CLASS LIST by sir
@@ -1177,7 +1285,7 @@ validateForm =()=>{
               <tr style={{padding: 155}} key={i}>
                 <td>{(i+1)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Installment No." name="installmentDetail" value={list.installmentDetail} onChange={(e)=>{this.feesStructureDetails(e,i,'I')}} />}</td>*/}
-                <td>Installment {(i+1)} {i==0&&`(admission,transport)`}</td>
+                <td>Installment {(i+1)} {i==0&&`${this.state.name}`}</td>
                 <td key={i}><div style={{marginLeft: 0}}><DatePicker style={{ width: "322px",marginLeft: 0}} className="tableinput"
                 peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
                 selected={this.state.assignDt} value={list.fromDate} minDate={new Date()}
@@ -1188,7 +1296,7 @@ validateForm =()=>{
                 peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
                 selected={this.state.assignDt} value={list.toDate} minDate={list.fromDate ? new Date(list.fromDate) : new Date()}
                 onChange={(e)=>{this.feesStructureDetails(e,i,'T')}} placeholderText="MM-DD-YYYY" /></td>
-                <td>{parseFloat(this.state.totalAmount/this.state.installmentName).toFixed(2)}</td>
+                <td>{i==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((this.state.value)-(((this.state.totalAmount))/this.state.installmentName)).toFixed(2)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Amount" name="amount" value={list.amount} onChange={(e)=>{this.feesStructureDetails(e,i,'A')}} />}</td>*/}
                 <td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Penalty" name="penalty" value={list.penalty} onChange={(e)=>{this.feesStructureDetails(e,i,'P')}} />}</td>
                 <td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Remarks" name="remark" value={list.remark} onChange={(e)=>{this.feesStructureDetails(e,i,'R')}} />}</td>
@@ -1443,13 +1551,13 @@ uploadFile=(e, type, i)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 77,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                      {this.props.match.params.id==='insert'?<><select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
                           <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
                         ) : null}
                       </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div></>: <span style={{display: 'inline-flex',marginBottom: 7}}>{this.state.studentClass}</span>}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Total Fees<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 55,marginRight: 30}}> : </span>
