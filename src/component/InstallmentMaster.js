@@ -660,7 +660,7 @@ validateForm =()=>{
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
             <td>{session.StudentClass}</td>
-            <td>{session.InstallmentName}</td>
+            <td>{session.NumberOfInstallments}</td>
             <td>{session.TotalAmount}</td>
             <td>{session.Remark?session.Remark:'-'}</td>
             <td>{session.StatusId==1?"Active":"In-Active"}</td>
@@ -669,7 +669,7 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            {<Link to={`installment/${session.InstallmentMasterId}`}> <i  class="ti-pencil"></i></Link>}
+            {<Link to={`installment/${session.InstallmentMasterId}/${session.StatusId}`}> <i  class="ti-pencil"></i></Link>}
             {" "}  {" "}<Link to={`installments/${session.InstallmentMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteInstallmentMaster(session)} class="ti-trash"></i>}
             </td>
@@ -848,7 +848,7 @@ uploadFile=(e, type, i)=>{
                       <div className="">
                         <h4 class="header-title">Installment List</h4>
                         <p className={styles.addCountry}>
-                        <Link to="installment/insert" >
+                        <Link to="installment/insert/insert" >
                           <button
                             //onClick={this.handleShow}
                             className="btn btn-warning btn-xs"

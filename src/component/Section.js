@@ -110,7 +110,7 @@ onChangeInsertType =(e)=>{
     this.setState({
       show: true,
       chapterFile:[], fileName:"",
-      title: 'Add Course',
+      title: 'Add Section',
        sectionName:"",
       courseDescription:"",
       courseOtherDetails:"",
@@ -317,18 +317,20 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", sectionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    }
-   else if(this.state.sectionName.trim()==''){
+   var sectionValid =this.state.sectionName.match(/^[a-z0-9]+$/i)
+   //var value = "^[a-zA-Z0-9]*$"
+    // if(this.state.classId==''){
+    //     isValid= false
+    //     return this.setState({classId_ErMsg:"Class name is required", sectionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+    // }
+   if(this.state.sectionName.trim()==''|| !sectionValid){
        isValid= false
-        return this.setState({classId_ErMsg:"", sectionName_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", sectionName_ErMsg:"Section name is required or Invalid section name", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-    else if(this.state.courseDescription.trim()==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"", sectionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
-    }
+    // else if(this.state.courseDescription.trim()==''){
+    //     isValid= false
+    //     return this.setState({classId_ErMsg:"", sectionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+    // }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
     //     return this.setState({classId_ErMsg:"", sectionName_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
@@ -348,7 +350,10 @@ validateForm =()=>{
   manageSection = (e) => {
     debugger
     e.preventDefault();
-
+    if(!this.validateForm()){
+      return
+    }
+    //validateForm
    if(this.state.isAdd){
     var data = {
         "SectionName": this.state.sectionName

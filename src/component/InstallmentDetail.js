@@ -99,7 +99,7 @@ class InstallmentDetail extends React.Component {
     } else {
 
    this.getClass(1);
-   this.getInstallmentMasterId();
+   //this.getInstallmentMasterId();
    this.getInstallmentDetail(1)
 
 
@@ -107,42 +107,42 @@ class InstallmentDetail extends React.Component {
   }
 
   /// GET CLASS LIST by sir
-  getInstallmentMasterId = async pageNumber => {
-    debugger
-    this.setState({isLoading:true})
-  try{
-
-  const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=1&size=50&status=1`,{
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
-      }
-    }
-  );
-  const data = await response.json();
-   if(data.success){
-     debugger
-     console.log('data', data)
-     debugger
-     this.setState({
-           installmentList: data.InstallmentMaster,
-       });
-
-   } else {
-       this.setState({
-        installmentList: []
-       });
-   }
-  this.setState({isLoading:false})
-  }
-  catch(err)
-  {
-  this.setState({isLoading: false})
-  toast.error('uploading failed')
-  }
-   };
+  // getInstallmentMasterId = async pageNumber => {
+  //   debugger
+  //   this.setState({isLoading:true})
+  // try{
+  //
+  // const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=1&size=50&status=1`,{
+  //     method: "GET",
+  //     headers: {
+  //       "Accept": "application/json",
+  //       "Content-Type": "application/json",
+  //       'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+  //     }
+  //   }
+  // );
+  // const data = await response.json();
+  //  if(data.success){
+  //    debugger
+  //    console.log('data', data)
+  //    debugger
+  //    this.setState({
+  //          installmentList: data.InstallmentMaster,
+  //      });
+  //
+  //  } else {
+  //      this.setState({
+  //       installmentList: []
+  //      });
+  //  }
+  // this.setState({isLoading:false})
+  // }
+  // catch(err)
+  // {
+  // this.setState({isLoading: false})
+  // toast.error('uploading failed')
+  // }
+  //  };
 
 // ON CHANGE INSERT TYPE
 onChangeInsertType =(e)=>{
@@ -315,7 +315,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&InstallmentMasterId=`,{
+const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&InstallmentMasterId=${this.props.match.params.id}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -336,6 +336,7 @@ const data = await response.json();
      });
 
  } else {
+    debugger
      this.setState({
       installdetailList: []
      });
@@ -344,6 +345,7 @@ this.setState({isLoading:false})
 }
 catch(err)
 {
+  debugger
 this.setState({isLoading: false})
 toast.error('uploading failed')
 }
@@ -363,18 +365,24 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    }
-   else if(this.state.installmentDetail.trim()==''){
+   if(this.state.installmentDetail.trim()==''){
        isValid= false
-        return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({amount_ErMsg:"", installmentDetail_ErMsg:"Installment detail name is required", fromDate_ErMsg:"",toDate_ErMsg:""})
     }
-    else if(this.state.courseDescription.trim()==''){
+    else if(this.state.amount==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
+        return this.setState({amount_ErMsg:"Amount is required", installmentDetail_ErMsg:"", fromDate_ErMsg:"",toDate_ErMsg:""})
     }
+
+    else if(this.state.fromDate.trim()==''){
+        isValid= false
+        return this.setState({amount_ErMsg:"", installmentDetail_ErMsg:"", fromDate_ErMsg:"From Date is required",toDate_ErMsg:""})
+    }
+
+     else if(this.state.toDate.trim()==''){
+         isValid= false
+         return this.setState({amount_ErMsg:"", installmentDetail_ErMsg:"", fromDate_ErMsg:"",toDate_ErMsg:"To Date is required"})
+     }
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
     //     return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
@@ -384,6 +392,7 @@ validateForm =()=>{
     //     return this.setState({classId_ErMsg:"", installmentDetail_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
+        this.setState({amount_ErMsg:"", installmentDetail_ErMsg:"", fromDate_ErMsg:"",toDate_ErMsg:""})
         return isValid
     }
 }
@@ -394,14 +403,17 @@ validateForm =()=>{
   manageInstallmentDetail = (e) => {
     debugger
     e.preventDefault();
-
+    if(!this.validateForm()){
+      debugger
+      return
+    }
    if(this.state.isAdd){
     var data = {
         "InstallmentDetail": this.state.installmentDetail,
         "Amount": this.state.amount,
         "FromDate": this.state.fromDate,
         "ToDate": this.state.toDate,
-        "InstallmentMasterId": this.state.installId,
+        "InstallmentMasterId": this.props.match.params.id,
         "Remark": this.state.remark,
         "Penalty": this.state.penalty
       }
@@ -933,7 +945,7 @@ uploadFile=(e, type, i)=>{
                                 <th scope="col">S.No</th>
                                 <th scope="col">Class Name</th>
                                 <th scope="col">Installment Name</th>
-                                <th scope="col">Total Amount</th>
+                                <th scope="col">Amount</th>
                                 <th scope="col">Remarks</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
@@ -985,13 +997,13 @@ uploadFile=(e, type, i)=>{
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
             <div>
-            <Col sm={4}> Installment Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            {/*<Col sm={4}> Installment Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
             <Col sm={9}>
               <FormControl as="select" value={this.state.installId} name="installId" onChange={this.handleInputs} class="form-control">
                 <option>-Select Installment Name-</option> {this.state.installmentList.length > 0 ? this.state.installmentList.map(classId =>
                   <option key={classId.InstallmentMasterId} value={classId.InstallmentMasterId}>{classId.InstallmentName}</option>) : null} </FormControl>
               <small className={this.state.displaytext + " text-danger"}>{this.state.installId_ErMsg}</small>
-            </Col>
+            </Col>*/}
 						<Col sm={4}> Installment Detail <small style={{color: 'red', fontSize: 18}}>*</small></Col>
 						<Col sm={9}>
 							<FormControl type="text" placeholder="Installment Detail" value={this.state.installmentDetail} onChange={this.handleInputs} name="installmentDetail" />

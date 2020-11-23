@@ -114,7 +114,7 @@ onChangeInsertType =(e)=>{
     this.setState({
       show: true,
       chapterFile:[], fileName:"",
-      title: 'Add Course',
+      title: 'Add Religion',
        religionName:"",
       courseDescription:"",
       courseOtherDetails:"",
@@ -194,7 +194,7 @@ deleteReligionById = async(e) => {
 //     "error": true,
 //     "message": "Religion Deleted."
 // }
-  fetch(api_Url+`deleteReligion?status=0&ReligionMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteReligion?ReligionMasterId=${this.state.id}&status=0`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -241,7 +241,7 @@ try{
   } else {
   }
   // api_Url+`getReligionBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`
-const response = await fetch( `http://35.200.220.64:4000/connektschool/getReligionBySchoolId?page=1&size=10&status=1`,{
+const response = await fetch( api_Url+`getReligionBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -289,18 +289,13 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.classId==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"Class name is required", religionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
-    }
-   else if(this.state.religionName.trim()==''){
+   var religionNameValid =this.state.religionName.match(/^[a-zA-Z]*$/)
+
+    if(this.state.religionName.trim()==''|| !religionNameValid){
        isValid= false
-        return this.setState({classId_ErMsg:"", religionName_ErMsg:"Course name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
+        return this.setState({classId_ErMsg:"", religionName_ErMsg:"Religion name is required", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:""})
     }
-    else if(this.state.courseDescription.trim()==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"", religionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"Description is required", courseImage_ErMsg:""})
-    }
+
     // else  if(this.state.courseOtherDetails.trim()==''){
     //     isValid= false
     //     return this.setState({classId_ErMsg:"", religionName_ErMsg:"", courseOtherDetails_ErMsg:"Course other description is required", courseDescription_ErMsg:"", courseImage_ErMsg:""})
@@ -310,6 +305,7 @@ validateForm =()=>{
     //     return this.setState({classId_ErMsg:"", religionName_ErMsg:"", courseOtherDetails_ErMsg:"", courseDescription_ErMsg:"", courseImage_ErMsg:"Course image is required"})
     // }
     else{
+
         return isValid
     }
 }
@@ -320,6 +316,9 @@ validateForm =()=>{
   manageReligion = (e) => {
     debugger
     e.preventDefault();
+    if(!this.validateForm()){
+      return
+    }
 
    if(this.state.isAdd){
     var data = {

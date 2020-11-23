@@ -769,7 +769,9 @@ validateForm =()=>{
 
   cancelFeesType = () => {
     if(this.props.match.params.id1=='insert'){
-      this.setState({feesType: '', modeofPayment: ''})
+      this.setState({feesType: '', modeofPayment: '',sessionId:''})
+    } else {
+      this.getFeeTypeById(1)
     }
   }
 

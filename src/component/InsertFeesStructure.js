@@ -160,6 +160,16 @@ class InsertFeesStructure extends React.Component {
 
       list.shift()
      console.log(list)
+
+     while(this.state.listLength>list.length){
+       list.push({
+         "feesTypeId": "",
+        //"FeesStructureMasterId":this.props.params.match.id,
+        "amount": "",
+        "otherDescription": ""
+       })
+     }
+
      debugger
        this.setState({
 
@@ -712,7 +722,7 @@ validateForm =()=>{
 
   getInsertFeesStructure = async(id)=> {
 
-    if(this.state.isAdd){
+    if(this.state.isAdd||this.props.match.params.id=='insert'){
       this.setState({isLoading:true})
     debugger
     console.log(id)
@@ -1216,6 +1226,17 @@ uploadFile=(e, type, i)=>{
 
       }
    }
+
+   cancelFeesStructure = () => {
+     if(this.props.match.params.id=='insert'){
+       this.setState({classId: "", totalFees: "",sessionId:"",feesStructure:"",sessionId:""})
+       this.showInputs()
+     } else {
+       this.getStructureTypeById(1)
+       this.showInputs()
+     }
+   }
+
   render() {
 
     const handleInputChange = (e, index, type) => {
@@ -1399,7 +1420,7 @@ uploadFile=(e, type, i)=>{
                       </div>
                     </div>
                     {this.state.listLength&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
-                      <button className="searchbutton123" onClick={this.manageInsertFeesStructure}>Cancel</button>
+                      <button className="searchbutton123" onClick={this.cancelFeesStructure}>Cancel</button>
                       <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertFeesStructure}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                     </div>}
                 </div>

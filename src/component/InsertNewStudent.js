@@ -121,35 +121,22 @@ class InsertNewStudent extends React.Component {
 
   }
 
-  // editHoliday = (data) => {
-  //   console.log(data)
-  //   debugger
-  //   this.setState({
-  //      show: true,
-  //      holidayName: data.HolidayName,
-  //      startDate: moment(data.FromDate).format("YYYY-MM-DD"),
-  //      endDate: moment(data.ToDate).format("YYYY-MM-DD"),
-  //      id: data.HolidayId,
-  //     insertType:"single",
-  //     // courseImage:[],
-  //      title: 'Update Holiday',
-  //      active:data.StatusId==1?true:false,
-  //      btntitle: 'Update',
-  //      isAdd: false,
-  //      isEdit: true,
-  //      isDelete: false,
-  //      displaytext: 'hide_block',
-  //       });
-  //
-  // };
-
-
   // ON CHANGE INSERT TYPE
   onChangeInsertType =(e)=>{
     debugger
     this.setState({insertType:e.target.name,})
     }
 
+
+  handleKeyPress = (event) => {
+      if(event.key === 'Enter'){
+        if(this.state.enquiryId){
+        this.getEnquiry(this.state.enquiryId)
+      } else {
+        toast.error('Enquiry Id is required')
+      }
+    }
+    }
 
 // handle input changes
   handleInputs = (e) => {
@@ -174,7 +161,9 @@ class InsertNewStudent extends React.Component {
         //this.getStudentList(e.target.value)
       }
       if(e.target.name=='enquiryId'){
-        this.getEnquiry(e.target.value)
+        console.log(e)
+        debugger
+        // this.getEnquiry(e.target.value)
       }
       }
   }
@@ -206,13 +195,18 @@ class InsertNewStudent extends React.Component {
           permanentAddress: data.EnquiryData[0].PermanentAddress? data.EnquiryData[0].PermanentAddress: '',
          // enquiryList: data.EnquiryData,
        });
-
+       toast.success(`Details are found for EnquiryId = ${id}`)
 
    } else {
-       // this.setState({
-       // });
+       this.setState({
+         classId: '',
+         fatherName: '',
+         fatherMobile: '',
+         localAddress: '',
+         permanentAddress:  '',
+       });
        if(id){
-         toast.success(`No details are found for EnquiryId = ${id}`)
+         toast.error(`No details are found for EnquiryId = ${id}`)
        }
 
    }
@@ -1382,6 +1376,39 @@ uploadFile=(e, type)=>{
       }
 
   }
+
+  cancelStudent = () => {
+    if(this.props.match.params.id=='insert'){
+      this.setState({
+        studentName: "",
+        gender: "",
+        birthDate: "",
+        classId: "",
+        enrollment: "",
+        medium: "",
+        previousSchool: "",
+        enquiryId: "",
+        anyDisability: "",
+        childInterests: "",
+        sectionId: "",
+        nationality: "",
+        religionId: "",
+        casteId: "",
+        category: "",
+        bloodgroupId: "",
+        studentMobile: "",
+        enrollment: "",
+        localAddress:"",
+        permanentAddress: "",
+      })
+      // this.showInputs()
+    } else {
+      // this.getStructureTypeById(1)
+      // this.showInputs()
+      this.getStudentById(1)
+    }
+  }
+
   render() {
     return (
       <div>
@@ -1460,7 +1487,7 @@ uploadFile=(e, type)=>{
 
                       {this.state.admission=="2"&&<><div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 91,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id" value={this.state.enquiryId} onChange={this.handleInputs} name="enquiryId" />
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id" value={this.state.enquiryId} onChange={this.handleInputs} onKeyPress={this.handleKeyPress} name="enquiryId" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}</div>}
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
@@ -1605,6 +1632,7 @@ uploadFile=(e, type)=>{
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="any disability" value={this.state.anyDisability} onChange={this.handleInputs} name="anyDisability" />
                       </div>
                       </div>
+
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Child Interests</span><span style={{marginLeft: 64,marginRight: 30}}> : </span>
@@ -1692,6 +1720,10 @@ uploadFile=(e, type)=>{
 
                       <button className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                       </div>
+                    </div>
+                    <div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
+                      <button className="searchbutton123" onClick={this.cancelStudent}>Cancel</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                     </div>
 
                 </div>

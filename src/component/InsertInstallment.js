@@ -26,6 +26,10 @@ class InsertInstallment extends React.Component {
   constructor() {
     super();
     this.state = {
+      alreadySaved: true,
+      statusId: "",
+      statusDetails: [{statusId:"2",statusName:"Inactive"},
+                      {statusId:"1",statusName:"Active"}],
       name: '',
       value: 0.0,
       feeType: [],
@@ -127,19 +131,88 @@ class InsertInstallment extends React.Component {
     this.setState({totalAmount: data.FeesStructure[0].TotalFees,
                   fixedAmount: data.FeesStructure[0].TotalFees},() => {
                     this.getFeesStructureMasterId()
+                    this.getDetails()
                   })
 
    } else {
       debugger
       toast.error('please enter fee structure for selected class')
        this.setState({
+        installmentName: '',
+        remark: '',
+        listArray: [],
         totalAmount: '',
         fixedAmount: '',
         name:'',
-        count: 0.0
+        value: 0.0
       },()=> {
 
       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+    debugger
+  }
+  }
+
+  getDetails = async() => {
+    //http://35.200.220.64:4000/connektschool/getInstallmentDetailBySchoolAndClassId?page=1&size=10&classId=1&status=1
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getInstallmentDetailBySchoolAndClassId?page=1&size=10&classId=${this.state.classId}&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     console.log(data)
+     debugger
+     console.log(data,'datABBBBBBBBBBB',)
+    // console.log(list, 'list')
+    //  console.log(data,'datA',)
+    let list = [{
+      "installmentDetail":"",
+      "amount": "",
+      "fromDate": "",
+      "toDate": "",
+      //"InstallmentMasterId": id,
+      "penalty": "",
+      "remark": ""
+    }]
+    data.InstallmentDetail.map((item,index) => {
+      list.push({
+        "installmentDetail": item.InstallmentDetail,
+        "amount":item.Amount,
+       "fromDate": moment(item.FromDate).format("YYYY-MM-DD"),
+       "toDate": moment(item.ToDate).format("YYYY-MM-DD"),
+       "penalty": item.Penalty? item.Penalty: '',
+       "remark": item.Remarks? item.Remarks: '',
+      })
+    })
+    list.shift()
+
+    this.setState({
+      listArray: list,
+      alreadySaved: false,
+      installmentName: data.InstallmentDetail[0].NumberOfInstallments,
+                  })
+
+   } else {
+      debugger
+      //toast.error('please enter fee structure for selected class')
+       this.setState({
+         listArray: [],
+         alreadySaved: true,
+         installmentName: "",
+       });
    }
   this.setState({isLoading:false})
   }
@@ -164,7 +237,7 @@ class InsertInstallment extends React.Component {
     if (token === null) {
       return this.props.history.push('/login');
     } else {
-      if(this.props.match.params.id!=='insert'){
+      if(this.props.match.params.id1!=='insert'){
         this.getInstallmentMasterById(1)
         this.getInstallmentDetailById();
       }
@@ -180,7 +253,7 @@ class InsertInstallment extends React.Component {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?status=1&page=1&size=50&InstallmentMasterId=${this.props.match.params.id}`,{
+  const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?status=1&page=1&size=50&InstallmentMasterId=${this.props.match.params.id1}`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -236,7 +309,7 @@ class InsertInstallment extends React.Component {
      debugger
        this.setState({
 
-         // id: this.props.match.params.id,
+         // id: this.props.match.params.id1,
           listArray: list,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          // classId: data.FeesStructure[0].ClassId,
@@ -265,7 +338,7 @@ class InsertInstallment extends React.Component {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getInstallmentMasterByMasterId?status=1&InstallmentMasterId=${this.props.match.params.id}&page=1&size=1`,{
+  const response = await fetch( api_Url+`getInstallmentMasterByMasterId?status=${this.props.match.params.id2}&InstallmentMasterId=${this.props.match.params.id1}&page=1&size=1`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -283,20 +356,22 @@ class InsertInstallment extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
-          id: this.props.match.params.id,
+          id: this.props.match.params.id1,
           studentClass: data.InstallmentMaster[0].StudentClass,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.InstallmentMaster[0].ClassId,
          // totalAmount: data.FeesStructure[0].TotalFees,
          // sessionId: data.FeesStructure[0].SessionId,
-         statusId: data.InstallmentMaster[0].StatusId,
+         //statusId: data.FeesType[0].StatusId=='1'?'1':'2',
+         statusId: data.InstallmentMaster[0].StatusId=='1'?'1':'2',
          remark: data.InstallmentMaster[0].Remark,
          totalAmount: data.InstallmentMaster[0].TotalAmount,
-         installmentName: data.InstallmentMaster[0].InstallmentName,
+         installmentName: data.InstallmentMaster[0].NumberOfInstallments,
+         //installmentName: data.InstallmentMaster[0].InstallmentName,
          isEdit:true,
          isAdd:false
        },()=> {
-         //this.getFeesStructureMasterId()
+         this.getFeesStructureMasterId()
        });
 
    } else {
@@ -390,8 +465,8 @@ toast.error('uploading failed')
 
    } else {
        this.setState({
-         count: 0,
-         feeType: []
+         value: 0,
+         name: ""
        });
    }
   this.setState({isLoading:false})
@@ -700,28 +775,28 @@ toast.error('uploading failed')
 validateForm =()=>{
   debugger
    var isValid=true;
-    if(this.state.installmentName.trim()==''){
-      isValid= false
-      return this.setState({installmentName_ErMsg:'', classId_ErMsg:"", feesStructure_ErMsg:"",totalAmount_ErMsg:"", sessionId_ErMsg:""})
-    }
-    else if(this.state.classId==''){
+
+     if(this.state.classId==''){
         isValid= false
         return this.setState({classId_ErMsg:"Class name is required", feesStructure_ErMsg:"",totalAmount_ErMsg:"", sessionId_ErMsg:""})
+    } else if(this.state.installmentName==''){
+      isValid= false
+      return this.setState({installmentName_ErMsg:'please enter no. of Installments', classId_ErMsg:"", feesStructure_ErMsg:"",totalAmount_ErMsg:"", sessionId_ErMsg:""})
     }
     // else if(this.state.totalAmount==''||isNaN(this.state.totalAmount)){
     //     isValid= false
     //      return this.setState({installmentName_ErMsg:'',classId_ErMsg:"", feesStructure_ErMsg:"",totalAmount_ErMsg:"total fees is required or invalid number", sessionId_ErMsg:""})
     //  }
-   else if(this.state.feesStructure.trim()==''){
-       isValid= false
-        return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"Fees Structure type is required", totalAmount_ErMsg:"", sessionId_ErMsg:""})
-    }
+   // else if(this.state.feesStructure.trim()==''){
+   //     isValid= false
+   //      return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"Fees Structure type is required", totalAmount_ErMsg:"", sessionId_ErMsg:""})
+   //  }
     // else if(this.state.sessionId==''){
     //     isValid= false
     //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", totalAmount_ErMsg:"", sessionId_ErMsg:"Session is required"})
     // }
     else{
-        this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", totalAmount_ErMsg:"", session_ErMsg:""})
+        this.setState({classId_ErMsg:"", installmentName_ErMsg:"", totalAmount_ErMsg:"", session_ErMsg:""})
         return isValid
     }
 }
@@ -737,16 +812,29 @@ validateForm =()=>{
     debugger
     debugger
     e.preventDefault();
-    // if(!this.validateForm()){
-    //   debugger
-    //   return
-    // }
+    if(!this.validateForm()){
+      debugger
+      return
+    }
     //
     //
-    return
+    debugger
+    // return
+    var value = false
+    for(let i=0;i<this.state.listArray.length-1;i++){
+      if(this.state.listArray[i].toDate==''||this.state.listArray[i].fromDate==''){
+        value = true;
+        break;
+      }
+    }
+    if(value){
+      toast.error('please fill dates')
+      return
+    }
+
     var empty = false
     for(let i=0;i<this.state.listArray.length-1;i++){
-      if(this.state.listArray[i].toDate>=this.state.listArray[i].fromDate){
+      if(this.state.listArray[i].toDate>=this.state.listArray[i+1].fromDate){
         empty = true;
         break;
       }
@@ -786,7 +874,7 @@ validateForm =()=>{
     // }
     //toast.success('true')
     //return
-   if(this.state.isAdd||this.props.match.params.id=='insert'){
+   if(this.state.isAdd||this.props.match.params.id1=='insert'){
     // {
     //     "InstallmentName":"Test",
     //     "ClassId":1,(DD)
@@ -795,7 +883,8 @@ validateForm =()=>{
     // Note:- "Remark can be null at the insertion.
 
      var data = {
-       "InstallmentName": this.state.installmentName,
+       "NumberOfInstallments": this.state.installmentName,
+       //"InstallmentName": this.state.installmentName,
        "ClassId": this.state.classId,
        "TotalAmount": this.state.totalAmount,
        "Remark": this.state.remark
@@ -845,9 +934,11 @@ validateForm =()=>{
    else if(this.state.isEdit){
 
             var data = {
-              "InstallmentMasterId":this.props.match.params.id,
-              "InstallmentName": this.state.installmentName,
-              "StatusId":"1",
+              "InstallmentMasterId":this.props.match.params.id1,
+              "NumberOfInstallments": this.state.installmentName,
+              //"InstallmentName": this.state.installmentName,
+              // "StatusId":"1",
+              "StatusId":this.state.statusId=='1'?"1":"0",
               "TotalAmount": this.state.totalAmount,
               "Remark": this.state.remark
             }
@@ -887,7 +978,7 @@ validateForm =()=>{
 
   insertInstallment = async(id)=> {
 
-    if(this.state.isAdd ||this.props.match.params.id=='insert'){
+    if(this.state.isAdd ||this.props.match.params.id1=='insert'){
       this.setState({isLoading:true})
     debugger
     console.log(id)
@@ -921,7 +1012,7 @@ validateForm =()=>{
       this.state.listArray.map((data, index)=> {
         list.push({
           "InstallmentDetail":`Installment ${index+1}`,
-          "Amount": parseFloat(this.state.totalAmount/this.state.installmentName).toFixed(2),
+          "Amount": index==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2),
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
           "InstallmentMasterId": id,
@@ -993,7 +1084,7 @@ validateForm =()=>{
         list.push({
           "InstallmentDetailId": data.installmentDetailId,
           "InstallmentDetail": data.installmentDetail,
-          "Amount": data.amount,
+          "Amount": index==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2),
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
           "InstallmentMasterId": data.installmentMasterId,
@@ -1296,7 +1387,7 @@ validateForm =()=>{
                 peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
                 selected={this.state.assignDt} value={list.toDate} minDate={list.fromDate ? new Date(list.fromDate) : new Date()}
                 onChange={(e)=>{this.feesStructureDetails(e,i,'T')}} placeholderText="MM-DD-YYYY" /></td>
-                <td>{i==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((this.state.value)-(((this.state.totalAmount))/this.state.installmentName)).toFixed(2)}</td>
+                <td>{i==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Amount" name="amount" value={list.amount} onChange={(e)=>{this.feesStructureDetails(e,i,'A')}} />}</td>*/}
                 <td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Penalty" name="penalty" value={list.penalty} onChange={(e)=>{this.feesStructureDetails(e,i,'P')}} />}</td>
                 <td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Remarks" name="remark" value={list.remark} onChange={(e)=>{this.feesStructureDetails(e,i,'R')}} />}</td>
@@ -1347,7 +1438,7 @@ validateForm =()=>{
        await this.setState({
          listArray: a
        },() => {
-         if(this.props.match.params.id!='insert'){
+         if(this.props.match.params.id1!='insert'){
            this.getInstallmentDetailById()
          }
          console.log(this.state.listArray)
@@ -1386,6 +1477,17 @@ validateForm =()=>{
       }
     });
   };
+
+  cancelInstallment = () => {
+    if(this.props.match.params.id1=='insert'){
+      this.setState({classId: "", totalAmount: "",installmentName: "", listArray: []})
+
+    } else {
+      this.getInstallmentMasterById(1)
+      this.getInstallmentDetailById();
+    }
+  }
+
 // upload image file
 uploadFile=(e, type, i)=>{
     debugger
@@ -1508,7 +1610,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='feestructure'  shown='master' />
+      <SideBar tabIndex='installment'  shown='master' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -1546,12 +1648,12 @@ uploadFile=(e, type, i)=>{
                   <div style={{overflow: 'visible'}} class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Insert Installment":"Update Installment"}</h4>
+                        <h4 class="header-title">{this.props.match.params.id1==='insert'?"Insert Installment":"Update Installment"}</h4>
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 77,marginRight: 30}}> : </span>
-                      {this.props.match.params.id==='insert'?<><select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+                      {this.props.match.params.id1==='insert'?<><select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
                           <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
@@ -1573,11 +1675,27 @@ uploadFile=(e, type, i)=>{
                       <input style={{width: '40%'}} type="number" className="input-s br-w-1" placeholder="Enter Numbers" value={this.state.installmentName} onChange={this.handleInputs} name="installmentName" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.installmentName_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',width: 492}}><div style={{display: 'flex',flexDirection: 'row'}}>
+                      {this.props.match.params.id1!='insert'? <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 78,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Status-</option>
+                        {this.state.statusDetails.length > 0 ? this.state.statusDetails.map(cls =>
+                          <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
+                        ) : null}
+                      </select>{" "}
+                      </div>: <div style={{flexDirection: 'row',width: 492}}><div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 73,marginRight: 30}}> : </div>
                       <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
+                      </div>}
                       </div>
+
+                      {this.props.match.params.id1!='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 106,marginRight: 30}}> : </div>
+                      <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
                       </div>
+                      </div>}
 
                       <div style={{marginTop: 10}} class="table-responsive">
                         <table class="table text-center">
@@ -1627,9 +1745,9 @@ uploadFile=(e, type, i)=>{
 
                       </div>
                     </div>
-                    {this.state.installmentName&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
-                      <button className="searchbutton123" onClick={this.manageInsertInstallment}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertInstallment}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                    {this.state.installmentName&&this.state.alreadySaved&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
+                      <button className="searchbutton123" onClick={this.cancelInstallment}>Cancel</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertInstallment}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
                     </div>}
                 </div>
               </div>

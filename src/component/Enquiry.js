@@ -712,6 +712,7 @@ validateForm =()=>{
            return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
+            <td>{enquiry.EnquiryId}</td>
             <td>{enquiry.EnquiryName}</td>
             <td>{enquiry.GuardianName}</td>
             <td>{enquiry.StudentClass}</td>
@@ -931,7 +932,7 @@ uploadFile=(e, type)=>{
                         <p className={styles.addCountry}>
                         <Link to="enquiry/insert" >
                           <button
-                            onClick={this.insertAttendance}
+                            //onClick={this.insertAttendance}
                             className="btn btn-warning btn-xs"
                             data-title="Add"
                             data-toggle="modal"
@@ -951,6 +952,7 @@ uploadFile=(e, type)=>{
                               <tr class="text-white">
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
+                                <th scope="col">Enquiry Id</th>
                                 <th scope="col">Enquiry Name</th>
                                 <th scope="col">Guardian Name</th>
                                 <th scope="col">Class</th>

@@ -27,7 +27,7 @@ class InsertEnquiry extends React.Component {
     super();
     this.state = {
       statusId: "",
-      statusDetails: [{statusId:"0",statusName:"Inactive Enquiries"},
+      statusDetails: [{statusId:"4",statusName:"Inactive Enquiries"},
                       {statusId:"1",statusName:"Active Enquiries"},
                       {statusId:"2",statusName:"Registered"},
                       {statusId:"3",statusName:"Dropout"}],
@@ -236,7 +236,7 @@ class InsertEnquiry extends React.Component {
          guardianName: data.EnquiryData[0].GuardianName,
          studentId: data.EnquiryData[0].StudentId,
          enquiryDate: moment(data.EnquiryData[0].EnquiryDate).format("YYYY-MM-DD"),
-         enquiryMobile: data.EnquiryData[0].EnquiryMobile,
+         enquiryMobile: data.EnquiryData[0].EnquiryMobile?data.EnquiryData[0].EnquiryMobile:'',
          guardianMobile: data.EnquiryData[0].GuardianMobile,
          localAddress: data.EnquiryData[0].LocalAddress,
          permanentAddress: data.EnquiryData[0].PermanentAddress,
@@ -402,57 +402,6 @@ class InsertEnquiry extends React.Component {
       this.setState({ active: !this.state.active })
     }
 
-/// GET Holiday LIST
-// getHoliday = async pageNumber => {
-//   this.setState({isLoading:true})
-// try{
-//   let value = '1';
-//   if(this.state.status == 'active'){
-//     value = '1';
-//   } else if(this.state.status == 'inactive'){
-//     value = '0';
-//     debugger
-//   } else {
-//   }
-// //http://35.200.220.64:1500/aarambhTesting/getHolidayBySchoolId?page=1&size=10&status=1&FromDate=2020-11-13&ToDate=2020-11-16
-//                                                 // ${value}
-// const response = await fetch( api_Url+`getHolidayBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&FromDate=&ToDate=`,{
-//     method: "GET",
-//     headers: {
-//       "Accept": "application/json",
-//       "Content-Type": "application/json",
-//       'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
-//     }
-//   }
-// );
-// const data = await response.json();
-//  if(data.success){
-//    debugger
-//    console.log(data)
-//    debugger
-//    this.setState({
-//          holidayList: data.HolidayDetail,
-//          total: data.TotalCount[0].Total,
-//        current_page:pageNumber,
-//      });
-//
-//
-//  } else {
-//      this.setState({
-//       holidayList: []
-//      });
-//  }
-// this.setState({isLoading:false})
-// }
-// catch(err)
-// {
-//   toast.error('Error found',err)
-//   console.log('error console')
-//   console.log(err)
-// }
-// };
-
-
   handleClose = () => {
     this.setState({ show: false, classId:"", courseId:"", chapterId:"", examDoc: []});
   };
@@ -610,7 +559,11 @@ validateForm =()=>{
    else if(this.state.isEdit){
     debugger
     data.EnquiryId = this.props.match.params.id;
+    let value = this.state.statusId;
     data.StatusId = this.state.statusId;
+    if(value == '4'){
+      data.StatusId = '0';
+    }
    this.setState({isLoading:true})
    // http://35.200.220.64:1500/aarambhTesting/updateHoliday
     fetch(api_Url+`updateEnquiry`,{
@@ -990,6 +943,33 @@ uploadFile=(e, type)=>{
       }
 
   }
+
+  cancelEnquiry = () => {
+    if(this.props.match.params.id=='insert'){
+      this.setState({
+      //classId: "", totalFees: "",sessionId:"",feesStructure:"",sessionId:""
+      //id: this.props.match.params.id,
+      enquiryName: "",
+      classId: "",
+      guardianName: "",
+      studentId: "",
+      enquiryDate: "",
+      enquiryMobile: "",
+      guardianMobile: "",
+      localAddress: "",
+      permanentAddress: "",
+      enquiryTaken: "",
+      remarks: "",
+      dropoutReason: "",
+      })
+      // this.showInputs()
+    } else {
+      // this.getStructureTypeById(1)
+      // this.showInputs()
+      this.getEnquiryById(1)
+    }
+  }
+
   render() {
     return (
       <div>
@@ -1151,8 +1131,13 @@ uploadFile=(e, type)=>{
                       </div></div>}
 
                       </div>
-                      <button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                      {/*<button className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>*/}
                       </div>
+
+                    </div>
+                    <div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
+                      <button className="searchbutton123" onClick={this.cancelEnquiry}>Cancel</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageEnquiry}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                     </div>
 
                 </div>
