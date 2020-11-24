@@ -657,9 +657,10 @@ validateForm =()=>{
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{fees.FeesStructureType}</td>
+
             <td>{fees.StudentClass}</td>
             <td>{fees.TotalFees? fees.TotalFees:'-'}</td>
+            <td>{fees.FeesStructureType}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
             <td>{fees.StatusId==1?"Active":"In-Active"}</td>
 
@@ -783,7 +784,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='feestructure'  shown='master' />
+      <SideBar tabIndex='feestructure'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
@@ -870,9 +871,10 @@ uploadFile=(e, type, i)=>{
                               <tr class="text-white">
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
-                                <th scope="col">Fees Structure Type</th>
+
                                 <th scope="col">Class</th>
                                 <th scope="col">Total Fees</th>
+                                <th scope="col">Fees Structure</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
 

@@ -26,6 +26,11 @@ class InsertNewStudent extends React.Component {
   constructor() {
     super();
     this.state = {
+      readOnly: false,
+      firstName: "",
+      lastName: "",
+      firstName_ErMsg: "",
+      lastName_ErMsg: "",
       studentMobile_ErMsg: "",
       studentMobile: "",
       bloodGroup: [{groupId:"1",groupName:"A+"},
@@ -42,8 +47,8 @@ class InsertNewStudent extends React.Component {
       motherName: "",
       motherMobile: "",
       bloodgroupId: "",
-      admission:"",
-      admissionType: [{AdmissionId:"1",AdmissionName:"Direct"},{AdmissionId:"2",AdmissionName:"Enquiry"}],
+      admission:"1",
+      admissionType: [{AdmissionId:"1",AdmissionName:"Direct Admission"},{AdmissionId:"2",AdmissionName:"By Enquiry"}],
       nationList: [{NationId:"1",NationName:"INDIAN"},{NationId:"2",NationName:"Other"}],
       categoryList: [{CategoryId:"1",CategoryName:"General"},{CategoryId:"2",CategoryName:"OBC"},{CategoryId:"3",CategoryName:"SC"},{CategoryId:"4",CategoryName:"ST"},],
       studentName:"",
@@ -142,7 +147,13 @@ class InsertNewStudent extends React.Component {
   handleInputs = (e) => {
     debugger
     if(e.target.value!=='0'){
-    this.setState({
+
+    if(!this.state.readOnly||!(e.target.name=='classId'||e.target.name=='fatherName'
+    ||e.target.name=='fatherMobile'||e.target.name=='permanentAddress'||
+    e.target.name=='localAddress'||e.target.name=='firstName'
+    ||e.target.name=='lastName')){
+
+      this.setState({
       [e.target.name]: e.target.value, [e.target.name+`_ErMsg`]:"",
       count: (e.target.name == 'per_page')? true : false
     },
@@ -154,6 +165,21 @@ class InsertNewStudent extends React.Component {
         }
 
       });
+    }
+      if(this.state.readOnly){
+        this.setState({readOnly: (e.target.name=='admission'&&e.target.value=='1')? false: true}, () => {
+          if(!this.state.readOnly){
+            this.setState({classId: '',
+            fatherName: '',
+            fatherMobile: '',
+            localAddress: '',
+            permanentAddress:  '',
+            lastName: "",
+            firstName: "",
+            readOnly: false,})
+          }
+        })
+      }
       if(e.target.name=='classId'){
         // reset course id on class change
         this.setState({courseId:"",  chapterList: []})
@@ -193,6 +219,9 @@ class InsertNewStudent extends React.Component {
           fatherMobile: data.EnquiryData[0].GuardianMobile? data.EnquiryData[0].GuardianMobile: '',
           localAddress: data.EnquiryData[0].LocalAddress? data.EnquiryData[0].LocalAddress: '',
           permanentAddress: data.EnquiryData[0].PermanentAddress? data.EnquiryData[0].PermanentAddress: '',
+          firstName: data.EnquiryData[0].FirstName? data.EnquiryData[0].FirstName: '',
+          lastName: data.EnquiryData[0].LastName? data.EnquiryData[0].LastName: '',
+          readOnly: true,
          // enquiryList: data.EnquiryData,
        });
        toast.success(`Details are found for EnquiryId = ${id}`)
@@ -204,6 +233,9 @@ class InsertNewStudent extends React.Component {
          fatherMobile: '',
          localAddress: '',
          permanentAddress:  '',
+         lastName: "",
+         firstName: "",
+         readOnly: false,
        });
        if(id){
          toast.error(`No details are found for EnquiryId = ${id}`)
@@ -544,6 +576,9 @@ class InsertNewStudent extends React.Component {
            enrollment: data.Student[0].EnrollmentNumber?data.Student[0].EnrollmentNumber:'',
            localAddress:data.Student[0].LocalAddress,
            permanentAddress: data.Student[0].PermanentAddress,
+           motherName: data.Student[0].MotherName?data.Student[0].MotherName:'',
+           motherMobile: data.Student[0].MotherMobile?data.Student[0].MotherMobile:'',
+           fatherName: data.Student[0].FatherName?data.Student[0].FatherName:'',
            isEdit:true,
            isAdd:false
        });
@@ -885,6 +920,7 @@ validateForm =()=>{
         "StudentDOB": this.state.birthDate,
         //"StudentPassword": "123456",
         "ClassId":this.state.classId,
+        "StudentMobile": this.state.studentMobile,
        //"EnrollmentNumber": this.state.enrollment,
        //"Medium": this.state.medium,
        //"PreviousSchool": this.state.previousSchool,
@@ -957,7 +993,7 @@ validateForm =()=>{
 
 
    if(this.state.isAdd){
-      data.StudentUsername = this.state.studentUsername;
+      data.StudentUsername = this.state.enrollment;
       data.StudentPassword = "123456";
     this.setState({isLoading:true})
   //   http://35.200.220.64:4000/connektschool/insertEnquiry
@@ -1296,7 +1332,7 @@ validateForm =()=>{
   };
 // on search exam
 onSearchHoliday =()=>{
-  this.getEnquiry()
+  //this.getEnquiry()
 }
 
 
@@ -1380,7 +1416,14 @@ uploadFile=(e, type)=>{
   cancelStudent = () => {
     if(this.props.match.params.id=='insert'){
       this.setState({
+        readOnly: false,
+        studentUsername: "",
+        motherName: "",
+        motherMobile: "",
+        admission: "1",
         studentName: "",
+        fatherName: "",
+        fatherMobile: "",
         gender: "",
         birthDate: "",
         classId: "",
@@ -1405,7 +1448,8 @@ uploadFile=(e, type)=>{
     } else {
       // this.getStructureTypeById(1)
       // this.showInputs()
-      this.getStudentById(1)
+      //this.getStudentById(1)
+      this.props.history.goBack()
     }
   }
 
@@ -1451,7 +1495,6 @@ uploadFile=(e, type)=>{
                 <div class="col-lg-12 mt-5">
 
 
-
               {/*<ul className="filter-ul">
               {<li style={{width: 186}}>
                 <span>Enquiry From Date</span>
@@ -1471,7 +1514,7 @@ uploadFile=(e, type)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Add Admission Details":"Update Admission Details"}</h4>
+                        <h4 class="header-title">{this.props.match.params.id==='insert'?"New Admission":"Update Admission Details"}</h4>
                       </div>
                       {this.props.match.params.id ==='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
@@ -1487,17 +1530,34 @@ uploadFile=(e, type)=>{
 
                       {this.state.admission=="2"&&<><div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 91,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id" value={this.state.enquiryId} onChange={this.handleInputs} onKeyPress={this.handleKeyPress} name="enquiryId" />
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id and press Enter" value={this.state.enquiryId} onChange={this.handleInputs} onKeyPress={this.handleKeyPress} name="enquiryId" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}</div>}
+
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Student First Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 26,marginRight: 30}}> : </span>
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="First Name" value={this.state.firstName} onChange={this.handleInputs} name="firstName" />
+                      </div>
+                      <div style={{flexDirection: 'row',width: 492}}>
+                      <span style={{marginLeft: 13}}>Student Last Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 29,marginRight: 25}}> : </span>
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Last Name" value={this.state.lastName} onChange={this.handleInputs} name="lastName" />
+                      </div>
+                      </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      {/*<div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Student Name" value={this.state.studentName} onChange={this.handleInputs} name="studentName" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentName_ErMsg}</div>
+                      </div>*/}
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Enrollment Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 22,marginRight: 30}}> : </span>
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enrollment Number" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Enrollment Number</span><span style={{marginLeft: 32,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enrollment Number" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
+                      <span style={{marginLeft: 13}}>Student Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
+                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Student's contact number" value={this.state.studentMobile} onChange={this.handleInputs} name="studentMobile" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentMobile_ErMsg}</div>
                       </div>
                       </div>
 
@@ -1544,7 +1604,7 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Section</span><span style={{marginLeft: 108,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Section<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 100,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="sectionId" value={this.state.sectionId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Section-</option>
                         {this.state.sectionList.length > 0 ? this.state.sectionList.map(cls =>
@@ -1591,18 +1651,18 @@ uploadFile=(e, type)=>{
                       </div>*/}
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Father's Name</span><span style={{marginLeft: 65,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Father's Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Father's Name" value={this.state.fatherName} onChange={this.handleInputs} name="fatherName" />
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Father's Mobile Number</span><span style={{marginLeft: 5,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Father's Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Father's contact number" value={this.state.fatherMobile} onChange={this.handleInputs} name="fatherMobile" />
                       </div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Mother's Name</span><span style={{marginLeft: 59,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Mother's Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 51,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Mother's Name" value={this.state.motherName} onChange={this.handleInputs} name="motherName" />
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
@@ -1635,7 +1695,7 @@ uploadFile=(e, type)=>{
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Child Interests</span><span style={{marginLeft: 64,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Child Interests<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 56,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="childInterests" value={this.state.childInterests} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Child Interest-</option>
                         {this.state.interestsList.length > 0 ? this.state.interestsList.map(cls =>
@@ -1645,7 +1705,7 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Nationality</span><span style={{marginLeft: 86,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Nationality<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="nationality" value={this.state.nationality} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Nationality-</option>
                         {this.state.nationList.length > 0 ? this.state.nationList.map(cls =>
@@ -1657,7 +1717,7 @@ uploadFile=(e, type)=>{
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Religion</span><span style={{marginLeft: 105,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Religion<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 97,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="religionId" value={this.state.religionId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Religion-</option>
                         {this.state.religionList.length > 0 ? this.state.religionList.map(cls =>
@@ -1667,7 +1727,7 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Caste</span><span style={{marginLeft: 119,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Caste<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 111,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="casteId" value={this.state.casteId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Caste-</option>
                         {this.state.casteList.length > 0 ? this.state.casteList.map(cls =>
@@ -1679,7 +1739,7 @@ uploadFile=(e, type)=>{
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Category</span><span style={{marginLeft: 97,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Category<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 89,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="category" value={this.state.category} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Category-</option>
                         {this.state.categoryList.length > 0 ? this.state.categoryList.map(cls =>
@@ -1689,7 +1749,7 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Medium</span><span style={{marginLeft: 103,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Medium<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 95,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="medium" value={this.state.medium} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Medium-</option>
                         {this.state.mediumList.length > 0 ? this.state.mediumList.map(cls =>
@@ -1712,13 +1772,10 @@ uploadFile=(e, type)=>{
                       </select>{" "}
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.bloodgroupId_ErMsg}</div>
                       </div>
-                      {this.props.match.params.id==='insert'&&<div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Student Username<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 32,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Student username" value={this.state.studentUsername} onChange={this.handleInputs} name="studentUsername" />
-                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.studentUsername_ErMsg}</div></div>}
+
                       </div>
 
-                      <button className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                      {/*<button className="searchbutton123" onClick={this.manageStudent}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>*/}
                       </div>
                     </div>
                     <div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>

@@ -771,7 +771,8 @@ validateForm =()=>{
     if(this.props.match.params.id1=='insert'){
       this.setState({feesType: '', modeofPayment: '',sessionId:''})
     } else {
-      this.getFeeTypeById(1)
+      // this.getFeeTypeById(1)
+      this.props.history.goBack();
     }
   }
 
@@ -875,7 +876,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='feetype'  shown='master' />
+      <SideBar tabIndex='feetype'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">

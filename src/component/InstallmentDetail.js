@@ -858,7 +858,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='installment'  shown='master' />
+      <SideBar tabIndex='installment'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">

@@ -211,6 +211,23 @@ toggleClass =(e, type)=>{
                                         </div>
 
                                     </li>*/}
+
+                                    {role=='2'&&<li>
+                                     <a href="javascript:void(0)" aria-expanded="true" data-toggle="collapse" data-target="#toggleDemo1" className={this.props.shown == 'fees_management' ? 'active_submenu' : ""} data-parent="#sidenav01" onClick={(e) => this.toggleClass(e, "1")}><i className="ti-layout-sidebar-left"></i><span>Fees Management
+                                         </span></a>
+                                     <div className="collapse" id="toggleDemo1">
+                                         <ul>
+
+                                             <li><Link className="cursor1" className={this.props.tabIndex == 'feetype' ? 'active' : ''} to="/feetype" > Fee Type   </Link></li>
+                                             <li><Link className="cursor1" className={this.props.tabIndex == 'feestructure' ? 'active' : ''} to="/feestructure" > Fees Structure</Link></li>
+                                             <li><Link className="cursor1" className={this.props.tabIndex == 'installment' ? 'active' : ''} to="/installment" >Create Installment</Link></li>
+
+
+
+                                         </ul>
+                                     </div>
+
+                                 </li>}
                                     {role=='1'&&<li>
                                         <a href="javascript:void(0)" aria-expanded="true" data-toggle="collapse" data-target="#toggleDemo2" className={this.props.shown == 'master' ? 'active_submenu' : ""} data-parent="#sidenav01" onClick={(e) => this.toggleClass(e, "2")}><i className="ti-layout-sidebar-left"></i><span>Master
                                             </span></a>
@@ -246,12 +263,12 @@ toggleClass =(e, type)=>{
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'section' ? 'active' : ''} to="/section" > Section   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'caste' ? 'active' : ''} to="/caste" > Caste   </Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'religion' ? 'active' : ''} to="/religion" > Religion   </Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'feetype' ? 'active' : ''} to="/feetype" > Fee Type   </Link></li>
+
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'notification' ? 'active' : ''} to="/notification" > Notification</Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'feestructure' ? 'active' : ''} to="/feestructure" > Fees Structure</Link></li>
+
                                                 {/*<li><Link className="cursor1" className={this.props.tabIndex == 'feestructuredetail' ? 'active' : ''} to="/feestructuredetail" > Fees Structure Detail</Link></li>*/}
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'session' ? 'active' : ''} to="/session" > Session</Link></li>
-                                                <li><Link className="cursor1" className={this.props.tabIndex == 'installment' ? 'active' : ''} to="/installment" >Create Installment</Link></li>
+
                                                 {/*<li><Link className="cursor1" className={this.props.tabIndex == 'installmentdetail' ? 'active' : ''} to="/installmentdetail" > Installment Details</Link></li>*/}
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'childinterests' ? 'active' : ''} to="/childinterests" > Child Interests</Link></li>
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'school-medium' ? 'active' : ''} to="/school-medium" > School Medium</Link></li>
@@ -262,6 +279,8 @@ toggleClass =(e, type)=>{
                                         </div>
 
                                     </li>}
+
+
 
                                     {role=='3'  && <li>
                                         <a href="javascript:void(0)" aria-expanded="true" data-toggle="collapse" data-target="#toggleDemo" className={this.props.shown == 'master' ? 'active_submenu' : ""} data-parent="#sidenav01" onClick={(e) => this.toggleClass(e, "5")}><i className="ti-layout-sidebar-left"></i><span>Class Management

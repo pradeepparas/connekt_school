@@ -24,6 +24,7 @@ class InsertFeesStructure extends React.Component {
   constructor() {
     super();
     this.state = {
+      class1Id: "",
       sessionId: '',
       sessionList: [],
       listArray: [],
@@ -82,8 +83,44 @@ class InsertFeesStructure extends React.Component {
                 this.getInsertFeesStructure(this.state.current_page)
               }
             });
+            if(e.target.name=='classId'){
+              this.getFeeClass(e.target.value)
+            }
       }
 
+  }
+
+  getFeeClass = async(id) => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getFeesStructureBySchoolIdAndClassId?page=1&size=1&status=1&ClassId=${id}`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     toast.success(`Fees Structure is present for particular class ${data.FeesStructure[0].StudentClass}`)
+     this.setState({classId: this.props.match.params.id=='insert'?"": this.state.class1Id})
+
+   } else {
+
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('network Error')
+  }
   }
 
 // ON CHANGE ACTIVE
@@ -223,6 +260,7 @@ class InsertFeesStructure extends React.Component {
          id: this.props.match.params.id,
          feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.FeesStructure[0].ClassId,
+         class1Id: data.FeesStructure[0].ClassId,
          totalFees: data.FeesStructure[0].TotalFees,
          sessionId: data.FeesStructure[0].SessionId,
          isEdit:true,
@@ -1232,8 +1270,9 @@ uploadFile=(e, type, i)=>{
        this.setState({classId: "", totalFees: "",sessionId:"",feesStructure:"",sessionId:""})
        this.showInputs()
      } else {
-       this.getStructureTypeById(1)
-       this.showInputs()
+       // this.getStructureTypeById(1)
+       // this.showInputs()
+       this.props.history.goBack()
      }
    }
 
@@ -1295,7 +1334,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='feestructure'  shown='master' />
+      <SideBar tabIndex='feestructure'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">

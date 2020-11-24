@@ -26,6 +26,9 @@ class InstallmentView extends React.Component {
   constructor() {
     super();
     this.state = {
+      value: 0,
+      name: "",
+      masterId: "",
       remark: '',
       installmentName: '',
       installmentName_ErMsg: '',
@@ -104,7 +107,7 @@ class InstallmentView extends React.Component {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getTotalAmountByClassId?classId=${id}&status=1&page=1&size=10`,{
+  const response = await fetch( api_Url+`getTotalAmountByClassId?classId=${this.state.classId}&status=1&page=1&size=10`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -121,11 +124,13 @@ class InstallmentView extends React.Component {
     // console.log(list, 'list')
     //  console.log(data,'datA',)
     this.setState({totalAmount: data.FeesStructure[0].TotalFees,
-                  fixedAmount: data.FeesStructure[0].TotalFees})
+                  fixedAmount: data.FeesStructure[0].TotalFees}, () => {
+                    this.getFeesStructureMasterId()
+                  })
 
    } else {
       debugger
-      toast.error('please enter fee structure for selected class')
+      //toast.error('please enter fee structure for selected class')
        this.setState({
         totalAmount: '',
         fixedAmount: ''
@@ -136,6 +141,93 @@ class InstallmentView extends React.Component {
   catch(err)
   {
     debugger
+  }
+  }
+
+  getFeesStructureMasterId = async() => {
+  //  http://35.200.220.64:4000/connektschool/getFeesStructureByClassIdAndFeeStructureType?page=1&size=10&classId=5&status=1&feesStructureType=Installment
+  this.setState({isLoading:true})
+try{
+const response = await fetch( api_Url+`getFeesStructureByClassIdAndFeeStructureType?page=1&size=50&classId=${this.state.classId}&status=1&feesStructureType=Installment`,{
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+    }
+  }
+);
+const data = await response.json();
+ if(data.success){
+   debugger
+   console.log('data', data)
+   debugger
+   this.setState({
+         masterId: data.FeesStructure[0].FeesStructureMasterId,
+     }, () => {
+       this.getFeesTypeById()
+     });
+
+ } else {
+     this.setState({
+      masterId: []
+     });
+ }
+this.setState({isLoading:false})
+}
+catch(err)
+{
+this.setState({isLoading: false})
+toast.error('uploading failed')
+}
+  }
+
+  getFeesTypeById = async() => {
+    // http://35.200.220.64:4000/connektschool/getFeesStructureDetailByStructureId?status=1&id=13&page=1&size=1
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getFeesStructureDetailByStructureId?status=1&id=${this.state.masterId}&page=1&size=50`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     let count = 0
+     let name = ''
+     data.FeesStructureDetail.map((item,index) => {
+       if(item.ModeofPayment=='Single'){
+         name = name + item.FeesType+',';
+         count = +count+(+item.Amount)
+         console.log(count)
+         debugger
+       }
+     })
+     console.log(count,name)
+     debugger
+     this.setState({
+           name: name,
+           value: count,
+       });
+
+   } else {
+       this.setState({
+         value: 0,
+         name: ""
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
   }
   }
 
@@ -156,6 +248,7 @@ class InstallmentView extends React.Component {
     } else {
       if(this.props.match.params.id!=='insert'){
         this.getInstallmentMasterById(1)
+
         this.getInstallmentDetailById();
       }
    this.getClass(1);
@@ -285,6 +378,8 @@ class InstallmentView extends React.Component {
          installmentName: data.InstallmentMaster[0].InstallmentName,
          isEdit:true,
          isAdd:false
+       }, ()=> {
+         this.getTotalAmount()
        });
 
    } else {
@@ -1178,11 +1273,11 @@ validateForm =()=>{
               <tr style={{padding: 155}} key={i}>
                 <td>{(i+1)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Installment No." name="installmentDetail" value={list.installmentDetail} onChange={(e)=>{this.feesStructureDetails(e,i,'I')}} />}</td>*/}
-                <td>Installment {(i+1)} {i==0&&`(admission,transport)`}</td>
+                <td>Installment {(i+1)} {i==0&&`(${this.state.name})`}</td>
                 <td key={i}>{list.fromDate}</td>
 
                 <td key={i}>{list.toDate}</td>
-                <td>{parseFloat(this.state.totalAmount/this.state.installmentName).toFixed(2)}</td>
+                <td>{list.amount}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2,width: 130}} className="tableinput" type="number" placeholder="Amount" name="amount" value={list.amount} onChange={(e)=>{this.feesStructureDetails(e,i,'A')}} />}</td>*/}
                 <td key={i}>{list.penalty?list.penalty:'-'}</td>
                 <td key={i}>{list.remark?list.remark:'-'}</td>
@@ -1394,7 +1489,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='installment'  shown='master' />
+      <SideBar tabIndex='installment'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">

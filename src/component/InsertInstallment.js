@@ -270,7 +270,7 @@ class InsertInstallment extends React.Component {
     // console.log(list, 'list')
     //  console.log(data,'datA',)
     let list = [{
-      "installmentDetailId": "",
+      //"installmentDetailId": "",
       "installmentDetail": "",
       "amount": "",
       "fromDate": "",
@@ -293,7 +293,7 @@ class InsertInstallment extends React.Component {
       data.InstallmentDetail.map((item,index) => {
         list.push({
           "installmentDetail": item.InstallmentDetail,
-          "installmentDetailId": item.InstallmentDetailId,
+          //"installmentDetailId": item.InstallmentDetailId,
          "installmentMasterId": item.InstallmentMasterId,
          "amount":item.Amount,
          "fromDate": moment(item.FromDate).format("YYYY-MM-DD"),
@@ -305,6 +305,19 @@ class InsertInstallment extends React.Component {
       })
 
        list.shift()
+       while(this.state.listLength>list.length){
+         list.push({
+           "installmentDetail": "",
+           //"installmentDetailId": item.InstallmentDetailId,
+          "installmentMasterId": this.props.match.params.id1,
+          "amount":"",
+          "fromDate": "",
+          "toDate": "",
+          "penalty": "",
+          "remark": "",
+          "statusId": "1"
+         })
+       }
      // console.log(list)
      debugger
        this.setState({
@@ -394,7 +407,7 @@ class InsertInstallment extends React.Component {
   //  http://35.200.220.64:4000/connektschool/getFeesStructureByClassIdAndFeeStructureType?page=1&size=10&classId=5&status=1&feesStructureType=Installment
   this.setState({isLoading:true})
 try{
-const response = await fetch( api_Url+`getFeesStructureByClassIdAndFeeStructureType?page=1&size=50&classId=${this.state.classId}&status=1&feesStructureType=Installment`,{
+const response = await fetch( api_Url+`getFeesStructureByClassIdAndFeeStructureType?page=1&size=50&classId=${this.state.classId}&status=1&feesStructureType=`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -1070,7 +1083,7 @@ validateForm =()=>{
     console.log(id)
     debugger
           let list = [{
-            "InstallmentDetailId": "",
+            //"InstallmentDetailId": "",
             "InstallmentDetail": "",
             "Amount": "",
             "FromDate": "",
@@ -1082,12 +1095,12 @@ validateForm =()=>{
           }]
       this.state.listArray.map((data, index)=> {
         list.push({
-          "InstallmentDetailId": data.installmentDetailId,
-          "InstallmentDetail": data.installmentDetail,
+          //"InstallmentDetailId": data.installmentDetailId,
+          "InstallmentDetail": `Installment ${index+1}`,
           "Amount": index==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2),
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
-          "InstallmentMasterId": data.installmentMasterId,
+          "InstallmentMasterId": this.props.match.params.id1,
           "StatusId": "1"
         })
         if(data.remark){
@@ -1483,8 +1496,9 @@ validateForm =()=>{
       this.setState({classId: "", totalAmount: "",installmentName: "", listArray: []})
 
     } else {
-      this.getInstallmentMasterById(1)
-      this.getInstallmentDetailById();
+      // this.getInstallmentMasterById(1)
+      // this.getInstallmentDetailById();
+      this.props.history.goBack()
     }
   }
 
@@ -1610,7 +1624,7 @@ uploadFile=(e, type, i)=>{
       <div>
         {this.state.isLoading && <div class="loader1"></div>}
         <div className="page-container">
-      <SideBar tabIndex='installment'  shown='master' />
+      <SideBar tabIndex='installment'  shown='fees_management' />
           <div className="main-content">
             <div className="header-area">
               <div className="row align-items-center">
