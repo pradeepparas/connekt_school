@@ -404,10 +404,11 @@ class InsertInstallment extends React.Component {
 
 
   getFeesStructureMasterId = async() => {
+
   //  http://35.200.220.64:4000/connektschool/getFeesStructureByClassIdAndFeeStructureType?page=1&size=10&classId=5&status=1&feesStructureType=Installment
   this.setState({isLoading:true})
 try{
-const response = await fetch( api_Url+`getFeesStructureByClassIdAndFeeStructureType?page=1&size=50&classId=${this.state.classId}&status=1&feesStructureType=`,{
+const response = await fetch( api_Url+`getFeesStructureBySchoolIdAndClassId?page=1&size=1&status=1&ClassId=${this.state.classId}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -443,6 +444,7 @@ toast.error('uploading failed')
 
 // fees Type
   getFeesTypeById = async() => {
+    debugger
     // http://35.200.220.64:4000/connektschool/getFeesStructureDetailByStructureId?status=1&id=13&page=1&size=1
     this.setState({isLoading:true})
   try{
