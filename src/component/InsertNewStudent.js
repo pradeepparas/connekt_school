@@ -554,9 +554,12 @@ class InsertNewStudent extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
+           fatherMobile: data.Student[0].FatherMobile,
+           firstName: data.Student[0].FirstName,
+           lastName: data.Student[0].LastName,
            status: data.Student[0].StatusId? 'active': 'inactive',
            id: this.props.match.params.id,
-           studentName: data.Student[0].StudentName,
+           //studentName: data.Student[0].StudentName,
            gender: data.Student[0].StudentGender,
            birthDate: moment(data.Student[0].StudentDOB).format("YYYY-MM-DD"),
            classId: data.Student[0].ClassId,
@@ -807,13 +810,29 @@ validateForm =()=>{
    var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/;
    if(this.state.isAdd&&this.state.admission==''){
      isValid= false
-     return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"admission type is required", studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+     return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
    }
-   else if(this.state.studentName.trim()==''){
-        debugger
-        isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"", studentMobile_ErMsg:"", studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
-    }
+   else if(this.state.firstName.trim()==''){
+     isValid = false
+      return this.setState({firstName_ErMsg:"First Name is required",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+   }
+   else if(this.state.lastName.trim()==''){
+     isValid=false
+     return this.setState({firstName_ErMsg:"",lastName_ErMsg:"last name is required",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+   }
+   else if(this.state.enrollment.toString().trim()==''){
+     isValid= false
+     return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"Enrollment Number is required", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+   }
+   else if(this.state.studentMobile==''||!mobileValid){
+     isValid = false
+     return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"Mobile number is required",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+   }
+   // else if(this.state.studentName.trim()==''){
+   //      debugger
+   //      isValid= false
+   //      return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"", studentMobile_ErMsg:"", studentName_ErMsg:"Student Name is required", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+   //  }
 
     // else  if(this.state.isAdd&&this.state.password.toString().trim()==''){
     //   debugger
@@ -823,41 +842,82 @@ validateForm =()=>{
     else  if(this.state.gender==''){
       debugger
         isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",admission_ErMsg:"", studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"gender is required", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"gender is required", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
     else  if(this.state.birthDate.trim()==''){
       debugger
         isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"Date of birth is required",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"Date of birth is required",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
     else  if(this.state.classId==''){
       debugger
         isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"class is required",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"class is required",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
-    else if(this.state.isEdit&&(this.state.studentMobile.toString().trim()==''||!mobileValid)){
-      isValid= false
-    return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"student mobile is empty or invalid", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+    else if(this.state.sectionId==''){
+      isValid = false
+      return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"section is required", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
+    else if(this.state.fatherName.trim()==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"Father's Name is required", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+    }
+    else if(this.state.fatherMobile==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"Father's contact Number is required", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+    }
+    else if(this.state.motherName.trim()==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"Mother's Name is required", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+    }
+    // else if(this.state.isEdit&&(this.state.studentMobile.toString().trim()==''||!mobileValid)){
+    //   isValid= false
+    // return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
+    // }
     else  if(this.state.localAddress.toString().trim()==''){
         isValid= false
-      return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"local address is required",permanentAddress_ErMsg:""})
+      return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"local Address is required",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
     else  if(this.state.permanentAddress.toString().trim()==''){
         isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:"permanent address is required"})
+      return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"Permanent Address is required",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
-    else  if(this.state.isAdd&&this.state.studentUsername.trim()==''){
-      debugger
-        isValid= false
-        return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"Student Username is required", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+    else if(this.state.childInterests==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"Child Interests is required",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
+    else if(this.state.nationality==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"Nationality is required",casteId_ErMsg:"",medium_ErMsg:"",})
+    }
+    else if(this.state.religionId==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",religionId_ErMsg:"Religion is required"})
+    }
+    else if(this.state.casteId==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"Caste is required",medium_ErMsg:"",})
+
+    }
+    else if(this.state.category==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",category_ErMsg:"category is required"})
+    }
+    else if(this.state.medium==''){
+      isValid = false
+      this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"Medium is required",})
+    }
+    // else  if(this.state.isAdd&&this.state.studentUsername.trim()==''){
+    //   debugger
+    //     isValid= false
+    //     return this.setState({bloodgroupId_ErMsg:"",studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"Student Username is required", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+    // }
     else if(this.state.bloodgroupId==''){
       isValid= false
-      return this.setState({bloodgroupId_ErMsg:"blodd group is required", studentMobile_ErMsg:"", studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+      return this.setState({firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"Blood Group is required", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
     }
     else{
-        this.setState({bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", studentUsername_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",localAddress_ErMsg:"",permanentAddress_ErMsg:""})
+        this.setState({religionId_ErMsg:"", category_ErMsg:"",firstName_ErMsg:"",lastName_ErMsg:"",enrollment_ErMsg:"", bloodgroupId_ErMsg:"", admission_ErMsg:"",studentMobile_ErMsg:"",studentName_ErMsg:"", password_ErMsg:"", gender_ErMsg:"", birthDate_ErMsg:"",classId_ErMsg:"",sectionId_ErMsg:"", fatherName_ErMsg:"", fatherMobile_ErMsg:"", motherName_ErMsg:"", localAddress_ErMsg:"",permanentAddress_ErMsg:"",childInterests_ErMsg:"",nationality_ErMsg:"",casteId_ErMsg:"",medium_ErMsg:"",})
         return isValid
     }
 }
@@ -915,6 +975,8 @@ validateForm =()=>{
       var data = {
         "EnquiryId": this.state.admission==='1'?"0":this.state.enquiryId,
         "StudentName": this.state.studentName,
+        "FirstName": this.state.firstName,
+        "LastName": this.state.lastName,
         "StudentGender": this.state.gender,
         //"StudentUsername":this.state.studentUsername,
         "StudentDOB": this.state.birthDate,
@@ -1417,6 +1479,8 @@ uploadFile=(e, type)=>{
     if(this.props.match.params.id=='insert'){
       this.setState({
         readOnly: false,
+        firstName: "",
+        lastName: "",
         studentUsername: "",
         motherName: "",
         motherMobile: "",
@@ -1531,17 +1595,17 @@ uploadFile=(e, type)=>{
                       {this.state.admission=="2"&&<><div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Enquiry Id</span><span style={{marginLeft: 91,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Enquiry Id and press Enter" value={this.state.enquiryId} onChange={this.handleInputs} onKeyPress={this.handleKeyPress} name="enquiryId" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.password_ErMsg}</div></div></>}</div>}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enquiryId_ErMsg}</div></div></>}</div>}
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Student First Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 26,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="First Name" value={this.state.firstName} onChange={this.handleInputs} name="firstName" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.firstName_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Student Last Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 29,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Last Name" value={this.state.lastName} onChange={this.handleInputs} name="lastName" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.lastName_ErMsg}</div></div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
@@ -1553,7 +1617,7 @@ uploadFile=(e, type)=>{
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Enrollment Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 22,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Enrollment Number" value={this.state.enrollment} onChange={this.handleInputs} name="enrollment" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.enrollment_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Student Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Student's contact number" value={this.state.studentMobile} onChange={this.handleInputs} name="studentMobile" />
@@ -1612,7 +1676,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.sectionId_ErMsg}</div></div>
                       </div>
 
                       {this.props.match.params.id !=='insert'&&<><div style={{display: "flex",flexDirection: 'row'}}>
@@ -1653,18 +1717,18 @@ uploadFile=(e, type)=>{
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Father's Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Father's Name" value={this.state.fatherName} onChange={this.handleInputs} name="fatherName" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.fatherName_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Father's Mobile Number<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Father's contact number" value={this.state.fatherMobile} onChange={this.handleInputs} name="fatherMobile" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.fatherMobile_ErMsg}</div></div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Mother's Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 51,marginRight: 30}}> : </span>
                       <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Mother's Name" value={this.state.motherName} onChange={this.handleInputs} name="motherName" />
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.motherName_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Mother's Mobile Number</span><span style={{marginLeft: 0,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Mother's Contact Number" value={this.state.motherMobile} onChange={this.handleInputs} name="motherMobile" />
@@ -1703,7 +1767,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
-                      </div>
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.childInterests_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Nationality<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 25}}> : </span>
                       <select style={{width: '38%'}} className="input-s br-w-1" name="nationality" value={this.state.nationality} onChange={this.handleInputs}>
@@ -1713,6 +1777,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.nationality_ErMsg}</div>
                       </div>
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
@@ -1725,6 +1790,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.religionId_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Caste<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 111,marginRight: 25}}> : </span>
@@ -1735,6 +1801,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.casteId_ErMsg}</div>
                       </div>
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
@@ -1747,6 +1814,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.category_ErMsg}</div>
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Medium<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 95,marginRight: 25}}> : </span>
@@ -1757,6 +1825,7 @@ uploadFile=(e, type)=>{
                         ) : null}
 
                       </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.medium_ErMsg}</div>
                       </div>
                       </div>
 

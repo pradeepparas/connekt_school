@@ -680,18 +680,17 @@ validateForm =()=>{
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
             <td>{enquiry.EnrollmentNumber?enquiry.EnrollmentNumber:'-'}</td>
-            <td>{enquiry.StudentName}</td>
+            <td>{enquiry.FirstName} {enquiry.LastName}</td>
             <td>{enquiry.studentclass}</td>
             <td>{enquiry.Section}</td>
-            <td>{enquiry.StudentUsername}</td>
             <td>{enquiry.StudentGender}</td>
             <td> {moment(enquiry.StudentDOB).format('DD-MMM-YYYY')}</td>
             <td>{enquiry.Medium?enquiry.Medium:'-'}</td>
-            <td>{enquiry.PreviousSchool?enquiry.PreviousSchool:'-'}</td>
+            <td>{enquiry.StatusId=='1'?"Active":"In-Active"}</td>
             <td>
             <Link to={`students/${enquiry.StudentId}`}> <i  class="ti-pencil"></i></Link>
             {" "}  {" "}
-            <i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i>
+            {/*<i  onClick={() => this.deleteEnquiry(enquiry)} class="ti-trash"></i>*/}
             </td>
             {/**/}{/**/}
 
@@ -848,14 +847,14 @@ uploadFile=(e, type)=>{
                       <span>Test Name</span><br></br>
                       <input className="input-s br-w-1" type="text" placeholder="Test Name" name="searchStr" value={this.state.searchStr} onChange={this.handleInputs} />
                     </li>*/}
-                    <li>
+                    {/*<li>
                       <span>Status</span>
                       <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Status-</option>
                         <option value={'active'}>Active</option>
                         <option value={'inactive'}>In-Active</option>
                       </select>{" "}
-                    </li>
+                    </li>*/}
                     <li>
                       <span>Page Size</span>
                       <select className="input-s br-w-1" name="per_page" value={this.state.per_page} onChange={this.handleInputs}>
@@ -905,11 +904,10 @@ uploadFile=(e, type)=>{
                                 <th scope="col">Student Name</th>
                                 <th scope="col">Class</th>
                                 <th scope="col">Section</th>
-                                <th scope="col">Student Username</th>
                                 <th scope="col">Gender</th>
                                 <th scope="col">D.O.B</th>
                                 <th scope="col">Medium</th>
-                                <th scope="col">Previous School</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Action</th>
                               </tr>
                             </thead>

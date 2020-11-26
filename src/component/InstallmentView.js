@@ -375,7 +375,7 @@ toast.error('uploading failed')
          statusId: data.InstallmentMaster[0].StatusId,
          remark: data.InstallmentMaster[0].Remark,
          totalAmount: data.InstallmentMaster[0].TotalAmount,
-         installmentName: data.InstallmentMaster[0].InstallmentName,
+         installmentName: data.InstallmentMaster[0].NumberOfInstallments,
          isEdit:true,
          isAdd:false
        }, ()=> {
