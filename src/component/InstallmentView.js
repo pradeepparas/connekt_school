@@ -183,6 +183,7 @@ toast.error('uploading failed')
   }
 
   getFeesTypeById = async() => {
+    debugger
     // http://35.200.220.64:4000/connektschool/getFeesStructureDetailByStructureId?status=1&id=13&page=1&size=1
     this.setState({isLoading:true})
   try{

@@ -472,6 +472,7 @@ toast.error('uploading failed')
        }
      })
      console.log(count,name)
+     name = name.substring(0, name.length - 1)
      debugger
      this.setState({
            name: name,
@@ -797,6 +798,9 @@ validateForm =()=>{
     } else if(this.state.installmentName==''){
       isValid= false
       return this.setState({installmentName_ErMsg:'please enter no. of Installments', classId_ErMsg:"", feesStructure_ErMsg:"",totalAmount_ErMsg:"", sessionId_ErMsg:""})
+    } else if(this.state.sessionId==''){
+      isValid = false
+      return this.setState({installmentName_ErMsg:'', classId_ErMsg:"", feesStructure_ErMsg:"",totalAmount_ErMsg:"", sessionId_ErMsg:"Session is required"})
     }
     // else if(this.state.totalAmount==''||isNaN(this.state.totalAmount)){
     //     isValid= false
@@ -811,7 +815,7 @@ validateForm =()=>{
     //     return this.setState({classId_ErMsg:"", feesStructure_ErMsg:"", totalAmount_ErMsg:"", sessionId_ErMsg:"Session is required"})
     // }
     else{
-        this.setState({classId_ErMsg:"", installmentName_ErMsg:"", totalAmount_ErMsg:"", session_ErMsg:""})
+        this.setState({classId_ErMsg:"", installmentName_ErMsg:"", totalAmount_ErMsg:"", sessionId_ErMsg:""})
         return isValid
     }
 }
@@ -831,10 +835,7 @@ validateForm =()=>{
       debugger
       return
     }
-    //
-    //
     debugger
-    // return
     var value = false
     for(let i=0;i<this.state.listArray.length-1;i++){
       if(this.state.listArray[i].toDate==''||this.state.listArray[i].fromDate==''){
@@ -859,36 +860,6 @@ validateForm =()=>{
       return
     }
 
-    // // this.state.listArray.map((a)=> {
-    // //   if(a.feesTypeId == ''){
-    // //     empty = true;
-    // //     break;
-    // //   }
-    // // })
-    // if(empty){
-    //   toast.error('Fees Type is required');
-    //   return
-    // }
-    // console.log(this.state.listArray)
-    // debugger
-    // const uniqueValues = new Set(this.state.listArray.map(v => v.feesTypeId));
-    // if (uniqueValues.size < this.state.listArray.length) {
-    //   toast.error('Fees Type should be unquie')
-    //   return;
-    // }
-    //
-    // let count = 0;
-    // this.state.listArray.map((a)=> {
-    //   count = count + parseFloat(a.amount?a.amount:0)
-    // })
-    // console.log(count)
-    // debugger
-    // if(count!=parseFloat(this.state.totalAmount)){
-    //   toast.error('Amount should less or equal to Total Fees')
-    //   return;
-    // }
-    //toast.success('true')
-    //return
    if(this.state.isAdd||this.props.match.params.id1=='insert'){
     // {
     //     "InstallmentName":"Test",
@@ -902,7 +873,8 @@ validateForm =()=>{
        //"InstallmentName": this.state.installmentName,
        "ClassId": this.state.classId,
        "TotalAmount": this.state.totalAmount,
-       "Remark": this.state.remark
+       "Remark": this.state.remark,
+       "SessionId": this.state.sessionId,
      }
      // if(this.state.totalAmount){
      //   data.TotalFees = this.state.totalAmount;
@@ -949,6 +921,7 @@ validateForm =()=>{
    else if(this.state.isEdit){
 
             var data = {
+              "SessionId": this.state.sessionId,
               "InstallmentMasterId":this.props.match.params.id1,
               "NumberOfInstallments": this.state.installmentName,
               //"InstallmentName": this.state.installmentName,
@@ -1022,7 +995,8 @@ validateForm =()=>{
             "ToDate": "",
             "InstallmentMasterId": id,
             "Penalty": "",
-            "Remark": ""
+            "Remark": "",
+            "SessionId": ""
           }]
       this.state.listArray.map((data, index)=> {
         list.push({
@@ -1031,6 +1005,7 @@ validateForm =()=>{
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
           "InstallmentMasterId": id,
+          "SessionId": this.state.sessionId
           //
           //
       })
@@ -1093,7 +1068,8 @@ validateForm =()=>{
             "Penalty": "",
             "Remark": "",
             "InstallmentMasterId": "",
-            "StatusId": "1"
+            "StatusId": "1",
+            "SessionId": ""
           }]
       this.state.listArray.map((data, index)=> {
         list.push({
@@ -1103,7 +1079,8 @@ validateForm =()=>{
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
           "InstallmentMasterId": this.props.match.params.id1,
-          "StatusId": "1"
+          "StatusId": "1",
+          "SessionId": this.state.sessionId
         })
         if(data.remark){
           list.push({"Remarks": data.remark})
@@ -1391,7 +1368,7 @@ validateForm =()=>{
               <tr style={{padding: 155}} key={i}>
                 <td>{(i+1)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Installment No." name="installmentDetail" value={list.installmentDetail} onChange={(e)=>{this.feesStructureDetails(e,i,'I')}} />}</td>*/}
-                <td>Installment {(i+1)} {i==0&&`${this.state.name}`}</td>
+                <td>Installment {(i+1)} {i==0&&`(${this.state.name})`}</td>
                 <td key={i}><div style={{marginLeft: 0}}><DatePicker style={{ width: "322px",marginLeft: 0}} className="tableinput"
                 peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select"
                 selected={this.state.assignDt} value={list.fromDate} minDate={new Date()}
@@ -1699,19 +1676,43 @@ uploadFile=(e, type, i)=>{
                           <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
                         ) : null}
                       </select>{" "}
-                      </div>: <div style={{flexDirection: 'row',width: 492}}><div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 73,marginRight: 30}}> : </div>
-                      <textarea style={{width: '38%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
+                      </div>: <div style={{flexDirection: 'row',width: 492}}>
+                      <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 71,marginRight: 30}}> : </span>
+                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Session-</option>
+                        {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
+                          <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
+                        ) : null}
+                      </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div>
                       </div>}
                       </div>
 
                       {this.props.match.params.id1!='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 103,marginRight: 30}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Session-</option>
+                        {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
+                          <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
+                        ) : null}
+                      </select>{" "}
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div>
+                      </div>
+                      <div style={{flexDirection: 'row',width: 492}}>
                       <div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 106,marginRight: 30}}> : </div>
-                      <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 73,marginRight: 30}}> : </div>
+                      <textarea style={{width: '37%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" /></div>
                       </div>
                       </div>}
+
+                      {this.props.match.params.id1=='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <div style={{display: 'flex',flexDirection: 'row'}}>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 106,marginRight: 30}}> : </div>
+                      <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Remarks" value={this.state.remark} onChange={this.handleInputs} name="remark" />
+                      </div>
+                      </div></div>}
 
                       <div style={{marginTop: 10}} class="table-responsive">
                         <table class="table text-center">
