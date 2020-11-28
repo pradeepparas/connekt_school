@@ -221,7 +221,7 @@ toggleClass =(e, type)=>{
                                              <li><Link className="cursor1" className={this.props.tabIndex == 'feetype' ? 'active' : ''} to="/feetype" > Fee Type   </Link></li>
                                              <li><Link className="cursor1" className={this.props.tabIndex == 'feestructure' ? 'active' : ''} to="/feestructure" > Fees Structure</Link></li>
                                              <li><Link className="cursor1" className={this.props.tabIndex == 'installment' ? 'active' : ''} to="/installment" >Create Installment</Link></li>
-
+                                             <li><Link className="cursor1" className={this.props.tabIndex == 'student-fees' ? 'active' : ''} to="/student-fees" > Student Fees</Link></li>
 
 
                                          </ul>
