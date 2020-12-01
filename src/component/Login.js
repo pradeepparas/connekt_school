@@ -18,9 +18,11 @@ class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			sessionList: [],
+			showSession: false,
 			sessionId_ErMsg: "",
 			sessionId: "",
-			sessionList: [{SessionId:"1",SessionName:"2019-20"},{SessionId:"2",SessionName:"2020-21"},{SessionId:"2021-22",SessionName:"2022-23"}],
+			//sessionList: [{SessionId:"1",SessionName:"2019-20"},{SessionId:"2",SessionName:"2020-21"},{SessionId:"2021-22",SessionName:"2022-23"}],
 			show: false,
 			id: '',
 			isRedirect: false,
@@ -54,6 +56,47 @@ class Login extends React.Component {
 
 	}
 
+// Get Session
+	getSession = async pageNumber => {
+		let value = window.sessionStorage.getItem('auth_token')
+		console.log(value)
+		debugger
+		this.setState({isLoading:true})
+	try{
+	const response = await fetch( api_Url+`getSessionBySchoolId?page=1&size=50&status=1`,{
+			method: "GET",
+			headers: {
+				"Accept": "application/json",
+				"Content-Type": "application/json",
+				'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+			}
+		}
+	);
+	const data = await response.json();
+	 if(data.success){
+		 debugger
+		 console.log('data', data)
+		 debugger
+		 this.setState({
+					 sessionList: data.SessionData,
+					 showSession: true
+			 });
+
+	 } else {
+			 this.setState({
+				sessionList: [],
+				showSession: false
+			 });
+	 }
+	this.setState({isLoading:false})
+	}
+	catch(err)
+	{
+	this.setState({isLoading: false})
+	toast.error('uploading failed')
+	}
+	 };
+
 	handleInputs = (e) => {
 
     this.setState({
@@ -85,12 +128,12 @@ class Login extends React.Component {
 				password_ErMsg:'Password is required', email_ErMsg:"", sessionId_ErMsg:""
 			});
 		}
-		else if(this.state.sessionId=="") {
-			this.setState({
-				password_ErMsg:'', email_ErMsg:"", sessionId_ErMsg:"Session is required"
-			})
-			return;
-		}
+		// else if(this.state.sessionId=="") {
+		// 	this.setState({
+		// 		password_ErMsg:'', email_ErMsg:"", sessionId_ErMsg:"Session is required"
+		// 	})
+		// 	return;
+		// }
 		else{
 			this.setState({
 				password_ErMsg:'', email_ErMsg:"", sessionId_ErMsg:"",  displaytext:"hide_block",
@@ -116,17 +159,24 @@ class Login extends React.Component {
 	.then(result=>{
 		if(result.success){
 			debugger
-			toast.success("LoggedIn Successfully",{
-			})
+
+			// toast.success("LoggedIn Successfully",{
+			// })
 			  //CLEAR LOCAL STORAGE BEFORE LOGIN
+				//window.sessionStorage.removeItem("session")
 			  window.sessionStorage.removeItem("role",)
 			  localStorage.removeItem("auth_token",)
-
+				window.sessionStorage.removeItem("auth_token",)
+				//localStorage.removeItem("SessionId")
 			 // SET VALUE IN LOCAL STORAGE
 			 window.sessionStorage.setItem("auth_token", result.Token);
-			window.sessionStorage.setItem("role", result.RoleId)
+			 window.sessionStorage.setItem("role", result.RoleId)
+			this.getSession();
+			//window.sessionStorage.setItem("SessionId", this.state.sessionId)
 			//  if(result.Data[0].RoleId=='2'){
-				this.props.history.push('/dashboard')
+				// if(this.state.sessionId){
+				// 	this.props.history.push('/dashboard')
+				// }
 
 			//   }
 		}
@@ -192,7 +242,7 @@ class Login extends React.Component {
 									<small className={this.state.displaytext+" text-danger text-left"}>{this.state.password_ErMsg}</small>
 								</div>
 
-								<div className="">
+								{/*<div className="">
 								<select style={{borderColor: 'white'}} className="input100" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
 									<option style={{width: '100%'}} value={'0'}>--SELECT SESSION--</option>
 									{this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
@@ -200,7 +250,7 @@ class Login extends React.Component {
 									) : null}
 								</select>{" "}
 								<small className={this.state.displaytext+" text-danger text-left"}>{this.state.sessionId_ErMsg}</small>
-								</div>
+								</div>*/}
 								<div className="w-full p-b-48 m-t-25">
 									{/* <div className="contact100-form-checkbox">
 										<input className="input-checkbox100" id="ckb1" type="checkbox" name="remember" value={this.state.rememberMe}  onClick={this.rememberMe} />
@@ -209,9 +259,9 @@ class Login extends React.Component {
 										</label>
 									</div> */}
 									<div className="container-login100-form-btn">
-										<button className="login100-form-btn">
+										{<button className="login100-form-btn">
 											Sign In
-										</button>
+										</button>}
 										<div>
 										<button style={{marginTop: 4}}className='button1234' onClick ={this.handleShow}>Forgot password?</button></div>
 									</div>
@@ -256,6 +306,45 @@ class Login extends React.Component {
 						    </Modal.Footer>
 						  </Modal>
 						</div>}
+						{<div className="static-modal">
+
+				<Modal show={this.state.showSession} backdrop="static" onHide={this.handleClose}>
+					<Modal.Header closeButton>
+						<Modal.Title>Session</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+										 {this.state.isLoading &&
+						<div class="loader1"></div>}
+						<Form horizontal>
+							<FormGroup controlId="formHorizontalEmail">
+							<Col sm={4}> Session Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+										<Col sm={9}>
+											<FormControl as="select" value={this.state.sessionId} name="sessionId" onChange={this.handleInputs} class="form-control">
+												<option>-Select Session-</option> {this.state.sessionList.length > 0 ? this.state.sessionList.map(sId =>
+													<option key={sId.SessionId} value={sId.SessionId}>{sId.SessionName}</option>) : null} </FormControl>
+											<small className={this.state.displaytext + " text-danger"}>{this.state.sessionId_ErMsg}</small>
+										</Col>
+							</FormGroup>
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={this.handleClose}>Close</Button>
+						<Button type="submit" disabled={this.state.isValiddata} onClick={() => {
+							var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+							if (this.state.sessionId=='')
+								{
+								toast.error("Please select session")
+								return
+							} else {
+								localStorage.removeItem("SessionId")
+									window.sessionStorage.setItem("SessionId", this.state.sessionId)
+									this.props.history.push('/dashboard')
+							}
+
+						}} bsStyle="primary"> {" "} {" "} Submit </Button>
+					</Modal.Footer>
+				</Modal>
+			</div>}
 								</div>
 							</form>
 						</div>

@@ -86,7 +86,7 @@ class InsertInstallment extends React.Component {
   }
 
   handleInputs = (e) => {
-      if(e.target.value!=='0'){
+      if(e.target.name!='sessionId'&&e.target.value!=='0'){
         this.setState({
             [e.target.name]: e.target.value, [e.target.name+`_ErMsg`]:"", count: (e.target.name == 'per_page')? true : false,
             listLength: (e.target.name == 'installmentName')? e.target.value : ''
@@ -233,10 +233,14 @@ class InsertInstallment extends React.Component {
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let sessionId = window.sessionStorage.getItem('SessionId')
     let token = window.sessionStorage.getItem('auth_token');
     if (token === null) {
       return this.props.history.push('/login');
     } else {
+      this.setState({sessionId: sessionId},()=> {
+        
+      })
       if(this.props.match.params.id1!=='insert'){
         this.getInstallmentMasterById(1)
         this.getInstallmentDetailById();
@@ -1000,7 +1004,7 @@ validateForm =()=>{
           }]
       this.state.listArray.map((data, index)=> {
         list.push({
-          "InstallmentDetail":`Installment ${index+1}`,
+          "InstallmentDetail":index==0? `Installment ${index+1} (${this.state.name})`:`Installment ${index+1}`,
           "Amount": index==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2),
           "FromDate": data.fromDate,
           "ToDate": data.toDate,
@@ -1074,7 +1078,7 @@ validateForm =()=>{
       this.state.listArray.map((data, index)=> {
         list.push({
           //"InstallmentDetailId": data.installmentDetailId,
-          "InstallmentDetail": `Installment ${index+1}`,
+          "InstallmentDetail": index==0? `Installment ${index+1} (${this.state.name})`:`Installment ${index+1}`,
           "Amount": index==0?parseFloat((this.state.value)+(((this.state.totalAmount)-(this.state.value))/this.state.installmentName)).toFixed(2):parseFloat((((this.state.totalAmount)-(+this.state.value))/this.state.installmentName)).toFixed(2),
           "FromDate": data.fromDate,
           "ToDate": data.toDate,

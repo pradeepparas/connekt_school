@@ -26,16 +26,18 @@ class Holiday extends React.Component {
   constructor() {
     super();
     this.state = {
+      sessionId: '',
       resultDt: "",
       resultDate: "",
       resultDate_ErMsg: "",
       appt: 0,
+      classList: [],
       appt_ErMsg:"",
       holidayList: [],
       change: false,
       count: false,
       courseList: [],
-      classList:[],
+      sessionList:[],
       chapterList:[],
       //holidayList:[],
       id: '',
@@ -155,14 +157,55 @@ class Holiday extends React.Component {
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let sessionId = window.sessionStorage.getItem('SessionId')
     let token = window.sessionStorage.getItem('auth_token');
     if (token === null) {
       return this.props.history.push('/login');
     } else {
-      this.getHoliday(1)
+      this.setState({sessionId: sessionId},()=> {
+        this.getHoliday(1)
+      })
+      this.getSession();
+
     }
   }
 
+// GET Session List
+  getSession = async pageNumber => {
+    debugger
+    this.setState({isLoading:true})
+  try{
+  const response = await fetch( api_Url+`getSessionBySchoolId?page=1&size=50&status=1`,{
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+      }
+    }
+  );
+  const data = await response.json();
+   if(data.success){
+     debugger
+     console.log('data', data)
+     debugger
+     this.setState({
+           sessionList: data.SessionData,
+       });
+
+   } else {
+       this.setState({
+        sessionList: []
+       });
+   }
+  this.setState({isLoading:false})
+  }
+  catch(err)
+  {
+  this.setState({isLoading: false})
+  toast.error('uploading failed')
+  }
+   };
 
   handleShow = () => {
 
@@ -236,9 +279,9 @@ try{
     debugger
   } else {
   }
-//http://35.200.220.64:1500/aarambhTesting/getHolidayBySchoolId?page=1&size=10&status=1&FromDate=2020-11-13&ToDate=2020-11-16
+//http://35.200.220.64:4000/connektSchool/getHolidayBySchoolId?page=1&size=10&status=1&FromDate=2020-10-01&ToDate=2020-10-31&SessionId=1
                                                 // ${value}
-const response = await fetch( api_Url+`getHolidayBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&FromDate=&ToDate=`,{
+const response = await fetch( api_Url+`getHolidayBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&FromDate=&ToDate=&SessionId=${this.state.sessionId}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -287,16 +330,16 @@ validateForm =()=>{
 
   if(this.state.holidayName.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"Exam name is required", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"Holiday name is required", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
     }
 
     else  if(this.state.startDate.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"Exam start date is required", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"Holiday start date is required", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
     }
     else  if(this.state.endDate.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"End date is required", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"Holiday last date is required", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
     }
     else{
         this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
@@ -357,6 +400,7 @@ validateForm =()=>{
     "HolidayName": this.state.holidayName,
     "FromDate": this.state.startDate,
     "ToDate": this.state.endDate,
+    "SessionId": this.state.sessionId
       }
 
     this.setState({isLoading:true})
@@ -404,7 +448,7 @@ validateForm =()=>{
     "HolidayName": this.state.holidayName,
     "FromDate": this.state.startDate,
     "ToDate": this.state.endDate,
-    "StatusId":this.state.active?1:0
+    "StatusId":this.state.active?'1':'0'
       }
     debugger
 
@@ -433,6 +477,9 @@ validateForm =()=>{
       }
       else{
      toast.error(result.message,{
+
+     })
+     toast.error(result.error,{
 
      })
       }
@@ -956,7 +1003,13 @@ uploadFile=(e, type)=>{
 				<div class="loader1"></div>}
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
-            <div>
+            <div> <Col sm={4}> Session Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                  <Col sm={9}>
+                    <FormControl as="select" value={this.state.classId} name="classId" onChange={this.handleInputs} class="form-control">
+                      {this.state.sessionList.length > 0 ? this.state.sessionList.map(classId =>
+                        <option key={classId.SessionId} value={classId.SessionId}>{classId.SessionName}</option>) : null} </FormControl>
+                    <small className={this.state.displaytext + " text-danger"}>{this.state.sessionId_ErMsg}</small>
+                  </Col>
                   <Col sm={4}> Holiday Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
       						<Col sm={9}>
       							<FormControl type="text" placeholder="Holiday Name" value={this.state.holidayName} onChange={this.handleInputs} name="holidayName" />
@@ -972,14 +1025,15 @@ uploadFile=(e, type)=>{
                                     <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.endDate} minDate={this.state.startDate? new Date(this.state.startDate) : new Date()} maxDate={this.state.resultDate ? new Date(this.state.resultDate) : ''} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
                                  <small className={this.state.displaytext + " text-danger"}>{this.state.endDate_ErMsg}</small>
                         </Col>
+
                         {/*<Col sm={4}>Exam Result Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
                                 <Col sm={9}>
                                     <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.resultDt} value={this.state.resultDate} minDate={this.state.endDate? new Date(this.state.endDate) : new Date()} onChange={(e) => {this.handleChange(e,'result')}} placeholderText="MM-DD-YYYY" />
                                  <small className={this.state.displaytext + " text-danger"}>{this.state.endDate_ErMsg}</small>
                         </Col>*/}
-        <Col sm={9}>
+        {this.state.isEdit&&<Col sm={9}>
           <input type="checkbox"  checked={this.state.active} onChange={this.onChageCheckboxActive} name="active" /> Is Active
-        </Col>
+        </Col>}
         </div>
 					</FormGroup>
 				</Form>

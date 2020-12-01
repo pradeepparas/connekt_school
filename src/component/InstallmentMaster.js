@@ -24,6 +24,8 @@ class InstallmentMaster extends React.Component {
   constructor() {
     super();
     this.state = {
+      sessionList: [],
+      sessionId: "",
       count: false,
       fsize: 0,
       installmentList: [],
@@ -90,17 +92,59 @@ class InstallmentMaster extends React.Component {
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let sessionId = window.sessionStorage.getItem('SessionId')
     let token = window.sessionStorage.getItem('auth_token');
     if (token === null) {
       return this.props.history.push('/login');
     } else {
-
+   this.setState({sessionId: sessionId},()=> {
+     this.getInstallmentMaster(1)
+   })
+   console.log(this.state.sessionId)
+   debugger
    this.getClass(1);
-   this.getInstallmentMaster(1)
 
+    this.getSession();
 
     }
   }
+
+// Get Session LIST
+getSession = async pageNumber => {
+  debugger
+  this.setState({isLoading:true})
+try{
+const response = await fetch( api_Url+`getSessionBySchoolId?page=1&size=50&status=1`,{
+    method: "GET",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+    }
+  }
+);
+const data = await response.json();
+ if(data.success){
+   debugger
+   console.log('data', data)
+   debugger
+   this.setState({
+         sessionList: data.SessionData,
+     });
+
+ } else {
+     this.setState({
+      sessionList: []
+     });
+ }
+this.setState({isLoading:false})
+}
+catch(err)
+{
+this.setState({isLoading: false})
+toast.error('uploading failed')
+}
+ };
 
 // ON CHANGE INSERT TYPE
 onChangeInsertType =(e)=>{
@@ -269,7 +313,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getInstallmentMasterBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}&SessionId=${this.state.sessionId}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -820,6 +864,15 @@ uploadFile=(e, type, i)=>{
 
                 <div class="col-lg-12 mt-5">
                   <ul className="filter-ul">
+                  {/*<li>
+                  <span>Session</span>
+                  <select className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                    <option value={'0'}>-Select Session-</option>
+                    {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
+                      <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
+                    ) : null}
+                  </select>{" "}
+                  </li>*/}
                   <li>
                     <span>Status</span>
                     <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
