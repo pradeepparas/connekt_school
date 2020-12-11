@@ -124,6 +124,7 @@ class SideBar extends React.Component{
 
 Logout = () => {
     debugger
+    localStorage.clear();
     sessionStorage.clear();
     this.props.history.push('/login')
 }
@@ -298,6 +299,7 @@ toggleClass =(e, type)=>{
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'notes' ? 'active' : ''} to="/notes" > Notes </Link></li>
                                                 {/*<li><Link className="cursor1" className={this.props.tabIndex == 'attendance' ? 'active' : ''} to="/attendance/:" > Attendance </Link></li>*/}
                                                 <li><Link className="cursor1" className={this.props.tabIndex == 'attendance' ? 'active' : ''} to="/attendance" > Attendance </Link></li>
+                                                <li><Link className="cursor1" className={this.props.tabIndex == 'newattendance' ? 'active' : ''} to="/newattendance" > New Attendance </Link></li>
                                             </ul>
                                         </div>
 
