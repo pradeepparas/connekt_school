@@ -106,6 +106,10 @@ import InsertFeesType from './component/InsertFeesType';
 import InsertFeesStructure from './component/InsertFeesStructure';
 import FeesStructureView from './component/FeesStructureView';
 import InstallmentView from './component/InstallmentView';
+import StudentFees from './component/StudentFees';
+import InsertStudentFees from './component/InsertStudentFees';
+import NewAttendance from './component/NewAttendance';
+import InsertNewAttendance from './component/InsertNewAttendance';
 
 class App extends React.Component {
 render() {
@@ -158,9 +162,13 @@ render() {
           <Route path="/session" exact={true} component= { Session } />
           <Route path="/installment" exact={true} component= { InstallmentMaster } />
           <Route path="/installments/:id" exact={true} component= { InstallmentView } />
-          <Route path="/installment/:id" exact={true} component= { InsertInstallment } />
+          <Route path="/installment/:id1/:id2" exact={true} component= { InsertInstallment } />
           <Route path="/childinterests" exact={true} component= { ChildInterests } />
           <Route path="/school-medium" exact={true} component= { SchoolMedium } />
+          <Route path="/student-fees" exact={true} component= { StudentFees } />
+          <Route path="/student-fees/:id1/:id2" exact={true} component= { InsertStudentFees } />
+          <Route path="/newattendance" exact={true} component= {NewAttendance } />
+          <Route path="/newattendance/:id" exact={true} component= {InsertNewAttendance } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
           {/* <Route path="/bookatutor" exact={true} component={ Bookatutor } /> */}
           {/* <Route path="/termsconditions" exact={true} component={ Termsconditions } /> */}
