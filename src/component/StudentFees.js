@@ -92,14 +92,18 @@ class StudentFees extends React.Component {
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let session = window.sessionStorage.getItem('SessionId');
     let token = window.sessionStorage.getItem('auth_token');
-    if (token === null) {
+    if (token === null&& session === null) {
       return this.props.history.push('/login');
     } else {
 
    this.getClass(1);
-   this.getStudentFees(1)
-   this.getSession();
+   this.setState({sessionId: session},()=>{
+     this.getStudentFees(1)
+     this.getSession();
+   })
+
 
     }
   }
@@ -259,10 +263,10 @@ deleteStudentFees = (data) => {
 deleteStudentFeesById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteStudentFees?status=0&StudentFeesId=1
+  //http://35.200.220.64:4000/connektschool/deleteStudentFeesMaster?status=1&StudentFeesMasterId=1
   this.setState({isLoading:true})
 
-  fetch(api_Url+`deleteStudentFees?status=0&StudentFeesId=${this.state.id}`,{
+  fetch(api_Url+`deleteStudentFeesMaster?status=0&StudentFeesMasterId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -323,7 +327,7 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         //studentFeesList: data.StudentFees,
+         studentFeesList: data.StudentFeesMaster,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
@@ -699,16 +703,16 @@ validateForm =()=>{
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
             <td>{session.StudentClass}</td>
-            <td>{session.NumberOfInstallments}</td>
-            <td>{session.TotalAmount}</td>
-            <td>{session.Remark?session.Remark:'-'}</td>
+            <td>{session.FirstName} {session.LastName}</td>
+            <td>{session.FeeType}</td>
+            <td>{session.GrandTotal?session.GrandTotal:'-'}</td>
             <td>{session.StatusId==1?"Active":"In-Active"}</td>
 
 
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            {<Link to={`installment/${session.StudentFeesId}/${session.StatusId}`}> <i  class="ti-pencil"></i></Link>}
+            {<Link to={`student-fees/${session.StudentFeesMasterId}/${session.StatusId}`}> <i  class="ti-pencil"></i></Link>}
             {" "}  {" "}<Link to={`installments/${session.StudentFeesId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteStudentFees(session)} class="ti-trash"></i>}
             </td>
@@ -859,7 +863,7 @@ uploadFile=(e, type, i)=>{
 
                 <div class="col-lg-12 mt-5">
                   <ul className="filter-ul">
-                  <li>
+                  {/*<li>
                   <span>Session</span>
                   <select className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
                     <option value={'0'}>-Select Session-</option>
@@ -867,7 +871,7 @@ uploadFile=(e, type, i)=>{
                       <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
                     ) : null}
                   </select>{" "}
-                  </li>
+                  </li>*/}
                   <li>
                     <span>Status</span>
                     <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>
@@ -894,7 +898,7 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">Installment List</h4>
+                        <h4 class="header-title">Student List</h4>
                         <p className={styles.addCountry}>
                         <Link to="student-fees/insert/insert" >
                           <button
@@ -905,7 +909,7 @@ uploadFile=(e, type, i)=>{
                             data-target="#add"
                           >
                             {" "}
-                      Create Installment {" "}
+                      Add Student Fees {" "}
                             <span className="glyphicon glyphicon-plus"> </span>
                           </button>
                           </Link>
@@ -920,9 +924,9 @@ uploadFile=(e, type, i)=>{
                                 {/* <th scope="col">ID</th> */}
                                 <th scope="col">S.No</th>
                                 <th scope="col">Class Name</th>
-                                <th scope="col">No. of Installments</th>
-                                <th scope="col">Total Amount</th>
-                                <th scope="col">Remarks</th>
+                                <th scope="col">Student Name</th>
+                                <th scope="col">Fees Type</th>
+                                <th scope="col">Grand Total</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Action</th>
 
