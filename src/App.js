@@ -2,11 +2,11 @@ import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
 import { hashHistory } from 'react-dom';
 import { ToastContainer, toast } from 'react-toastify';
-
+import TestingAjax from './component/TestingAjax';
 import Home  from './component/Home';
 import Login from './component/Login';
 import Register from './component/Register';
-// import Aboutus from './component/Aboutus';
+// import Aboutus from './component/Aboutus'; student-fees
 // import Contact from './component/Contact';
 // import Profile from './component/Profile';
 import Mycources from './component/Mycourses'
@@ -107,6 +107,7 @@ import InsertFeesStructure from './component/InsertFeesStructure';
 import FeesStructureView from './component/FeesStructureView';
 import InstallmentView from './component/InstallmentView';
 import StudentFees from './component/StudentFees';
+import StudentFeesView from './component/StudentFeesView';
 import InsertStudentFees from './component/InsertStudentFees';
 import NewAttendance from './component/NewAttendance';
 import InsertNewAttendance from './component/InsertNewAttendance';
@@ -167,6 +168,7 @@ render() {
           <Route path="/school-medium" exact={true} component= { SchoolMedium } />
           <Route path="/student-fees" exact={true} component= { StudentFees } />
           <Route path="/student-fees/:id1/:id2" exact={true} component= { InsertStudentFees } />
+          <Route path="/student-fees/:id" exact={true} component= { StudentFeesView } />
           <Route path="/newattendance" exact={true} component= {NewAttendance } />
           <Route path="/newattendance/:id" exact={true} component= {InsertNewAttendance } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
@@ -230,6 +232,7 @@ render() {
           <Route path="/assignment" exact={true} component={ Assignment } />
           <Route path="/student-assignment/:id" exact={true} component={ StudentAssignment } />
           <Route path="/feedback" exact={true} component={ Feedback } />
+          <Route path="/testajax" exact={true} component={ TestingAjax } />
 
 
 
