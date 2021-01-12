@@ -22,7 +22,7 @@ const imageUrl = myConstClass.imageUrl
 const pageSize = myConstClass.pageSize
 const file1 = myConstClass.fileSize
 
-class InsertStudentFees extends React.Component {
+class StudentFeesView extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -92,7 +92,7 @@ class InsertStudentFees extends React.Component {
       }
    this.setState({sessionId: sessionId})
    this.getClass(1);
-   //this.getInsertStudentFees(1)
+   //this.getStudentFeesView(1)
    this.getFeeType();
    this.getSession()
 
@@ -127,7 +127,7 @@ class InsertStudentFees extends React.Component {
             () => {
               if(this.state.count){
                 this.getClass(this.state.current_page);
-                this.getInsertStudentFees(this.state.current_page)
+                this.getStudentFeesView(this.state.current_page)
               }
             });
             if(e.target.name=='feesStructure'){
@@ -556,7 +556,7 @@ onChangeInsertType =(e)=>{
   };
 // EDIT COURSE
 
-editInsertStudentFees = (data) => {
+editStudentFeesView = (data) => {
   console.log(data)
   debugger
   this.setState({
@@ -564,9 +564,9 @@ editInsertStudentFees = (data) => {
     classId:data.ClassId,
      insertType:"single",
     title: 'Update Fees Structure',
-    feesStructure:data.InsertStudentFeesType,
+    feesStructure:data.StudentFeesViewType,
     active:data.StatusId==1?true:false,
-    id:data.InsertStudentFeesMasterId,
+    id:data.StudentFeesViewMasterId,
     totalFees: data.TotalFees?data.TotalFees:"",
     totalFees_ErMsg: "",
     feesStructure_ErMsg:"",
@@ -615,16 +615,16 @@ catch(err)
 
 /// ON SEARCH COURSE
 onSearchCourese=()=>{
-this.getInsertStudentFees(1, this.state.current_page, this.state.classId, this.state.status)
+this.getStudentFeesView(1, this.state.current_page, this.state.classId, this.state.status)
 }
 
 
 // delete section
-deleteInsertStudentFees = (data) => {
+deleteStudentFeesView = (data) => {
   console.log(data)
   debugger
    this.setState({
-     id: data.InsertStudentFeesMasterId,
+     id: data.StudentFeesViewMasterId,
      title: 'Delete Fees Structure',
      btntitle: 'Delete',
      btnValue: "Delete",
@@ -633,19 +633,19 @@ deleteInsertStudentFees = (data) => {
      isEdit: false,
      isAdd: false,
      isDelete: true,
-     feesStructure: data.InsertStudentFeesType,
+     feesStructure: data.StudentFeesViewType,
      displaytext: 'hide_block',
    })
 
 }
 
 // delete fee by Id
-deleteInsertStudentFeesById = async(e) => {
+deleteStudentFeesViewById = async(e) => {
   debugger
   e.preventDefault();
-  //http://35.200.220.64:4000/connektschool/deleteInsertStudentFees?status=0&InsertStudentFeesMasterId=1
+  //http://35.200.220.64:4000/connektschool/deleteStudentFeesView?status=0&StudentFeesViewMasterId=1
   this.setState({isLoading:true})
-  fetch(api_Url+`deleteFeeStructureMaster?status=0&InsertStudentFeesMasterId=${this.state.id}`,{
+  fetch(api_Url+`deleteFeeStructureMaster?status=0&StudentFeesViewMasterId=${this.state.id}`,{
    method:"GET",
    headers :{
      "Accept":"Application/json",
@@ -661,7 +661,7 @@ deleteInsertStudentFeesById = async(e) => {
 
      })
      this.setState({id:""},()=>{
-      this.getInsertStudentFees(this.state.current_page, this.state.per_page)
+      this.getStudentFeesView(this.state.current_page, this.state.per_page)
 
      })
      this.handleDeleteClose()
@@ -679,7 +679,7 @@ deleteInsertStudentFeesById = async(e) => {
 }
 
 /// GET CLASS LIST by sir
-getInsertStudentFees = async pageNumber => {
+getStudentFeesView = async pageNumber => {
   debugger
   this.setState({isLoading:true})
 try{
@@ -691,7 +691,7 @@ try{
     debugger
   } else {
   }
-const response = await fetch( api_Url+`getInsertStudentFeesBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
+const response = await fetch( api_Url+`getStudentFeesViewBySchoolId?page=${pageNumber}&size=${this.state.per_page}&status=${value}`,{
     method: "GET",
     headers: {
       "Accept": "application/json",
@@ -706,7 +706,7 @@ const data = await response.json();
    console.log('data', data)
    debugger
    this.setState({
-         feesStructureList: data.InsertStudentFees,
+         feesStructureList: data.StudentFeesView,
          total: data.TotalCount[0].Total,
          current_page:pageNumber,
      });
@@ -772,7 +772,7 @@ validateForm =()=>{
 
 
   // manage Course
-  manageInsertStudentFees = (e) => {
+  manageStudentFeesView = (e) => {
 
     debugger
     e.preventDefault();
@@ -853,7 +853,7 @@ validateForm =()=>{
               // })
               console.log(result)
               debugger
-             this.getInsertStudentFees(result.id)
+             this.getStudentFeesView(result.id)
 
              //this.handleClose()
             }
@@ -918,8 +918,8 @@ validateForm =()=>{
               // toast.success(result.message,{
               //
               // })
-              this.getInsertStudentFees();
-             //  this.getInsertStudentFees(this.state.current_page, this.state.per_page)
+              this.getStudentFeesView();
+             //  this.getStudentFeesView(this.state.current_page, this.state.per_page)
              // this.handleClose()
             }
             else{
@@ -933,7 +933,7 @@ validateForm =()=>{
    }
   }
 
-  getInsertStudentFees = async(id)=> {
+  getStudentFeesView = async(id)=> {
 
     if(this.state.isAdd||this.props.match.params.id=='insert'){
       this.setState({isLoading:true})
@@ -1270,13 +1270,13 @@ validateForm =()=>{
     }
   }
 
-  showInsertStudentFees = () => {
+  showStudentFeesView = () => {
     if (this.state.feesStructureList !== undefined) {
       return this.state.feesStructureList.map((fees, i) => {
         return (
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
-            <td>{fees.InsertStudentFeesType}</td>
+            <td>{fees.StudentFeesViewType}</td>
             <td>{fees.StudentClass}</td>
             <td>{fees.TotalFees? fees.TotalFees:'-'}</td>
             {/*<td>{fee.CourseOtherDetails}</td>*/}
@@ -1286,9 +1286,9 @@ validateForm =()=>{
             {/* <td><img className="team-profile-pic" src={api_Url + '/UserProfile/' + course.profile_pic} title={member.firstname + ' ' + "profile pic"} alt={member.firstname + ' ' + "profile pic"} /></td> */}
 
             <td>
-            <i  onClick={() => this.editInsertStudentFees(fees)} class="ti-pencil"></i>
-            {" "}  {" "}<Link to={`feestructure/${fees.InsertStudentFeesMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
-            {<i  onClick={() => this.deleteInsertStudentFees(fees)} class="ti-trash"></i>}
+            <i  onClick={() => this.editStudentFeesView(fees)} class="ti-pencil"></i>
+            {" "}  {" "}<Link to={`feestructure/${fees.StudentFeesViewMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
+            {<i  onClick={() => this.deleteStudentFeesView(fees)} class="ti-trash"></i>}
             </td>
 
 
@@ -1403,7 +1403,7 @@ validateForm =()=>{
           <span
             key={number}
             className={classes}
-            onClick={() => this.getInsertStudentFees(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
+            onClick={() => this.getStudentFeesView(number, this.state.per_page, this.state.classId, this.state.status, this.state.searchStr,)}
           >
             {number}
           </span>
@@ -1584,33 +1584,17 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id1==='insert'?"Insert Student Fees":"Update Student Fees"}</h4>
+                        <h4 class="header-title">View Student Fees</h4>
                       </div>
-                      {/*
-                          "StudentId":751,
-                          "ClassId":2,
-                          "SessionId":1,
-                          "FeeType":"Lumpsum",
-                          "TotalFees":"30000",
-                          "FeesRebate":0,
-                          "GrandTotal":"30000",
-                          "RebateReason":""
-                      */}
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 67,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Class-</option>
-                        {this.state.classList.length > 0 ? this.state.classList.map(cls =>
-                          <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
+                      {this.state.StudentClass}
+
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Total Fees<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 36,marginRight: 30}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Total Fees" value={this.state.totalFees} onChange={this.handleInputs} name="totalFees" />
-                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.totalFees_ErMsg}</div>
+                      {this.state.totalFees}
                       </div>
                       </div>
 
@@ -1639,24 +1623,16 @@ uploadFile=(e, type, i)=>{
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Fees Structure Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 18,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="feesStructure" value={this.state.feesStructure} onChange={this.handleInputs}>
-                        <option value={'0'}>-Select Fees Structure-</option>
-                        {this.state.feesStructureList.length > 0 ? this.state.feesStructureList.map(cls =>
-                          <option key={cls.StructureId} value={cls.StructureName}>{cls.StructureName}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
+                      {this.state.feesStructure}</div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Fees Rebate<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 23,marginRight: 30}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Fees Rebate" value={this.state.feesRebate} onChange={this.handleInputs} name="feesRebate" />
-                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.feesRebate_ErMsg}</div></div>
+                      {this.state.feesRebate}</div>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Grand Total<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 69,marginRight: 30}}> : </span>
-                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Grand Total" value={this.state.grandTotal} onChange={this.handleInputs} name="grandTotal" />
-                      <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.grandTotal_ErMsg}</div>
+                      {this.state.grandTotal}
                       </div>
                       {this.props.match.params.id1!='insert'? <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 58,marginRight: 30}}> : </span>
@@ -1670,17 +1646,9 @@ uploadFile=(e, type, i)=>{
                       <div style={{flexDirection: 'row',width: 492}}>
                       <div style={{display: 'flex',flexDirection: 'row'}}>
                       <div style={{marginLeft: 13}}>Rebate Reason</div><div style={{marginLeft: 17,marginRight: 30}}> : </div>
-                      <textarea style={{width: '37%',height: 50}} type="text" className="input-s br-w-1" placeholder="Rebate Reason" value={this.state.reason} onChange={this.handleInputs} name="reason" /></div>
+                      {this.state.reason}</div>
                       </div>}
                       </div>
-
-                      {this.props.match.params.id1!=='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Rebate Reason</div><div style={{marginLeft: 59,marginRight: 30}}> : </div>
-                      <textarea style={{width: '40%',height: 50}} type="text" className="input-s br-w-1" placeholder="Rebate Reason" value={this.state.reason} onChange={this.handleInputs} name="reason" />
-                      </div>
-                      </div></div>}
 
                       <div style={{marginTop: 10}} class="table-responsive">
                         <table class="table text-center">
@@ -1713,37 +1681,11 @@ uploadFile=(e, type, i)=>{
                         </table>
 
                       </div>
-                      {/*<i class="fa  fa-plus-circle" style={{marginTop: 3,fontSize: 30,marginRight: 2}} onClick={() => {handleAddClick()}}></i>*/}
-                      {/*this.state.list.map((x, i) => {
-                        return(<div><div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Fees Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="feesStructure" value={x.feesStructure} onChange={e => handleInputChange(e, i, 'feesStructure')}>
-                        <option value={'0'}>-Select Fees Type-</option>
-                        {this.state.feesStructureList.length > 0 ? this.state.feesStructureList.map(cls =>
-                          <option key={cls.StructureId} value={cls.StructureName}>{cls.StructureName}</option>
-                        ) : null}
-                      </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
-                      <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Amount<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
-                      <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Amount" value={x.amount} onChange={e => handleInputChange(e, i, 'amount')} name="amount" />
-                      <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.amount_ErMsg}</div>
-                      </div>
-                      </div>
-
-                      <div style={{display: "flex",flexDirection: 'row'}}>
-                      <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Other Description</span><span style={{marginLeft: 36,marginRight: 30}}> : </span>
-                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="Other Description" value={x.otherDescription} onChange={e => handleInputChange(e, i, 'otherDescription')} name="otherDescription" />
-                      </div>
-                      </div></div>)})*/}
-
                       </div>
                     </div>
                     {this.state.listLength&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
                       <button className="searchbutton123" onClick={this.cancelFeesStructure}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertStudentFees}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageStudentFeesView}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
                     </div>}
                 </div>
               </div>
@@ -1789,7 +1731,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageInsertStudentFees} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageStudentFeesView} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1813,7 +1755,7 @@ uploadFile=(e, type, i)=>{
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleDeleteClose}>Close</Button>
-				<Button type="submit" onClick={this.deleteInsertStudentFeesById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" onClick={this.deleteStudentFeesViewById} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>
@@ -1844,4 +1786,4 @@ uploadFile=(e, type, i)=>{
 
 
 
-export default InsertStudentFees
+export default StudentFeesView

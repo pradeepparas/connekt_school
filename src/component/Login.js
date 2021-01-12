@@ -14,10 +14,12 @@ import * as myConstClass from './constants';
 const api_Url = myConstClass.api
 
 class Login extends React.Component {
-
+// handleSubmit
 	constructor(props) {
 		super(props);
 		this.state = {
+			sessionName: '',
+			showCreateSession: false,
 			sessionList: [],
 			showSession: false,
 			sessionId_ErMsg: "",
@@ -40,13 +42,62 @@ class Login extends React.Component {
 		};
 	}
 
+	// manage Course
+	manageSession = (e) => {
+		debugger
+		e.preventDefault();
+		if(this.state.sessionName==''){
+			this.setState({sessionName_ErMsg: 'session name is required'})
+			return;
+		}
+		var data = {
+				"SessionName": this.state.sessionName
+			}
+		let url= `insertSession`;
+			let header={
+				"Accept":"Application/json",
+				"Content-Type": "application/json",
+				'Authorization': 'Bearer ' + window.sessionStorage.getItem('auth_token'),
+			}
+		this.setState({isLoading:true})
+				 fetch(api_Url+url,{
+						method:"POST",
+					 headers:header,
+						body: JSON.stringify(data)
+					})
+					.then(res=>res.json())
+					.then(result=>{
+							debugger
+						if(result.success){
+							toast.success(result.message,{
+
+							})
+
+						 this.handleClose()
+						}
+						else{
+					 toast.error(result.message,{
+
+					 })
+					 toast.error(result.error,{
+
+					 })
+						}
+						this.setState({isLoading:false})
+
+					}).catch(e => {
+						toast.error(e)
+					})
+	}
+
 	handleChange = (e) => {
 		this.setState({[e.target.name]: e.target.value, [e.target.name+`_ErMsg`]:""});
 	}
 
 	componentDidMount() {
 		let token = window.sessionStorage.getItem('auth_token');
-		if (token) {
+		let session = window.sessionStorage.setItem("SessionId", this.state.sessionId)
+		if (token&&session) {
 			this.props.history.push('/dashboard');
 
 		}
@@ -58,11 +109,12 @@ class Login extends React.Component {
 
 // Get Session
 	getSession = async pageNumber => {
-		let value = window.sessionStorage.getItem('auth_token')
+		let value = await window.sessionStorage.getItem('auth_token')
 		console.log(value)
 		debugger
 		this.setState({isLoading:true})
-	try{
+     if(value){
+		try{
 	const response = await fetch( api_Url+`getSessionBySchoolId?page=1&size=50&status=1`,{
 			method: "GET",
 			headers: {
@@ -92,9 +144,10 @@ class Login extends React.Component {
 	}
 	catch(err)
 	{
+	console.log(err, 'catch error')
 	this.setState({isLoading: false})
-	toast.error('uploading failed')
-	}
+	toast.error(err)
+	}}
 	 };
 
 	handleInputs = (e) => {
@@ -105,10 +158,17 @@ class Login extends React.Component {
   }
 
 	handleClose = () => {
-		this.setState({ show: false });
+		localStorage.clear();
+		sessionStorage.clear();
+		this.setState({
+				sessionName_ErMsg: '',
+				show: false,
+				showSession: false,
+				showCreateSession: false,
+				sessionName: '' });
 	};
 
-	handleSubmit = (e) => {
+	handleSubmit = async(e) => {
 		debugger
 		e.preventDefault();
 		var emailValid = this.state.email.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
@@ -164,14 +224,21 @@ class Login extends React.Component {
 			// })
 			  //CLEAR LOCAL STORAGE BEFORE LOGIN
 				//window.sessionStorage.removeItem("session")
-			  window.sessionStorage.removeItem("role",)
-			  localStorage.removeItem("auth_token",)
-				window.sessionStorage.removeItem("auth_token",)
+				localStorage.clear();
+		    sessionStorage.clear();
+			  // window.sessionStorage.removeItem("role",)
+			  // localStorage.removeItem("auth_token",)
+				// window.sessionStorage.removeItem("auth_token",)
 				//localStorage.removeItem("SessionId")
 			 // SET VALUE IN LOCAL STORAGE
 			 window.sessionStorage.setItem("auth_token", result.Token);
 			 window.sessionStorage.setItem("role", result.RoleId)
-			this.getSession();
+				if(result.RoleId!=1){
+					setTimeout(()=>{ this.getSession(1);}, 3000)
+				}
+					else {
+					this.props.history.push('/dashboard')
+				}
 			//window.sessionStorage.setItem("SessionId", this.state.sessionId)
 			//  if(result.Data[0].RoleId=='2'){
 				// if(this.state.sessionId){
@@ -193,7 +260,7 @@ class Login extends React.Component {
 			debugger
 		}
 		this.setState({username:"", password:""})
-		this.setState({isLoading:false})
+		// this.setState({isLoading:false})
 
 	})
 }
@@ -218,6 +285,14 @@ class Login extends React.Component {
 
 	};
 
+	createSession = () => {
+		this.setState({
+			showCreateSession: true,
+			show: false,
+			showSession: false
+		})
+	}
+
   	render() {
 
 		return (
@@ -231,7 +306,7 @@ class Login extends React.Component {
 					<div style={{height: 550}} className="wrap-login100 p-l-60 p-r-50 p-t-40 p-b-40 login-blur">
 						<img src={logo} alt="logo"></img>
 						{/* <h4 className="mb-3 f-w-400">Log in</h4> */}
-							<form onSubmit={this.handleSubmit} className="login100-form validate-form flex-sb flex-w">
+							<div /*onSubmit={this.handleSubmit}*/ className="login100-form validate-form flex-sb flex-w">
 
 									<input autoFocus className="input100" type="text" name="email" value={this.state.email} onChange={this.handleChange} placeholder="Username"  />
 									{/* <span className="focus-input100"></span> */}
@@ -242,11 +317,11 @@ class Login extends React.Component {
 									<small className={this.state.displaytext+" text-danger text-left"}>{this.state.password_ErMsg}</small>
 								</div>
 
-								{/*<div className="">
+								{/*this.state.showSession&&<div className="">
 								<select style={{borderColor: 'white'}} className="input100" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
 									<option style={{width: '100%'}} value={'0'}>--SELECT SESSION--</option>
 									{this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
-										<option key={cls.SessionId} value={cls.SessionName}>{cls.SessionName}</option>
+										<option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
 									) : null}
 								</select>{" "}
 								<small className={this.state.displaytext+" text-danger text-left"}>{this.state.sessionId_ErMsg}</small>
@@ -259,7 +334,7 @@ class Login extends React.Component {
 										</label>
 									</div> */}
 									<div className="container-login100-form-btn">
-										{<button className="login100-form-btn">
+										{<button className="login100-form-btn" onClick={this.handleSubmit}>
 											Sign In
 										</button>}
 										<div>
@@ -306,6 +381,11 @@ class Login extends React.Component {
 						    </Modal.Footer>
 						  </Modal>
 						</div>}
+
+
+
+
+
 						{<div className="static-modal">
 
 				<Modal show={this.state.showSession} backdrop="static" onHide={this.handleClose}>
@@ -323,6 +403,9 @@ class Login extends React.Component {
 												<option>-Select Session-</option> {this.state.sessionList.length > 0 ? this.state.sessionList.map(sId =>
 													<option key={sId.SessionId} value={sId.SessionId}>{sId.SessionName}</option>) : null} </FormControl>
 											<small className={this.state.displaytext + " text-danger"}>{this.state.sessionId_ErMsg}</small>
+										</Col>
+										<Col sm={9}>
+											<button type='button' style={{marginTop: 11, right: 121, cursor: 'pointer' }} className='button1234' onClick ={this.createSession}>Doesn't Have Session click here?</button>
 										</Col>
 							</FormGroup>
 						</Form>
@@ -346,10 +429,35 @@ class Login extends React.Component {
 				</Modal>
 			</div>}
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 				</div>
+				{<div className="static-modal">
+
+		<Modal show={this.state.showCreateSession} backdrop="static" onHide={this.handleClose}>
+			<Modal.Header closeButton>
+				<Modal.Title>Create Session</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<Form horizontal>
+					<FormGroup controlId="formHorizontalEmail">
+						<div>
+						<Col sm={4}> Session Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+						<Col sm={9}>
+							<FormControl type="text" placeholder="Session Name like(2020-21)" value={this.state.sessionName} onChange={this.handleInputs} name="sessionName" />
+							<small className={this.state.displaytext + " text-danger"}>{this.state.sessionName_ErMsg}</small>
+						</Col>
+						</div>
+					</FormGroup>
+				</Form>
+			</Modal.Body>
+			<Modal.Footer>
+				<Button onClick={this.handleClose}>Close</Button>
+				<Button /*type="submit"*/ disabled={this.state.isValiddata} onClick={this.manageSession} bsStyle="primary"> {" "} {" "} Add </Button>
+			</Modal.Footer>
+		</Modal>
+	</div>}
 			</div>
 		);
   	}

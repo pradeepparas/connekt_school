@@ -1,5 +1,5 @@
 import React from 'react';
-
+// sidebar-menu image
 import '../assets/css/styles.css';
 import '../css/style.css';
 import '../assets/css/default-css.css';
@@ -141,7 +141,7 @@ toggleClass =(e, type)=>{
                 <div className="sidebar-menu">
                     <div className="sidebar-header">
                         <div className="logo">
-                            <a href="index.html"><img src={logo} alt="logo" /></a>
+                            <a href="index.html"><img style={{height: 42,width: 261, borderRadius: 5}} src={logo} alt="logo" /></a>
                         </div>
                     </div>
                     <div  className="main-menu">
