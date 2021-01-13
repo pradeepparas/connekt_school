@@ -6,7 +6,7 @@ import TestingAjax from './component/TestingAjax';
 import Home  from './component/Home';
 import Login from './component/Login';
 import Register from './component/Register';
-// import Aboutus from './component/Aboutus'; student-fees
+// import Aboutus from './component/Aboutus'; feestructures
 // import Contact from './component/Contact';
 // import Profile from './component/Profile';
 import Mycources from './component/Mycourses'
@@ -115,7 +115,7 @@ import InsertNewAttendance from './component/InsertNewAttendance';
 class App extends React.Component {
 render() {
   return (
-      // <HashRouter history={ hashHistory }>
+      // <HashRouter history={ hashHistory }> feestructure
       <HashRouter>
         <ToastContainer hideProgressBar ={true}/>
         <Switch>
@@ -158,8 +158,8 @@ render() {
           <Route path="/feetype" exact={true} component= { FeeType } />
           <Route path="/feetype/:id1/:id2" exact={true} component= { InsertFeesType } />
           <Route path="/feestructure" exact={true} component= { FeesStructure } />
-          <Route path="/feestructures/:id" exact={true} component= { FeesStructureView } />
-          <Route path="/feestructure/:id" exact={true} component= { InsertFeesStructure } />
+          <Route path="/feestructures/:id1/:id2" exact={true} component= { FeesStructureView } />
+          <Route path="/feestructure/:id1/:id2" exact={true} component= { InsertFeesStructure } />
           <Route path="/session" exact={true} component= { Session } />
           <Route path="/installment" exact={true} component= { InstallmentMaster } />
           <Route path="/installments/:id" exact={true} component= { InstallmentView } />
@@ -168,7 +168,7 @@ render() {
           <Route path="/school-medium" exact={true} component= { SchoolMedium } />
           <Route path="/student-fees" exact={true} component= { StudentFees } />
           <Route path="/student-fees/:id1/:id2" exact={true} component= { InsertStudentFees } />
-          <Route path="/student-fees/:id" exact={true} component= { StudentFeesView } />
+          <Route path="/student-fees-view/:id1/:id2" exact={true} component= { StudentFeesView } />
           <Route path="/newattendance" exact={true} component= {NewAttendance } />
           <Route path="/newattendance/:id" exact={true} component= {InsertNewAttendance } />
           {/* <Route path="/prices" exact={true} component={ Prices } /> */}
