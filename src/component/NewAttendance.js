@@ -26,6 +26,10 @@ class NewAttendance extends React.Component {
   constructor() {
     super();
     this.state = {
+      attendanceStatus: "",
+      attendanceDate: "",
+      attendanceTime_ErMsg: "",
+      attendanceTime: "",
       toDate: moment(new Date()).format("YYYY-MM-DD"),
       fromDate:moment(new Date()).format("YYYY-MM-DD"),
       attendanceList:[],
@@ -84,18 +88,34 @@ class NewAttendance extends React.Component {
 
   }
 
-  editHoliday = (data) => {
+//   [{
+//     "StudentAttendanceId":2,
+//     "AttendanceDate": "2020-10-31",
+//     "AttendanceTime": "08:00:00.000000",
+//     "ClassId":1,
+//     "CourseId":6,
+//     "StudentId": 751,
+//     "AttendanceStatus":"1",
+//     "StatusId": "1"
+// }]
+
+  editAttendance = (data) => {
     console.log(data)
     debugger
     this.setState({
        show: true,
-       holidayName: data.HolidayName,
-       startDate: moment(data.FromDate).format("YYYY-MM-DD"),
-       endDate: moment(data.ToDate).format("YYYY-MM-DD"),
-       id: data.HolidayId,
-      insertType:"single",
+       classId: data.ClassId,
+       courseId: data.CourseId,
+       attendanceTime: data.AttendanceTime,
+       attendanceStatus: data.AttendanceStatus=='0'?'3':data.AttendanceStatus,
+       studentId: data.StudentId,
+       studentName: data.ClassId,
+       attendanceDate: moment(data.AttendanceDate).format("YYYY-MM-DD"),
+       //endDate: moment(data.ToDate).format("YYYY-MM-DD"),
+       id: data.StudentAttendanceId,
+      //insertType:"single",
       // courseImage:[],
-       title: 'Update Holiday',
+       title: 'Update Student Attendance',
        active:data.StatusId==1?true:false,
        btntitle: 'Update',
        isAdd: false,
@@ -116,7 +136,7 @@ class NewAttendance extends React.Component {
 // handle input changes
   handleInputs = (e) => {
     debugger
-    if(e.target.value!=='0'){
+    if(e.target.value!=='0'&&e.target.name!='classId'){
     this.setState({
       [e.target.name]: e.target.value, [e.target.name+`_ErMsg`]:"",
       count: (e.target.name == 'per_page')? true : false
@@ -304,23 +324,20 @@ catch(err)
 // validate form
 validateForm =()=>{
   debugger
+   var timeValid = /^(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]$/
    var isValid=true;
 
-  if(this.state.holidayName.trim()==''){
+  if(this.state.attendanceTime.toString().trim()==''||!this.state.attendanceTime.match(timeValid)){
         isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"Exam name is required", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        return this.setState({attendanceTime_ErMsg:"Time is required or invalid format", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
     }
 
-    else  if(this.state.startDate.trim()==''){
+    else  if(this.state.attendanceStatus.trim()==''){
         isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"Exam start date is required", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
-    }
-    else  if(this.state.endDate.trim()==''){
-        isValid= false
-        return this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"End date is required", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        return this.setState({attendanceTime_ErMsg:"", attendanceStatus_ErMsg:"attendance status is required", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
     }
     else{
-        this.setState({classId_ErMsg:"", chapterId_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
+        this.setState({attendanceTime_ErMsg:"", attendanceStatus_ErMsg:"", courseId_ErMsg:"", holidayName_ErMsg:"", startDate_ErMsg:"", endDate_ErMsg:"", examDoc_ErMsg:"", appt_ErMsg:"",passingMarks_ErMsg:""})
         return isValid
     }
 }
@@ -366,72 +383,29 @@ validateForm =()=>{
   }
 
   // manage exam
-  manageHoliday= (e) => {
+  manageAttendance= (e) => {
     debugger
     e.preventDefault();
       if(!this.validateForm()){
         return
       }
+    if(this.state.isEdit){
 
-   if(this.state.isAdd){
-     var data = {
-    "HolidayName": this.state.holidayName,
-    "FromDate": this.state.startDate,
-    "ToDate": this.state.endDate,
-      }
-
-    this.setState({isLoading:true})
-  //   http://35.200.220.64:1500/aarambhTesting/insertHoliday
-  //  return;
-    fetch(api_Url+`insertHoliday`,{
-      method:"POST",
-      headers :{
-        "Accept":"Application/json",
-         "Content-Type":"Application/json",
-        "Authorization":"Bearer "+sessionStorage.getItem("auth_token"),
-      },
-      body:JSON.stringify(data),
-    })
-    .then(res=>res.json())
-    .then(result=>{
-        debugger
-      if(result.success){
-        this.setState({courseId:"",chapterId:"", classId:""},()=>{
-          this.getAttendance(this.state.current_page, this.state.per_page, this.state.searchStr);
-        })
-        toast.success(result.message,{
-        })
-       this.handleClose()
-      }
-      else{
-     toast.error(result.message,{
-
-     })
-      }
-      this.setState({isLoading:false})
-
-    }).catch((e) => toast.error(e))
-   }
-   else if(this.state.isEdit){
-    //  {
-    // "HolidayId":2,
-    // "HolidayName": "Diwali",
-    // "FromDate": "2020.11.13",
-    // "ToDate": "2020.11.16",
-    // "StatusId":"0"
-    // }
-     var data = {
-    "HolidayId":this.state.id,
-    "HolidayName": this.state.holidayName,
-    "FromDate": this.state.startDate,
-    "ToDate": this.state.endDate,
-    "StatusId":this.state.active?1:0
-      }
+     var data = [{
+       "StudentAttendanceId":this.state.id,
+       "AttendanceDate": this.state.attendanceDate,
+       "AttendanceTime": this.state.attendanceTime,
+       "ClassId": this.state.classId,
+       "CourseId": this.state.courseId,
+       "StudentId": this.state.studentId,
+       "AttendanceStatus": this.state.attendanceStatus=='3'?'0':this.state.attendanceStatus,
+       "StatusId": "1"
+      }]
     debugger
 
    this.setState({isLoading:true})
    // http://35.200.220.64:1500/aarambhTesting/updateHoliday
-    fetch(api_Url+`updateHoliday`,{
+    fetch(api_Url+`updateStudentAttendance`,{
       method:"POST",
       headers :{
         "Accept":"Application/json",
@@ -708,17 +682,14 @@ validateForm =()=>{
             <td>{attendance.StudentClass}</td>
             <td>{attendance.AttendanceTime}</td>
             <td> {moment(attendance.AttendanceDate).format('DD-MMM-YYYY')}</td>
-            <td>
-            <Link to={`attendance/${attendance.StudentAttendanceId}`}> <i  class="ti-pencil"></i></Link>
-            {" "}  {" "}
-            </td>
+            <td>{attendance.AttendanceStatus=='0'&&'Absent'||attendance.AttendanceStatus=='1'&&'Present'||attendance.AttendanceStatus=='2'&&'Leave'}</td>
             {/**/}{/**/}
 
-            {/*<td>
-            <i  onClick={() => this.editAssignment(test)} class="ti-pencil"></i>
+            <td>
+            <i  onClick={() => this.editAttendance(attendance)} class="ti-pencil"></i>
             {" "}  {" "}
-          <Link to={`student-assignment/${test.AssignmentId}`}> <i  class="ti-eye"></i></Link>
-            </td>*/}
+          {/*<Link to={`student-assignment/${test.AssignmentId}`}> <i  class="ti-eye"></i></Link>*/}
+            </td>
 
 
 
@@ -920,6 +891,7 @@ uploadFile=(e, type)=>{
                                 <th scope="col">Student Class</th>
                                 <th scope="col">Attendance Time</th>
                                 <th scope="col">Attendance Date</th>
+                                <th scope="col">Attendance Status</th>
                                 <th scope="col">Action</th>
                               </tr>
                             </thead>
@@ -974,36 +946,28 @@ uploadFile=(e, type)=>{
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
             <div>
-                  <Col sm={4}> Holiday Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
-      						<Col sm={9}>
-      							<FormControl type="text" placeholder="Holiday Name" value={this.state.holidayName} onChange={this.handleInputs} name="holidayName" />
-      							<small className={this.state.displaytext + " text-danger"}>{this.state.holidayName_ErMsg}</small>
-      						</Col>
-                         <Col sm={4}>Holiday Start Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
-                                <Col sm={9}>
-                                    <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.assignDt} value={this.state.startDate} minDate={new Date()} maxDate={this.state.endDate ? new Date(this.state.endDate) : ''} onChange={(e) => this.handleChange(e,'start')} placeholderText="MM-DD-YYYY" />
-                                 <small className={this.state.displaytext + " text-danger"}>{this.state.startDate_ErMsg}</small>
-                        </Col>
-                        <Col sm={4}>Holiday End Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
-                                <Col sm={9}>
-                                    <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.endDate} minDate={this.state.startDate? new Date(this.state.startDate) : new Date()} maxDate={this.state.resultDate ? new Date(this.state.resultDate) : ''} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                                 <small className={this.state.displaytext + " text-danger"}>{this.state.endDate_ErMsg}</small>
-                        </Col>
-                        {/*<Col sm={4}>Exam Result Date <small style={{color: 'red', fontSize: 18}}>*</small></Col>
-                                <Col sm={9}>
-                                    <DatePicker style={{ width: "322px" }} className="form-control w-322" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.resultDt} value={this.state.resultDate} minDate={this.state.endDate? new Date(this.state.endDate) : new Date()} onChange={(e) => {this.handleChange(e,'result')}} placeholderText="MM-DD-YYYY" />
-                                 <small className={this.state.displaytext + " text-danger"}>{this.state.endDate_ErMsg}</small>
-                        </Col>*/}
-        <Col sm={9}>
-          <input type="checkbox"  checked={this.state.active} onChange={this.onChageCheckboxActive} name="active" /> Is Active
-        </Col>
+            <Col sm={6}> Attendance Time (HH:MM:SS)<small style={{color: 'red', fontSize: 18}}>*</small></Col>
+           <Col sm={9}>
+            <FormControl type="text" placeholder="HH:MM:SS" value={this.state.attendanceTime} onChange={this.handleInputs} name="attendanceTime" />
+            <small className={this.state.displaytext + " text-danger"}>{this.state.attendanceTime_ErMsg}</small>
+            </Col>
+            <Col sm={4}> Attendance Status <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+                  <Col sm={9}>
+                    <FormControl as="select" value={this.state.attendanceStatus} name="attendanceStatus" onChange={this.handleInputs} class="form-control">
+                      <option>-Attendance Status-</option>
+                        <option value={'3'}>Absent</option>
+                        <option value={'1'}>Present</option>
+                        <option value={'2'}>Leave</option>
+                      </FormControl>
+                    <small className={this.state.displaytext + " text-danger"}>{this.state.attendanceStatus_ErMsg}</small>
+                  </Col>
         </div>
 					</FormGroup>
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>
 				<Button onClick={this.handleClose}>Close</Button>
-				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageHoliday} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
+				<Button type="submit" disabled={this.state.isValiddata} onClick={this.manageAttendance} bsStyle="primary"> {" "} {" "} {this.state.btntitle} </Button>
 			</Modal.Footer>
 		</Modal>
 	</div>

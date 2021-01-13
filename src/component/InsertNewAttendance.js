@@ -499,6 +499,19 @@ validateForm =()=>{
         return
       }
 
+    var empty = false
+      for(let i=0;i<this.state.listArray.length;i++){
+        if(this.state.listArray[i].status == ''){
+          empty = true;
+          break;
+        }
+      }
+
+    if(empty){
+      toast.error('Attendance Status is required')
+      return;
+    }
+
      var list = [{
        "AttendanceDate": "",
        "AttendanceTime": "",
@@ -543,6 +556,9 @@ validateForm =()=>{
       }
       else{
      toast.error(result.message,{
+
+     })
+     toast.error(result.error,{
 
      })
       }
@@ -954,6 +970,7 @@ uploadFile=(e, type)=>{
                   ) : null}
 
                 </select>{" "}
+                <div className={this.state.displaytext + " text-danger attendance_error1"}>{this.state.classId_ErMsg}</div>
               </li>
               <li>
                 <span>Course Name</span>
@@ -968,7 +985,8 @@ uploadFile=(e, type)=>{
                     {<li style={{width: 186}}>
                       <span>Attendance Date</span>
                       <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.fromDate}  onChange={(e) => this.handleChange(e,'from')} placeholderText="MM-DD-YYYY" />
-                    </li>}
+                        <div className={this.state.displaytext + " text-danger attendance_error1"}>{this.state.fromDate_ErMsg}</div>
+                      </li>}
                     {/*<li style={{width: 186}}>
                       <span>To Date</span>
                       <DatePicker style={{ width: "322px" }} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={new Date()} value={this.state.toDate}  onChange={(e) => this.handleChange(e,'to')} placeholderText="MM-DD-YYYY" />
@@ -980,7 +998,8 @@ uploadFile=(e, type)=>{
                     <li>
                       <span>Attendance Time</span><br></br>
                       <input className="input-s br-w-1" type="text" placeholder="Time (HH:MM:SS)" name="attendanceTime" value={this.state.attendanceTime} onChange={this.handleInputs} />
-                    </li>
+                        <div className={this.state.displaytext + " text-danger attendance_error1"}>{this.state.attendanceTime_ErMsg}</div>
+                      </li>
                     {/*<li>
                       <span>Status</span>
                       <select className="input-s br-w-1" name="status" value={this.state.status} onChange={this.handleInputs}>

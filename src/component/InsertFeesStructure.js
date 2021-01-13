@@ -24,6 +24,7 @@ class InsertFeesStructure extends React.Component {
   constructor() {
     super();
     this.state = {
+      statusId: '',
       class1Id: "",
       sessionId: '',
       sessionList: [],
@@ -65,7 +66,8 @@ class InsertFeesStructure extends React.Component {
       courseImage_ErMsg:"",
       active:true,
       insertType:"single",
-
+      statusDetails: [{statusId:"2",statusName:"In-Active"},
+                      {statusId:"1",statusName:"Active"}],
 
     };
 
@@ -109,7 +111,7 @@ class InsertFeesStructure extends React.Component {
      console.log('data', data)
      debugger
      toast.success(`Fees Structure is present for particular class ${data.FeesStructure[0].StudentClass}`)
-     this.setState({classId: this.props.match.params.id=='insert'?"": this.state.class1Id})
+     this.setState({classId: this.props.match.params.id1=='insert'?"": this.state.class1Id})
 
    } else {
 
@@ -134,19 +136,21 @@ class InsertFeesStructure extends React.Component {
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let session = window.sessionStorage.getItem('SessionId');
     let token = window.sessionStorage.getItem('auth_token');
-    if (token === null) {
+    if (token === null&& session === null) {
       return this.props.history.push('/login');
     } else {
-      if(this.props.match.params.id!=='insert'){
-        this.getStructureTypeById(1)
-        //this.getStructureDetailById();
-      }
-   this.getClass(1);
-   //this.getInsertFeesStructure(1)
-   this.getFeeType();
-   this.getSession()
-
+      this.setState({sessionId: session}, ()=> {
+       if(this.props.match.params.id1!=='insert'){
+       this.getStructureTypeById(1)
+       //this.getStructureDetailById();
+     }
+     this.getClass(1);
+     //this.getInsertFeesStructure(1)
+     this.getFeeType();
+     this.getSession()
+   })
     }
   }
 
@@ -154,7 +158,7 @@ class InsertFeesStructure extends React.Component {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getFeesStructureDetailByStructureId?status=1&id=${this.props.match.params.id}&page=1&size=50`,{
+  const response = await fetch( api_Url+`getFeesStructureDetailByStructureId?status=1&id=${this.props.match.params.id1}&page=1&size=50`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -197,7 +201,6 @@ class InsertFeesStructure extends React.Component {
 
       list.shift()
      console.log(list)
-
      while(this.state.listLength>list.length){
        list.push({
          "feesTypeId": "",
@@ -206,11 +209,15 @@ class InsertFeesStructure extends React.Component {
         "otherDescription": ""
        })
      }
+     while(this.state.listLength<list.length){
+       list.pop()
+     }
+     console.log(list)
 
      debugger
        this.setState({
 
-         id: this.props.match.params.id,
+         id: this.props.match.params.id1,
          listArray: list,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          // classId: data.FeesStructure[0].ClassId,
@@ -239,7 +246,7 @@ class InsertFeesStructure extends React.Component {
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getFeesStructureById?status=1&id=${this.props.match.params.id}&page=1&size=1`,{
+  const response = await fetch( api_Url+`getFeesStructureById?status=${this.props.match.params.id2}&id=${this.props.match.params.id1}&page=1&size=1`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -257,12 +264,13 @@ class InsertFeesStructure extends React.Component {
     //  console.log(data,'datA',)
      console.log('list')
        this.setState({
-         id: this.props.match.params.id,
+         id: this.props.match.params.id1,
          feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.FeesStructure[0].ClassId,
          class1Id: data.FeesStructure[0].ClassId,
          totalFees: data.FeesStructure[0].TotalFees,
          sessionId: data.FeesStructure[0].SessionId,
+         statusId: data.FeesStructure[0].StatusId=='1'?'1':'2',
          isEdit:true,
          isAdd:false
        });
@@ -653,7 +661,7 @@ validateForm =()=>{
     }
     //toast.success('true')
     //return
-   if(this.state.isAdd||this.props.match.params.id=='insert'){
+   if(this.state.isAdd||this.props.match.params.id1=='insert'){
      var data = {
        "FeesStructureType": this.state.feesStructure,
        "ClassId": this.state.classId,
@@ -715,10 +723,10 @@ validateForm =()=>{
 // "SessionId":1
 // }
           var data = {
-              "FeesStructureMasterId":this.props.match.params.id,
+              "FeesStructureMasterId":this.props.match.params.id1,
               "FeesStructureType": this.state.feesStructure,
               "ClassId": this.state.classId,
-              "StatusId":"1",
+              "StatusId": this.state.statusId=='1'?"1":"0",
               "SessionId": this.state.sessionId,
               "TotalFees": this.state.totalFees
               }
@@ -760,7 +768,7 @@ validateForm =()=>{
 
   getInsertFeesStructure = async(id)=> {
 
-    if(this.state.isAdd||this.props.match.params.id=='insert'){
+    if(this.state.isAdd||this.props.match.params.id1=='insert'){
       this.setState({isLoading:true})
     debugger
     console.log(id)
@@ -819,7 +827,7 @@ validateForm =()=>{
     console.log(id)
     debugger
           let list = [{
-          "FeesTypeMasterId": this.props.match.params.id,
+          "FeesTypeMasterId": this.props.match.params.id1,
           "FeesStructureMasterId":'',
           "Amount":'',
           "OtherDescription":'',
@@ -827,7 +835,7 @@ validateForm =()=>{
       }]
       this.state.listArray.map((data, index)=> {
         list.push({"FeesTypeMasterId":data.feesTypeId,
-            "FeesStructureMasterId":this.props.match.params.id,
+            "FeesStructureMasterId":this.props.match.params.id1,
             "Amount":data.amount,
             "OtherDescription": data.otherDescription,
             "StatusId":"1"
@@ -1161,7 +1169,7 @@ validateForm =()=>{
        await this.setState({
          listArray: a
        },() => {
-         if(this.props.match.params.id!='insert'){
+         if(this.props.match.params.id1!='insert'){
            this.getStructureDetailById()
          }
          console.log(this.state.listArray)
@@ -1266,7 +1274,7 @@ uploadFile=(e, type, i)=>{
    }
 
    cancelFeesStructure = () => {
-     if(this.props.match.params.id=='insert'){
+     if(this.props.match.params.id1=='insert'){
        this.setState({classId: "", totalFees: "",sessionId:"",feesStructure:"",sessionId:""})
        this.showInputs()
      } else {
@@ -1372,7 +1380,7 @@ uploadFile=(e, type, i)=>{
                   <div class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{this.props.match.params.id==='insert'?"Insert Fees Structure":"Update Fees Structure"}</h4>
+                        <h4 class="header-title">{this.props.match.params.id1==='insert'?"Insert Fees Structure":"Update Fees Structure"}</h4>
                       </div>
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
@@ -1405,7 +1413,7 @@ uploadFile=(e, type, i)=>{
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 39,marginRight: 30}}> : </span>
-                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} disabled="disabled" onChange={this.handleInputs}>
                         <option value={'0'}>-Select Session-</option>
                         {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
                           <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
@@ -1413,6 +1421,17 @@ uploadFile=(e, type, i)=>{
                       </select>{" "}
                       <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.sessionId_ErMsg}</div></div>
                       </div>
+
+                      {this.props.match.params.id1!='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft: 13}}>Status<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 101,marginRight: 30}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="statusId" value={this.state.statusId} onChange={this.handleInputs}>
+                        <option value={'0'}>-Select Status-</option>
+                        {this.state.statusDetails.length > 0 ? this.state.statusDetails.map(cls =>
+                          <option key={cls.statusId} value={cls.statusId}>{cls.statusName}</option>
+                        ) : null}
+                      </select>{" "}</div>
+                      </div>}
 
                       <div style={{marginTop: 10}} class="table-responsive">
                         <table class="table text-center">
@@ -1460,7 +1479,7 @@ uploadFile=(e, type, i)=>{
                     </div>
                     {this.state.listLength&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
                       <button className="searchbutton123" onClick={this.cancelFeesStructure}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertFeesStructure}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInsertFeesStructure}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
                     </div>}
                 </div>
               </div>

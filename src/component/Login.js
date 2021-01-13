@@ -18,6 +18,7 @@ class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			teacherLogin: false,
 			sessionName: '',
 			showCreateSession: false,
 			sessionList: [],
@@ -219,33 +220,24 @@ class Login extends React.Component {
 	.then(result=>{
 		if(result.success){
 			debugger
-
-			// toast.success("LoggedIn Successfully",{
-			// })
 			  //CLEAR LOCAL STORAGE BEFORE LOGIN
-				//window.sessionStorage.removeItem("session")
-				localStorage.clear();
-		    sessionStorage.clear();
-			  // window.sessionStorage.removeItem("role",)
-			  // localStorage.removeItem("auth_token",)
-				// window.sessionStorage.removeItem("auth_token",)
-				//localStorage.removeItem("SessionId")
+				// localStorage.clear();
+		    // sessionStorage.clear();
 			 // SET VALUE IN LOCAL STORAGE
 			 window.sessionStorage.setItem("auth_token", result.Token);
 			 window.sessionStorage.setItem("role", result.RoleId)
 				if(result.RoleId!=1){
-					setTimeout(()=>{ this.getSession(1);}, 3000)
+					if(result.RoleId=='3'){
+						this.setState({
+							teacherLogin: true
+						})
+					}
+					 setTimeout(()=>{ this.getSession(1);}, 1500)
+					// return this.getSession(1)
 				}
 					else {
 					this.props.history.push('/dashboard')
 				}
-			//window.sessionStorage.setItem("SessionId", this.state.sessionId)
-			//  if(result.Data[0].RoleId=='2'){
-				// if(this.state.sessionId){
-				// 	this.props.history.push('/dashboard')
-				// }
-
-			//   }
 		}
 		else{
 			toast.error(result.Message,{
@@ -404,9 +396,9 @@ class Login extends React.Component {
 													<option key={sId.SessionId} value={sId.SessionId}>{sId.SessionName}</option>) : null} </FormControl>
 											<small className={this.state.displaytext + " text-danger"}>{this.state.sessionId_ErMsg}</small>
 										</Col>
-										<Col sm={9}>
+										{!this.state.teacherLogin &&<Col sm={9}>
 											<button type='button' style={{marginTop: 11, right: 121, cursor: 'pointer' }} className='button1234' onClick ={this.createSession}>Doesn't Have Session click here?</button>
-										</Col>
+										</Col>}
 							</FormGroup>
 						</Form>
 					</Modal.Body>

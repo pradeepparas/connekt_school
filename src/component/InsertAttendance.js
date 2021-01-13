@@ -1063,32 +1063,35 @@ uploadFile=(e, type)=>{
                       <div className="">
                         <h4 class="header-title">{this.props.match.params.id==='insert'?"Insert Attendance":`Update Attendance Student : ${this.state.studentName}`}</h4>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 57,marginRight: 25}}> : </span>
-                      <select style={{width: '35%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft:  13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 79,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="classId" value={this.state.classId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Class-</option>
                         {this.state.classList.length > 0 ? this.state.classList.map(cls =>
                           <option key={cls.ClassId} value={cls.ClassId}>{cls.StudentClass}</option>
                         ) : null}
-
                       </select>{" "}
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.classId_ErMsg}</div>
                       </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Course Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 46,marginRight: 25}}> : </span>
-                      <select style={{width: '35%'}} className="input-s br-w-1" name="courseId" value={this.state.courseId} onChange={this.handleInputs}>
+                      <div style={{flexDirection: 'row',width: 493}}>
+                      <span style={{marginLeft: 13}}>Course Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 49,marginRight: 25}}> : </span>
+                      <select style={{width: '38%'}} className="input-s br-w-1" name="courseId" value={this.state.courseId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Course-</option>
                         {this.state.courseList.length > 0 ? this.state.courseList.map(course =>
                           { console.log(course)
                             return(<option key={course.CourseId} value={course.CourseId}>{course.CourseName}</option>)}
                         ) : null}
-
                       </select>{" "}
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.courseId_ErMsg}</div>
+                      <div style={{marginLeft: 200}} className={this.state.displaytext + " text-danger error123"}>{this.state.courseId_ErMsg}</div></div>
                       </div>
-                      {this.props.match.params.id==='insert'&&<div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 43,marginRight: 25}}> : </span>
-                      <select style={{width: '35%'}} className="input-s br-w-1" name="studentId" value={this.state.studentId} onChange={this.handleInputs}>
+
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      {this.props.match.params.id==='insert'?<div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft:  13}}>Student Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 63,marginRight: 25}}> : </span>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="studentId" value={this.state.studentId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Student-</option>
                         {this.state.studentList.length > 0 ? this.state.studentList.map(student =>
                           <option key={student.StudentId} value={student.StudentId}>{student.StudentName}</option>
@@ -1096,25 +1099,26 @@ uploadFile=(e, type)=>{
 
                       </select>{" "}
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.studentId_ErMsg}</div>
-                      </div>}
-                      {/*<div style={{flexDirection: 'row',marginLeft: 31}}>
-
-                      <span style={{marginLeft: 13}}>Attendance Date</span><span style={{marginLeft: 27,marginRight: 25}}> : </span>
-                      <div style={{width: '105%'}}>
-                      <DatePicker style={{width: '200%'}} className="input-s br-w-1" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.endDate} minDate={this.state.startDate? new Date(this.state.startDate) : new Date()} maxDate={this.state.resultDate ? new Date(this.state.resultDate) : ''} onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      </div>
-                      </div>*/}
-
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
-                      <span style={{marginLeft: 13}}>Attendance Time<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 28,marginRight: 25}}> : </span>
-                      <input style={{width: '35%'}} type="text" className="input-s br-w-1" placeholder="HH:MM:SS" value={this.state.attendanceTime} onChange={this.handleInputs} name="attendanceTime" />
+                      </div>: <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft:  13}}>Attendance Time<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 46,marginRight: 25}}> : </span>
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="HH:MM:SS" value={this.state.attendanceTime} onChange={this.handleInputs} name="attendanceTime" />
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.attendanceTime_ErMsg}</div>
-                      </div>
-                      <div style={{flexDirection: 'row',marginLeft: 31}}>
+                      </div>}
+                      <div style={{flexDirection: 'row',width: 493}}>
                       <span style={{marginLeft: 13}}>Attendance Date<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 28,marginRight: 25}}> : </span>
                       <DatePicker style={{width: 324}} className="input-s" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" selected={this.state.completionDt} value={this.state.attendanceDate} /*minDate={this.state.startDate? new Date(this.state.startDate) : new Date()} maxDate={this.state.resultDate ? new Date(this.state.resultDate) : ''}*/ onChange={(e) => {this.handleChange(e,'end')}} placeholderText="MM-DD-YYYY" />
-                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.attendanceDate_ErMsg}</div>
+                      <div style={{marginLeft: 200}} className={this.state.displaytext + " text-danger error123"}>{this.state.attendanceDate_ErMsg}</div></div>
                       </div>
+
+                      <div style={{display: "flex",flexDirection: 'row'}}>
+                      {this.props.match.params.id==='insert'&&
+                       <div style={{flexDirection: 'row',width: 460}}>
+                      <span style={{marginLeft:  13}}>Attendance Time<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 46,marginRight: 25}}> : </span>
+                      <input style={{width: '40%'}} type="text" className="input-s br-w-1" placeholder="HH:MM:SS" value={this.state.attendanceTime} onChange={this.handleInputs} name="attendanceTime" />
+                      <div className={this.state.displaytext + " text-danger error123"}>{this.state.attendanceTime_ErMsg}</div>
+                      </div>}
+                      </div>
+
                       <button className="searchbutton123" onClick={this.manageAttendance}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
                       </div>
                     </div>

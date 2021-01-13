@@ -939,7 +939,7 @@ uploadFile=(e, type, i)=>{
                       {this.props.match.params.id1=='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                      <select style={{width: '40%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} disabled="disabled" onChange={this.handleInputs}>
                         <option value={'0'}>-Select Session-</option>
                         {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
                           <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
@@ -962,7 +962,7 @@ uploadFile=(e, type, i)=>{
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 105,marginRight: 25}}> : </span>
-                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                      <select style={{width: '38%'}} disabled="disabled" className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Session-</option>
                         {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
                           <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>

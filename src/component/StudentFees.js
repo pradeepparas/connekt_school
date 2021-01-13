@@ -713,7 +713,7 @@ validateForm =()=>{
 
             <td>
             {<Link to={`student-fees/${session.StudentFeesMasterId}/${session.StatusId}`}> <i  class="ti-pencil"></i></Link>}
-            {" "}  {" "}<Link to={`student-fees/${session.StudentFeesMasterId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
+            {" "}  {" "}<Link to={`student-fees-view/${session.StudentFeesMasterId}/${session.StatusId}`}> <i  class="ti-eye"></i></Link>{" "}{" "}
             {<i  onClick={() => this.deleteStudentFees(session)} class="ti-trash"></i>}
             </td>
 

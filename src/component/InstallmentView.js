@@ -243,8 +243,9 @@ toast.error('uploading failed')
     $('.nav-btn').on('click', function () {
         $('.page-container').toggleClass('sbar_collapsed');
       });
+    let session = window.sessionStorage.getItem('SessionId')
     let token = window.sessionStorage.getItem('auth_token');
-    if (token === null) {
+    if ( token === null&& session === null) {
       return this.props.history.push('/login');
     } else {
       if(this.props.match.params.id!=='insert'){
@@ -1274,7 +1275,7 @@ validateForm =()=>{
               <tr style={{padding: 155}} key={i}>
                 <td>{(i+1)}</td>
                 {/*<td key={i}>{<input style={{marginLeft: -2, width: 130}} className="tableinput" type="text" placeholder="Installment No." name="installmentDetail" value={list.installmentDetail} onChange={(e)=>{this.feesStructureDetails(e,i,'I')}} />}</td>*/}
-                <td>Installment {(i+1)} {i==0&&`(${this.state.name})`}</td>
+                <td>{list.installmentDetail}</td>
                 <td key={i}>{list.fromDate}</td>
 
                 <td key={i}>{list.toDate}</td>
@@ -1528,15 +1529,15 @@ uploadFile=(e, type, i)=>{
                   <div style={{overflow: 'visible'}} class="card">
                     <div class="card-body">
                       <div className="">
-                        <h4 class="header-title">{"View Installment"}</h4>
+                        <h4 class="header-title">{"Installment Details"}</h4>
                       </div>
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Class Name<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 77,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Class Name</span><span style={{marginLeft: 77,marginRight: 30}}> : </span>
                       {this.state.studentClass}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Total Fees<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 55,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Total Fees</span><span style={{marginLeft: 55,marginRight: 30}}> : </span>
                       {/*<input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Total Fees" value={this.state.totalAmount} onChange={this.handleInputs} name="totalAmount" />
                       <div style={{marginLeft: 160 }} className={this.state.displaytext + " text-danger error123"}>{this.state.totalAmount_ErMsg}</div>*/}
                       {this.state.totalAmount?this.state.totalAmount:'-'}
@@ -1545,11 +1546,11 @@ uploadFile=(e, type, i)=>{
 
                       <div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Number of Installments<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 4,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Number of Installments</span><span style={{marginLeft: 4,marginRight: 30}}> : </span>
                       {this.state.installmentName}
                       </div>
                       <div style={{flexDirection: 'row',width: 492}}><div style={{display: 'flex',flexDirection: 'row'}}>
-                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 73,marginRight: 30}}> : </div>
+                      <div style={{marginLeft: 13}}>Remarks</div><div style={{marginLeft: 66,marginRight: 30}}> : </div>
                       {this.state.remark?this.state.remark:'-'}
                       </div>
                       </div>
@@ -1579,7 +1580,7 @@ uploadFile=(e, type, i)=>{
                       {/*this.state.list.map((x, i) => {
                         return(<div><div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
-                      <span style={{marginLeft: 13}}>Fees Type<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 80,marginRight: 30}}> : </span>
+                      <span style={{marginLeft: 13}}>Fees Type</span><span style={{marginLeft: 80,marginRight: 30}}> : </span>
                       <select style={{width: '40%'}} className="input-s br-w-1" name="feesStructure" value={x.feesStructure} onChange={e => handleInputChange(e, i, 'feesStructure')}>
                         <option value={'0'}>-Select Fees Type-</option>
                         {this.state.feesStructureList.length > 0 ? this.state.feesStructureList.map(cls =>
@@ -1588,7 +1589,7 @@ uploadFile=(e, type, i)=>{
                       </select>{" "}
                       <div className={this.state.displaytext + " text-danger error123"}>{this.state.feesStructure_ErMsg}</div></div>
                       <div style={{flexDirection: 'row',width: 492}}>
-                      <span style={{marginLeft: 13}}>Amount<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
+                      <span style={{marginLeft: 13}}>Amount</span><span style={{marginLeft: 54,marginRight: 25}}> : </span>
                       <input style={{width: '38%'}} type="text" className="input-s br-w-1" placeholder="Amount" value={x.amount} onChange={e => handleInputChange(e, i, 'amount')} name="amount" />
                       <div style={{marginLeft: 235}} className={this.state.displaytext + " text-danger error123"}>{this.state.amount_ErMsg}</div>
                       </div>
@@ -1625,12 +1626,12 @@ uploadFile=(e, type, i)=>{
 				<Form horizontal>
 					<FormGroup controlId="formHorizontalEmail">
             <div>
-						<Col sm={6}> Fees Structure Type <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+						<Col sm={6}> Fees Structure Type </Col>
 						<Col sm={9}>
 							<FormControl type="text" placeholder="Fees Structure Type" value={this.state.feesStructure} onChange={this.handleInputs} name="feesStructure" />
 							<small className={this.state.displaytext + " text-danger"}>{this.state.feesStructure_ErMsg}</small>
 						</Col>
-            <Col sm={4}> Class Name <small style={{color: 'red', fontSize: 18}}>*</small></Col>
+            <Col sm={4}> Class Name </Col>
                   <Col sm={9}>
                     <FormControl as="select" value={this.state.classId} name="classId" onChange={this.handleInputs} class="form-control">
                       <option value='0'>-Select Class Name-</option> {this.state.classList.length > 0 ? this.state.classList.map(classId =>

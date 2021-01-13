@@ -1055,6 +1055,7 @@ validateForm =()=>{
 
 
    if(this.state.isAdd){
+      data.StudentName = this.state.firstName+" "+this.state.lastName;
       data.StudentUsername = this.state.enrollment;
       data.StudentPassword = "123456";
     this.setState({isLoading:true})
@@ -1091,7 +1092,7 @@ validateForm =()=>{
    }
    else if(this.state.isEdit){
     debugger
-
+    data.StudentName = this.state.firstName+" "+this.state.lastName;
     data.StudentMobile = this.state.studentMobile;
     data.StudentId = this.props.match.params.id;
     data.StatusId = this.state.status==='active'?"1":"0";

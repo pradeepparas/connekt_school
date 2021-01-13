@@ -94,14 +94,14 @@ class InstallmentMaster extends React.Component {
       });
     let sessionId = window.sessionStorage.getItem('SessionId')
     let token = window.sessionStorage.getItem('auth_token');
-    if (token === null) {
+    if (token === null&&sessionId=== null) {
       return this.props.history.push('/login');
     } else {
    this.setState({sessionId: sessionId},()=> {
      this.getInstallmentMaster(1)
    })
    console.log(this.state.sessionId)
-   debugger
+   // debugger
    this.getClass(1);
 
     this.getSession();

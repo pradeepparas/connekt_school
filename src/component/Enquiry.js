@@ -713,7 +713,7 @@ validateForm =()=>{
           <tr>
             <td>{((this.state.current_page - 1) * this.state.per_page) + (i + 1)}</td>
             <td>{enquiry.EnquiryId}</td>
-            <td>{enquiry.EnquiryName}</td>
+            <td>{enquiry.FirstName} {enquiry.LastName}</td>
             <td>{enquiry.GuardianName}</td>
             <td>{enquiry.StudentClass}</td>
             <td>{enquiry.EnquiryMobile?enquiry.EnquiryMobile:'-'}</td>

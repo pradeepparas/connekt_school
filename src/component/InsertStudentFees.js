@@ -935,7 +935,7 @@ validateForm =()=>{
 
   getInsertStudentFees = async(id)=> {
 
-    if(this.state.isAdd||this.props.match.params.id=='insert'){
+    if(this.state.isAdd||this.props.match.params.id1=='insert'){
       this.setState({isLoading:true})
     debugger
     console.log(id)

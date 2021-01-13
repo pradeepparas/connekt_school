@@ -85,6 +85,29 @@ class InsertInstallment extends React.Component {
 
   }
 
+  componentDidMount() {
+    $('.nav-btn').on('click', function () {
+        $('.page-container').toggleClass('sbar_collapsed');
+      });
+    let sessionId = window.sessionStorage.getItem('SessionId')
+    let token = window.sessionStorage.getItem('auth_token');
+    if (token === null&&sessionId== null) {
+      return this.props.history.push('/login');
+    } else {
+      this.setState({sessionId: sessionId},()=> {
+      })
+      if(this.props.match.params.id1!=='insert'){
+        this.getInstallmentMasterById(1)
+        this.getInstallmentDetailById();
+      }
+   this.getClass(1);
+   //this.getInsertInstallment(1)
+   this.getFeeType();
+   this.getSession()
+
+    }
+  }
+
   handleInputs = (e) => {
       if(e.target.name!='sessionId'&&e.target.value!=='0'){
         this.setState({
@@ -226,31 +249,6 @@ class InsertInstallment extends React.Component {
   onChageCheckboxActive = (e) => {
     debugger
     this.setState({ active: !this.state.active })
-  }
-
-
-  componentDidMount() {
-    $('.nav-btn').on('click', function () {
-        $('.page-container').toggleClass('sbar_collapsed');
-      });
-    let sessionId = window.sessionStorage.getItem('SessionId')
-    let token = window.sessionStorage.getItem('auth_token');
-    if (token === null) {
-      return this.props.history.push('/login');
-    } else {
-      this.setState({sessionId: sessionId},()=> {
-        
-      })
-      if(this.props.match.params.id1!=='insert'){
-        this.getInstallmentMasterById(1)
-        this.getInstallmentDetailById();
-      }
-   this.getClass(1);
-   //this.getInsertInstallment(1)
-   this.getFeeType();
-   this.getSession()
-
-    }
   }
 
   getInstallmentDetailById = async() => {
@@ -1682,7 +1680,7 @@ uploadFile=(e, type, i)=>{
                       </select>{" "}
                       </div>: <div style={{flexDirection: 'row',width: 492}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 71,marginRight: 30}}> : </span>
-                      <select style={{width: '38%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                      <select style={{width: '38%'}} disabled="disabled" className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Session-</option>
                         {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
                           <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
@@ -1695,7 +1693,7 @@ uploadFile=(e, type, i)=>{
                       {this.props.match.params.id1!='insert'&&<div style={{display: "flex",flexDirection: 'row'}}>
                       <div style={{flexDirection: 'row',width: 460}}>
                       <span style={{marginLeft: 13}}>Session<small style={{color: 'red', fontSize: 18}}>*</small></span><span style={{marginLeft: 103,marginRight: 30}}> : </span>
-                      <select style={{width: '40%'}} className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
+                      <select style={{width: '40%'}} disabled="disabled" className="input-s br-w-1" name="sessionId" value={this.state.sessionId} onChange={this.handleInputs}>
                         <option value={'0'}>-Select Session-</option>
                         {this.state.sessionList.length > 0 ? this.state.sessionList.map(cls =>
                           <option key={cls.SessionId} value={cls.SessionId}>{cls.SessionName}</option>
