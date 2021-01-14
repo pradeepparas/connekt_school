@@ -123,7 +123,8 @@ class InstallmentView extends React.Component {
      console.log(data,'datABBBBBBBBBBB',)
     // console.log(list, 'list')
     //  console.log(data,'datA',)
-    this.setState({totalAmount: data.FeesStructure[0].TotalFees,
+    this.setState({
+                  // totalAmount: data.FeesStructure[0].TotalFees,
                   fixedAmount: data.FeesStructure[0].TotalFees}, () => {
                     this.getFeesStructureMasterId()
                   })
@@ -248,7 +249,7 @@ toast.error('uploading failed')
     if ( token === null&& session === null) {
       return this.props.history.push('/login');
     } else {
-      if(this.props.match.params.id!=='insert'){
+      if(this.props.match.params.id1!=='insert'){
         this.getInstallmentMasterById(1)
 
         this.getInstallmentDetailById();
@@ -265,7 +266,7 @@ toast.error('uploading failed')
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?status=1&page=1&size=50&InstallmentMasterId=${this.props.match.params.id}`,{
+  const response = await fetch( api_Url+`getInstallmentDetailByInstallmentMasterId?status=1&page=1&size=50&InstallmentMasterId=${this.props.match.params.id1}`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -321,7 +322,7 @@ toast.error('uploading failed')
      debugger
        this.setState({
 
-         // id: this.props.match.params.id,
+         // id: this.props.match.params.id1,
           listArray: list,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          // classId: data.FeesStructure[0].ClassId,
@@ -350,7 +351,7 @@ toast.error('uploading failed')
     debugger
     this.setState({isLoading:true})
   try{
-  const response = await fetch( api_Url+`getInstallmentMasterByMasterId?status=1&InstallmentMasterId=${this.props.match.params.id}&page=1&size=1`,{
+  const response = await fetch( api_Url+`getInstallmentMasterByMasterId?status=${this.props.match.params.id2}&InstallmentMasterId=${this.props.match.params.id1}&page=1&size=1`,{
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -369,7 +370,7 @@ toast.error('uploading failed')
      console.log('list')
        this.setState({
           studentClass: data.InstallmentMaster[0].StudentClass,
-          id: this.props.match.params.id,
+          id: this.props.match.params.id1,
          // feesStructure: data.FeesStructure[0].FeesStructureType,
          classId: data.InstallmentMaster[0].ClassId,
          // totalAmount: data.FeesStructure[0].TotalFees,
@@ -776,7 +777,7 @@ validateForm =()=>{
     // }
     //toast.success('true')
     //return
-   if(this.state.isAdd||this.props.match.params.id=='insert'){
+   if(this.state.isAdd||this.props.match.params.id1=='insert'){
     // {
     //     "InstallmentName":"Test",
     //     "ClassId":1,(DD)
@@ -835,7 +836,7 @@ validateForm =()=>{
    else if(this.state.isEdit){
 
             var data = {
-              "InstallmentMasterId":this.props.match.params.id,
+              "InstallmentMasterId":this.props.match.params.id1,
               "InstallmentName": this.state.installmentName,
               "StatusId":"1",
               "TotalAmount": this.state.totalAmount,
@@ -877,7 +878,7 @@ validateForm =()=>{
 
   insertInstallment = async(id)=> {
 
-    if(this.state.isAdd ||this.props.match.params.id=='insert'){
+    if(this.state.isAdd ||this.props.match.params.id1=='insert'){
       this.setState({isLoading:true})
     debugger
     console.log(id)
@@ -1330,7 +1331,7 @@ validateForm =()=>{
        await this.setState({
          listArray: a
        },() => {
-         if(this.props.match.params.id!='insert'){
+         if(this.props.match.params.id1!='insert'){
            this.getInstallmentDetailById()
          }
          console.log(this.state.listArray)
@@ -1606,7 +1607,7 @@ uploadFile=(e, type, i)=>{
                     </div>
                     {/*this.state.installmentName&&<div style={{display: "flex",flexDirection: 'row',justifyContent: 'flex-end',marginRight: 60}}>
                       <button className="searchbutton123" onClick={this.manageInstallmentView}>Cancel</button>
-                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInstallmentView}>{this.props.match.params.id==='insert'?'Save':'Update'}</button>
+                      <button style={{marginLeft: 24}} className="searchbutton123" onClick={this.manageInstallmentView}>{this.props.match.params.id1==='insert'?'Save':'Update'}</button>
                     </div>*/}
                 </div>
               </div>
